@@ -6,7 +6,7 @@ class Samy extends React.Component {
 
   static propTypes = {
     path: React.PropTypes.string.isRequired,
-    ref: React:ProptTypes.fun
+    ref: React.PropTypes.fun
   }
   constructor (props) {
     super(props)

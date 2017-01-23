@@ -1,28 +1,25 @@
 (function (global, factory) {
   if (typeof define === "function" && define.amd) {
-    define(['exports', 'react', './Proxy', './SVGLoader'], factory);
+    define(['exports', 'react', 'react-svg'], factory);
   } else if (typeof exports !== "undefined") {
-    factory(exports, require('react'), require('./Proxy'), require('./SVGLoader'));
+    factory(exports, require('react'), require('react-svg'));
   } else {
     var mod = {
       exports: {}
     };
-    factory(mod.exports, global.react, global.Proxy, global.SVGLoader);
-    global.index = mod.exports;
+    factory(mod.exports, global.react, global.reactSvg);
+    global.SVGLoader = mod.exports;
   }
-})(this, function (exports, _react, _Proxy, _SVGLoader) {
+})(this, function (exports, _react, _reactSvg) {
   'use strict';
 
   Object.defineProperty(exports, "__esModule", {
     value: true
   });
-  exports.Samy = exports.Proxy = undefined;
 
   var _react2 = _interopRequireDefault(_react);
 
-  var _Proxy2 = _interopRequireDefault(_Proxy);
-
-  var _SVGLoader2 = _interopRequireDefault(_SVGLoader);
+  var _reactSvg2 = _interopRequireDefault(_reactSvg);
 
   function _interopRequireDefault(obj) {
     return obj && obj.__esModule ? obj : {
@@ -78,52 +75,36 @@
     if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass;
   }
 
-  var Samy = function (_React$Component) {
-    _inherits(Samy, _React$Component);
+  var SVGLoader = function (_React$Component) {
+    _inherits(SVGLoader, _React$Component);
 
-    function Samy(props) {
-      _classCallCheck(this, Samy);
+    function SVGLoader(props) {
+      _classCallCheck(this, SVGLoader);
 
-      var _this = _possibleConstructorReturn(this, (Samy.__proto__ || Object.getPrototypeOf(Samy)).call(this, props));
-
-      _this.state = {
-        svg: null
-      };
-      return _this;
+      return _possibleConstructorReturn(this, (SVGLoader.__proto__ || Object.getPrototypeOf(SVGLoader)).call(this, props));
     }
 
-    _createClass(Samy, [{
-      key: 'onSVGReady',
-      value: function onSVGReady(svgNode) {
-        this.setState({ svg: svgNode });
-        this.props.ref(svgNode);
+    _createClass(SVGLoader, [{
+      key: 'shouldComponentUpdate',
+      value: function shouldComponentUpdate(nextProps) {
+        if (nextProps.path !== this.props.path) {
+          return true;
+        }
+
+        return false;
       }
     }, {
       key: 'render',
       value: function render() {
-        var childrenCallbackResult = this.props.children(this.state.svg);
-        return _react2.default.createElement(
-          'div',
-          null,
-          _react2.default.createElement(_SVGLoader2.default, { path: this.props.path, onSVGReady: this.onSVGReady.bind(this) }),
-          childrenCallbackResult
-        );
+        return _react2.default.createElement(_reactSvg2.default, { path: this.props.path, callback: this.props.onSVGReady });
       }
     }]);
 
-    return Samy;
+    return SVGLoader;
   }(_react2.default.Component);
 
-  Samy.propTypes = {
-    path: _react2.default.PropTypes.string.isRequired,
-    ref: _react2.default.PropTypes.fun
+  SVGLoader.propTypes = {
+    path: _react2.default.PropTypes.string.isRequired
   };
-
-
-  Samy.defaultProps = {
-    ref: function ref() {}
-  };
-
-  exports.Proxy = _Proxy2.default;
-  exports.Samy = Samy;
+  exports.default = SVGLoader;
 });

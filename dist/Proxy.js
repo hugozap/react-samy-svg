@@ -1,28 +1,23 @@
 (function (global, factory) {
   if (typeof define === "function" && define.amd) {
-    define(['exports', 'react', './Proxy', './SVGLoader'], factory);
+    define(['exports', 'react'], factory);
   } else if (typeof exports !== "undefined") {
-    factory(exports, require('react'), require('./Proxy'), require('./SVGLoader'));
+    factory(exports, require('react'));
   } else {
     var mod = {
       exports: {}
     };
-    factory(mod.exports, global.react, global.Proxy, global.SVGLoader);
-    global.index = mod.exports;
+    factory(mod.exports, global.react);
+    global.Proxy = mod.exports;
   }
-})(this, function (exports, _react, _Proxy, _SVGLoader) {
+})(this, function (exports, _react) {
   'use strict';
 
   Object.defineProperty(exports, "__esModule", {
     value: true
   });
-  exports.Samy = exports.Proxy = undefined;
 
   var _react2 = _interopRequireDefault(_react);
-
-  var _Proxy2 = _interopRequireDefault(_Proxy);
-
-  var _SVGLoader2 = _interopRequireDefault(_SVGLoader);
 
   function _interopRequireDefault(obj) {
     return obj && obj.__esModule ? obj : {
@@ -78,52 +73,74 @@
     if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass;
   }
 
-  var Samy = function (_React$Component) {
-    _inherits(Samy, _React$Component);
+  var Proxy = function (_React$Component) {
+    _inherits(Proxy, _React$Component);
 
-    function Samy(props) {
-      _classCallCheck(this, Samy);
+    function Proxy(props) {
+      _classCallCheck(this, Proxy);
 
-      var _this = _possibleConstructorReturn(this, (Samy.__proto__ || Object.getPrototypeOf(Samy)).call(this, props));
+      var _this = _possibleConstructorReturn(this, (Proxy.__proto__ || Object.getPrototypeOf(Proxy)).call(this, props));
 
       _this.state = {
-        svg: null
+        elemRefs: null
       };
       return _this;
     }
 
-    _createClass(Samy, [{
-      key: 'onSVGReady',
-      value: function onSVGReady(svgNode) {
-        this.setState({ svg: svgNode });
-        this.props.ref(svgNode);
+    _createClass(Proxy, [{
+      key: 'componentWillReceiveProps',
+      value: function componentWillReceiveProps(nextProps) {
+        var _this2 = this;
+
+        if (nextProps.svg && !this.state.elemRefs) {
+          var nodes = [].slice.call(nextProps.svg.querySelectorAll(this.props.select));
+          // Call the ref callback with the element (or array)
+          if (this.props.ref && nodes.length > 0) {
+            this.props.ref(nodes.length === 1 ? nodes[0] : nodes);
+          }
+
+          this.setState({ elemRefs: nodes });
+        }
+
+        if (this.state.elemRefs) {
+          var pnames = Object.keys(nextProps);
+
+          var _loop = function _loop() {
+            /* The proxy received properties, apply them to the svg element */
+            var propName = pnames[i];
+            _this2.state.elemRefs.forEach(function (elem) {
+              elem.setAttribute(propName, nextProps[propName]);
+              if (_this2.props.children && typeof _this2.props.children === 'string') {
+                elem.innerHTML = _this2.props.children;
+              }
+            });
+          };
+
+          for (var i = 0; i < pnames.length; i++) {
+            _loop();
+          }
+        }
       }
     }, {
       key: 'render',
       value: function render() {
-        var childrenCallbackResult = this.props.children(this.state.svg);
-        return _react2.default.createElement(
-          'div',
-          null,
-          _react2.default.createElement(_SVGLoader2.default, { path: this.props.path, onSVGReady: this.onSVGReady.bind(this) }),
-          childrenCallbackResult
-        );
+        return null;
       }
     }]);
 
-    return Samy;
+    return Proxy;
   }(_react2.default.Component);
 
-  Samy.propTypes = {
-    path: _react2.default.PropTypes.string.isRequired,
-    ref: _react2.default.PropTypes.fun
+  Proxy.propTypes = {
+    select: _react2.default.PropTypes.string.isRequired,
+    svg: _react2.default.PropTypes.object,
+    ref: _react2.default.PropTypes.func,
+    children: _react2.default.PropTypes.string
   };
+  exports.default = Proxy;
 
 
-  Samy.defaultProps = {
+  Proxy.defaultProps = {
     ref: function ref() {}
   };
-
-  exports.Proxy = _Proxy2.default;
-  exports.Samy = Samy;
 });
