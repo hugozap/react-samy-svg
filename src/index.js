@@ -5,7 +5,8 @@ import SVGLoader from './SVGLoader'
 class Samy extends React.Component {
 
   static propTypes = {
-    path: React.PropTypes.sring.isRequired
+    path: React.PropTypes.string.isRequired,
+    ref: React:ProptTypes.fun
   }
   constructor (props) {
     super(props)
@@ -15,6 +16,7 @@ class Samy extends React.Component {
   }
   onSVGReady (svgNode) {
     this.setState({svg: svgNode})
+    this.props.ref(svgNode)
   }
 
   render () {
@@ -26,6 +28,10 @@ class Samy extends React.Component {
       </div>
     )
   }
+}
+
+Samy.defaultProps = {
+    ref: ()=>{}
 }
 
 export {Proxy, Samy}
