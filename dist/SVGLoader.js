@@ -96,7 +96,7 @@
     }, {
       key: 'render',
       value: function render() {
-        return _react2.default.createElement(_reactSvg2.default, { path: this.props.path, callback: this.props.onSVGReady });
+        return _react2.default.createElement(_reactSvg2.default, { style: this.props.style || {}, path: this.props.path, callback: this.props.onSVGReady });
       }
     }]);
 
@@ -104,7 +104,8 @@
   }(_react2.default.Component);
 
   SVGLoader.propTypes = {
-    path: _react2.default.PropTypes.string.isRequired
+    path: _react2.default.PropTypes.string.isRequired,
+    onSVGReady: _react2.default.PropTypes.fun
   };
   exports.default = SVGLoader;
 });

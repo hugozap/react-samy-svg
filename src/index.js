@@ -23,7 +23,7 @@ class Samy extends React.Component {
     const childrenCallbackResult = this.props.children(this.state.svg)
     return (
       <div>
-        <SVGLoader path={this.props.path} onSVGReady={this.onSVGReady.bind(this)} />
+        <SVGLoader style={this.props.style} path={this.props.path} onSVGReady={this.onSVGReady.bind(this)} />
         {childrenCallbackResult}
       </div>
     )
@@ -31,7 +31,7 @@ class Samy extends React.Component {
 }
 
 Samy.defaultProps = {
-    ref: ()=>{}
+  ref: () => {}
 }
 
 export {Proxy, Samy}

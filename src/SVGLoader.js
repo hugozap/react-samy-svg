@@ -4,7 +4,8 @@ import ReactSVG from 'react-svg'
 /* Just a wrapper around ReactSVG to disable re rendering it */
 export default class SVGLoader extends React.Component {
   static propTypes = {
-    path: React.PropTypes.string.isRequired
+    path: React.PropTypes.string.isRequired,
+    onSVGReady: React.PropTypes.fun
   }
 
   constructor (props) {
@@ -22,7 +23,7 @@ export default class SVGLoader extends React.Component {
   render () {
     return (
 
-      <ReactSVG path={this.props.path} callback={this.props.onSVGReady} />
+      <ReactSVG style={this.props.style || {}} path={this.props.path} callback={this.props.onSVGReady} />
     )
   }
 }
