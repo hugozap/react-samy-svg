@@ -96,7 +96,7 @@
     }, {
       key: 'render',
       value: function render() {
-        return _react2.default.createElement(_reactSvg2.default, { style: this.props.style || {}, path: this.props.path, callback: this.props.onSVGReady });
+        return _react2.default.createElement(_reactSvg2.default, { className: this.props.className || '', style: this.props.style || {}, path: this.props.path, callback: this.props.onSVGReady });
       }
     }]);
 

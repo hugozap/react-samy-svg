@@ -24,7 +24,7 @@ class Samy extends React.Component {
     const childrenCallbackResult = this.props.children(this.state.svg)
     return (
       <div>
-        <SVGLoader style={this.props.style} path={this.props.path} onSVGReady={this.onSVGReady.bind(this)} />
+        <SVGLoader className={this.props.className || '' }  style={this.props.style} path={this.props.path} onSVGReady={this.onSVGReady.bind(this)} />
         {childrenCallbackResult}
       </div>
     )

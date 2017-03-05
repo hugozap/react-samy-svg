@@ -107,7 +107,7 @@
         return _react2.default.createElement(
           'div',
           null,
-          _react2.default.createElement(_SVGLoader2.default, { style: this.props.style, path: this.props.path, onSVGReady: this.onSVGReady.bind(this) }),
+          _react2.default.createElement(_SVGLoader2.default, { className: this.props.className || '', style: this.props.style, path: this.props.path, onSVGReady: this.onSVGReady.bind(this) }),
           childrenCallbackResult
         );
       }
