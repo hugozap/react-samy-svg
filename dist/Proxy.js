@@ -92,26 +92,34 @@
       value: function componentWillReceiveProps(nextProps) {
         var _this2 = this;
 
-        if (nextProps.svg && !this.state.elemRefs) {
+        var elems = this.state.elemRefs || [];
+        if (nextProps.svg && elems.length === 0) {
+          //We don't have the svg element reference.
           var nodes = [].slice.call(nextProps.svg.querySelectorAll(this.props.select));
           // Call the ref callback with the element (or array)
           if (this.props.ref && nodes.length > 0) {
             this.props.ref(nodes.length === 1 ? nodes[0] : nodes);
           }
 
+          elems = nodes;
           this.setState({ elemRefs: nodes });
         }
 
-        if (this.state.elemRefs) {
+        if (elems) {
           var pnames = Object.keys(nextProps);
 
           var _loop = function _loop() {
             /* The proxy received properties, apply them to the svg element */
             var propName = pnames[i];
-            _this2.state.elemRefs.forEach(function (elem) {
-              elem.setAttribute(propName, nextProps[propName]);
-              if (_this2.props.children && typeof _this2.props.children === 'string') {
-                elem.innerHTML = _this2.props.children;
+            elems.forEach(function (elem) {
+              // TODO: replace this with a faster alternative
+              if (typeof nextProps[propName] === 'function') {
+                elem[propName] = nextProps[propName];
+              } else {
+                elem.setAttribute(propName, nextProps[propName]);
+                if (_this2.props.children && typeof _this2.props.children === 'string') {
+                  elem.innerHTML = _this2.props.children;
+                }
               }
             });
           };

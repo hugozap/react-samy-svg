@@ -1,12 +1,13 @@
 import React from 'react'
 import Proxy from './Proxy'
+import motionUtils from './animate/'
 import SVGLoader from './SVGLoader'
 
 class Samy extends React.Component {
 
   static propTypes = {
     path: React.PropTypes.string.isRequired,
-    ref: React.PropTypes.fun
+    ref: React.PropTypes.func
   }
   constructor (props) {
     super(props)
@@ -31,7 +32,7 @@ class Samy extends React.Component {
 }
 
 Samy.defaultProps = {
-  ref: () => {}
+  ref: function() { console.log('samy ref default function')} 
 }
 
-export {Proxy, Samy}
+export {Proxy, Samy, motionUtils }

@@ -1,30 +1,23 @@
 (function (global, factory) {
   if (typeof define === "function" && define.amd) {
-    define(['exports', 'react', './Proxy', './animate/', './SVGLoader'], factory);
+    define(['exports', 'react', 'react-motion'], factory);
   } else if (typeof exports !== "undefined") {
-    factory(exports, require('react'), require('./Proxy'), require('./animate/'), require('./SVGLoader'));
+    factory(exports, require('react'), require('react-motion'));
   } else {
     var mod = {
       exports: {}
     };
-    factory(mod.exports, global.react, global.Proxy, global.animate, global.SVGLoader);
-    global.index = mod.exports;
+    factory(mod.exports, global.react, global.reactMotion);
+    global.Rotate = mod.exports;
   }
-})(this, function (exports, _react, _Proxy, _animate, _SVGLoader) {
+})(this, function (exports, _react, _reactMotion) {
   'use strict';
 
   Object.defineProperty(exports, "__esModule", {
     value: true
   });
-  exports.motionUtils = exports.Samy = exports.Proxy = undefined;
 
   var _react2 = _interopRequireDefault(_react);
-
-  var _Proxy2 = _interopRequireDefault(_Proxy);
-
-  var _animate2 = _interopRequireDefault(_animate);
-
-  var _SVGLoader2 = _interopRequireDefault(_SVGLoader);
 
   function _interopRequireDefault(obj) {
     return obj && obj.__esModule ? obj : {
@@ -80,55 +73,42 @@
     if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass;
   }
 
-  var Samy = function (_React$Component) {
-    _inherits(Samy, _React$Component);
+  var Rotate = function (_React$Component) {
+    _inherits(Rotate, _React$Component);
 
-    function Samy(props) {
-      _classCallCheck(this, Samy);
+    function Rotate(props) {
+      _classCallCheck(this, Rotate);
 
-      var _this = _possibleConstructorReturn(this, (Samy.__proto__ || Object.getPrototypeOf(Samy)).call(this, props));
+      var _this = _possibleConstructorReturn(this, (Rotate.__proto__ || Object.getPrototypeOf(Rotate)).call(this, props));
 
-      _this.state = {
-        svg: null
-      };
+      console.log('Constructor');
       return _this;
     }
 
-    _createClass(Samy, [{
-      key: 'onSVGReady',
-      value: function onSVGReady(svgNode) {
-        this.setState({ svg: svgNode });
-        this.props.ref(svgNode);
-      }
-    }, {
+    _createClass(Rotate, [{
       key: 'render',
       value: function render() {
-        var childrenCallbackResult = this.props.children(this.state.svg);
+        var _this2 = this;
+
         return _react2.default.createElement(
-          'div',
-          null,
-          _react2.default.createElement(_SVGLoader2.default, { style: this.props.style, path: this.props.path, onSVGReady: this.onSVGReady.bind(this) }),
-          childrenCallbackResult
+          _reactMotion.Motion,
+          { defaultStyle: { angle: 0 }, style: { angle: (0, _reactMotion.spring)(this.props.endAngle) } },
+          function (val) {
+            var transform = 'rotate(' + val.angle + ', ' + _this2.props.originX + ', ' + _this2.props.originY + ')';
+            return _react2.default.createElement(Proxy, { id: 'ddd', svg: _this2.props.svg, transform: transform });
+          }
         );
       }
     }]);
 
-    return Samy;
+    return Rotate;
   }(_react2.default.Component);
 
-  Samy.propTypes = {
-    path: _react2.default.PropTypes.string.isRequired,
-    ref: _react2.default.PropTypes.func
+  Rotate.propTypes = {
+    angle: _react2.default.PropTypes.number.isRequired,
+    originX: _react2.default.PropTypes.number.isRequired,
+    originY: _react2.default.PropTypes.number.isRequired,
+    svg: _react2.default.PropTypes.object.isRequired
   };
-
-
-  Samy.defaultProps = {
-    ref: function ref() {
-      console.log('samy ref default function');
-    }
-  };
-
-  exports.Proxy = _Proxy2.default;
-  exports.Samy = Samy;
-  exports.motionUtils = _animate2.default;
+  exports.default = Rotate;
 });

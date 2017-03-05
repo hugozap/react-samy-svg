@@ -23,7 +23,7 @@ export default class SVGLoader extends React.Component {
   render () {
     return (
 
-      <ReactSVG style={this.props.style || {}} path={this.props.path} callback={this.props.onSVGReady} />
+      <ReactSVG className={this.props.className || ''}  style={this.props.style || {}} path={this.props.path} callback={this.props.onSVGReady} />
     )
   }
 }

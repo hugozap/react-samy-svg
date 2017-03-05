@@ -1,0 +1,10 @@
+
+nmap <F1> :set paste<CR>:r !pbpaste<CR>:set nopaste<CR>
+vmap <F2> :w !pbcopy<CR><CR>
+
+
+bind -t vi-copy 'v' begin-selection
+bind -t vi-copy 'y' copy-selection
+bind -t vi-copy Escape cancel
+
+Escape cancel
