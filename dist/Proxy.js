@@ -95,7 +95,12 @@
         var elems = this.state.elemRefs || [];
         if (nextProps.svg && elems.length === 0) {
           //We don't have the svg element reference.
+
           var nodes = [].slice.call(nextProps.svg.querySelectorAll(this.props.select));
+          if (nodes.length === 0 && ['svg', 'root'].indexOf(this.props.select) >= 0) {
+            //If the selector equls 'svg' or 'root' use the svg node
+            nodes.push(nextProps.svg);
+          }
           // Call the ref callback with the element (or array)
           if (this.props.ref && nodes.length > 0) {
             this.props.ref(nodes.length === 1 ? nodes[0] : nodes);

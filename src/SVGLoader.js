@@ -5,7 +5,7 @@ import ReactSVG from 'react-svg'
 export default class SVGLoader extends React.Component {
   static propTypes = {
     path: React.PropTypes.string.isRequired,
-    onSVGReady: React.PropTypes.fun
+    onSVGReady: React.PropTypes.function
   }
 
   constructor (props) {
