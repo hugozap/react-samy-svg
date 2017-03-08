@@ -16,6 +16,7 @@
     "react"
   ],
   "scripts": {
+    "build": "babel-node ./src --out-dir ./dis",
     "prepublish_disabled": "babel --presets=es2015,react --plugins=transform-class-properties,transform-es2015-modules-umd src --out-dir ./dist",
     "test": "tape -r babel-register tests/*.js "
   },
