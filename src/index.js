@@ -11,9 +11,13 @@ class Samy extends React.Component {
     scene: React.PropTypes.object.isRequired
   }
 
-  getChildContext() {
+  static childContextTypes = {
+    svg: React.PropTypes.object
+  }
+
+  getChildContext () {
     return {
-        svg: this.state.svg
+      svg: this.state.svg
     }
   }
 
@@ -29,9 +33,7 @@ class Samy extends React.Component {
   }
 
   render () {
-    return [
-      <SVGLoader className={this.props.className || ''} style={this.props.style} path={this.props.path} onSVGReady={this.onSVGReady.bind(this)} />,
-      ...(this.props.children || [])]
+    return  <SVGLoader className={this.props.className || ''} style={this.props.style} path={this.props.path} onSVGReady={this.onSVGReady.bind(this)} />
   }
 }
 

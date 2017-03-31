@@ -8,11 +8,7 @@ export default class SVGLoader extends React.Component {
     onSVGReady: React.PropTypes.function
   }
 
-  static defaultProps = {
-      onSVGReady: function(){}
-  }
-
-  constructor (props) {
+   constructor (props) {
     super(props)
   }
 
@@ -31,4 +27,10 @@ export default class SVGLoader extends React.Component {
     )
   }
 }
+ SVGLoader.defaultProps = {
+      onSVGReady: function(){
+        
+      }
+  }
+
 
