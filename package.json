@@ -18,7 +18,7 @@
   "scripts": {
     "build": "babel-node ./src --out-dir ./dis",
     "prepublish_disabled": "babel --presets=es2015,react --plugins=transform-class-properties,transform-es2015-modules-umd src --out-dir ./dist",
-    "test": "budo tests.js --live -- -t babelify"
+    "test": "cd tests && budo tests.js --live --open  -- -t babelify"
   },
   "devDependencies": {
     "babel-cli": "^6.6.4",
