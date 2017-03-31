@@ -33,7 +33,8 @@ class Samy extends React.Component {
   }
 
   render () {
-    return  <SVGLoader className={this.props.className || ''} style={this.props.style} path={this.props.path} onSVGReady={this.onSVGReady.bind(this)} />
+    return <div> <SVGLoader className={this.props.className || ''} style={this.props.style} path={this.props.path} onSVGReady={this.onSVGReady.bind(this)} />
+      {this.props.children} </div>
   }
 }
 
