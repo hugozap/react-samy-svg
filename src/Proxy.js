@@ -10,27 +10,30 @@ import React from 'react'
 export default class Proxy extends React.Component {
   static propTypes = {
     select: React.PropTypes.string.isRequired,
-    svg: React.PropTypes.object,
     ref: React.PropTypes.func,
     children: React.PropTypes.string,
   }
 
-  constructor (props) {
+  static contextTypes = {
+    svg: React.PropTypes.object,
+  }
+
+  constructor (props, context) {
     super(props)
     this.state = {
       elemRefs: null
     }
   }
 
-  componentWillReceiveProps (nextProps) {
+  componentWillReceiveProps (nextProps, nextContext) {
     var elems = this.state.elemRefs || [] 
-    if (nextProps.svg && elems.length === 0) {
+    if (nextContext.svg && elems.length === 0) {
       //We don't have the svg element reference.
       
-      var nodes = [].slice.call(nextProps.svg.querySelectorAll(this.props.select))
+      var nodes = [].slice.call(nextContext.svg.querySelectorAll(this.props.select))
       if(nodes.length === 0 && ['svg','root'].indexOf(this.props.select) >= 0 ) {
         //If the selector equls 'svg' or 'root' use the svg node
-        nodes.push(nextProps.svg)
+        nodes.push(nextContext.svg)
       }
       // Call the ref callback with the element (or array)
       if (this.props.ref && nodes.length > 0) {

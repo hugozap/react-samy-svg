@@ -7,8 +7,16 @@ class Samy extends React.Component {
 
   static propTypes = {
     path: React.PropTypes.string.isRequired,
-    ref: React.PropTypes.func
+    ref: React.PropTypes.func,
+    scene: React.PropTypes.object.isRequired
   }
+
+  getChildContext() {
+    return {
+        svg: this.state.svg
+    }
+  }
+
   constructor (props) {
     super(props)
     this.state = {
@@ -21,18 +29,14 @@ class Samy extends React.Component {
   }
 
   render () {
-    const childrenCallbackResult = this.props.children(this.state.svg)
-    return (
-      <div>
-        <SVGLoader className={this.props.className || '' }  style={this.props.style} path={this.props.path} onSVGReady={this.onSVGReady.bind(this)} />
-        {childrenCallbackResult}
-      </div>
-    )
+    return [
+      <SVGLoader className={this.props.className || ''} style={this.props.style} path={this.props.path} onSVGReady={this.onSVGReady.bind(this)} />,
+      ...(this.props.children || [])]
   }
 }
 
 Samy.defaultProps = {
-  ref: function() { console.log('samy ref default function')} 
+  ref: function () { console.log('samy ref default function') }
 }
 
 export {Proxy, Samy, motionUtils }

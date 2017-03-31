@@ -76,7 +76,7 @@
   var Proxy = function (_React$Component) {
     _inherits(Proxy, _React$Component);
 
-    function Proxy(props) {
+    function Proxy(props, context) {
       _classCallCheck(this, Proxy);
 
       var _this = _possibleConstructorReturn(this, (Proxy.__proto__ || Object.getPrototypeOf(Proxy)).call(this, props));
@@ -89,17 +89,17 @@
 
     _createClass(Proxy, [{
       key: 'componentWillReceiveProps',
-      value: function componentWillReceiveProps(nextProps) {
+      value: function componentWillReceiveProps(nextProps, nextContext) {
         var _this2 = this;
 
         var elems = this.state.elemRefs || [];
-        if (nextProps.svg && elems.length === 0) {
+        if (nextContext.svg && elems.length === 0) {
           //We don't have the svg element reference.
 
-          var nodes = [].slice.call(nextProps.svg.querySelectorAll(this.props.select));
+          var nodes = [].slice.call(nextContext.svg.querySelectorAll(this.props.select));
           if (nodes.length === 0 && ['svg', 'root'].indexOf(this.props.select) >= 0) {
             //If the selector equls 'svg' or 'root' use the svg node
-            nodes.push(nextProps.svg);
+            nodes.push(nextContext.svg);
           }
           // Call the ref callback with the element (or array)
           if (this.props.ref && nodes.length > 0) {
@@ -146,9 +146,11 @@
 
   Proxy.propTypes = {
     select: _react2.default.PropTypes.string.isRequired,
-    svg: _react2.default.PropTypes.object,
     ref: _react2.default.PropTypes.func,
     children: _react2.default.PropTypes.string
+  };
+  Proxy.contextTypes = {
+    svg: _react2.default.PropTypes.object
   };
   exports.default = Proxy;
 
