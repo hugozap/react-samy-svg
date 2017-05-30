@@ -1,0 +1,97 @@
+{
+  "name": "hugozap/react-samy-svg",
+  "version": "0.1.4",
+  "libraries": {
+    "xv": "^1.1.25"
+  },
+  "title": "Samy SVG",
+  "branch": "",
+  "style": {
+    "name": "Future",
+    "componentSet": {
+      "nav": "nav/BasicNav",
+      "header": "header/BannerHeader",
+      "article": "article/BasicArticle",
+      "footer": "footer/BasicFooter"
+    },
+    "fontFamily": "\"Avenir Next\", Helvetica, sans-serif",
+    "heading": {
+      "fontWeight": 500,
+      "textTransform": "uppercase",
+      "letterSpacing": "0.2em"
+    },
+    "alternativeText": {
+      "textTransform": "uppercase",
+      "fontWeight": 400,
+      "letterSpacing": "0.2em",
+      "opacity": 0.75
+    },
+    "colors": {
+      "text": "#333",
+      "background": "#fff",
+      "primary": "#666",
+      "secondary": "#888",
+      "highlight": "#1f80ff",
+      "muted": "#f6f6f6",
+      "border": "#eee"
+    },
+    "layout": {
+      "centered": true,
+      "maxWidth": 1024,
+      "bannerHeight": "80vh"
+    }
+  },
+  "content": [
+    {
+      "component": "nav",
+      "links": [
+        {
+          "href": "https://github.com/hugozap/react-samy-svg",
+          "text": "GitHub"
+        },
+        {
+          "href": "https://npmjs.com/package/react-samy-svg",
+          "text": "npm"
+        }
+      ]
+    },
+    {
+      "component": "header",
+      "heading": "react-samy-svg",
+      "subhead": "( Work In Progress ) Declarative SVG manipulation for React. No need to inline svg files. ",
+      "children": [
+        {
+          "component": "ui/TweetButton",
+          "text": "react-samy-svg: ( Work In Progress ) Declarative SVG manipulation for React. No need to inline svg files. ",
+          "url": ""
+        },
+        {
+          "component": "ui/GithubButton",
+          "user": "hugozap",
+          "repo": "react-samy-svg"
+        }
+      ],
+      "text": "v1.0.1"
+    },
+    {
+      "component": "article",
+      "metadata": {
+        "source": "github.readme"
+      },
+      "html": "<h1>React npm package boilerplate</h1>\n<p>Adapted from <a href=\"https://github.com/juliancwirko/react-npm-boilerplate\">https://github.com/juliancwirko/react-npm-boilerplate</a></p>\n<h1>Changes</h1>\n<ul>\n<li>Use tape for testing</li>\n<li>Use standard for code format (TODO)</li>\n</ul>\n"
+    },
+    {
+      "component": "footer",
+      "links": [
+        {
+          "href": "https://github.com/hugozap/react-samy-svg",
+          "text": "GitHub"
+        },
+        {
+          "href": "https://github.com/hugozap",
+          "text": "hugozap"
+        }
+      ]
+    }
+  ]
+}
