@@ -2,10 +2,10 @@ import React from 'react'
 import ReactSVG from 'react-svg'
 
 /* Just a wrapper around ReactSVG to disable re rendering it */
-export default class SVGLoader extends React.Component {
+ class SVGLoader extends React.Component {
   static propTypes = {
     path: React.PropTypes.string.isRequired,
-    onSVGReady: React.PropTypes.function
+    onSVGReady: React.PropTypes.func
   }
 
    constructor (props) {
@@ -29,8 +29,8 @@ export default class SVGLoader extends React.Component {
 }
  SVGLoader.defaultProps = {
       onSVGReady: function(){
-        
+        console.log('hey')
       }
   }
 
-
+export default SVGLoader

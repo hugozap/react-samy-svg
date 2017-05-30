@@ -8,7 +8,6 @@ class Samy extends React.Component {
   static propTypes = {
     path: React.PropTypes.string.isRequired,
     ref: React.PropTypes.func,
-    scene: React.PropTypes.object.isRequired
   }
 
   static childContextTypes = {
