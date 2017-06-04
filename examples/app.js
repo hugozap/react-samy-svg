@@ -1,5 +1,5 @@
-var ReactDOM = require('react-dom')
-var React = require('react')
+import ReactDOM from 'react-dom'
+import React from 'react'
 import {Samy, Proxy} from '../src/index'
 import Basic from './basic'
 import Text from './text'

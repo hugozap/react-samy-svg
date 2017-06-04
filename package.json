@@ -46,7 +46,6 @@
   },
   "dependencies": {
     "babel-runtime": "^6.6.1",
-    "react-motion": "^0.4.7",
     "react-svg": "^2.1.18"
   }
 }
