@@ -16,7 +16,7 @@
     "react"
   ],
   "scripts": {
-    "build": "babel-node ./src --out-dir ./dis",
+    "build": "babel ./src --out-dir ./dis --presets=es2015,react,stage-2",
     "prepublish_disabled": "babel --presets=es2015,react --plugins=transform-class-properties,transform-es2015-modules-umd src --out-dir ./dist",
     "examples": "cd examples && budo app.js --live --open  -- -t babelify"
   },
