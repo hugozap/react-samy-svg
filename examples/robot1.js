@@ -13,6 +13,7 @@ export default class Robot1 extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+    	eyeScale: 1,
     	bodyY: 0,
     	leg1Y: 0,
     	leg2Y: -20,
@@ -49,6 +50,12 @@ export default class Robot1 extends React.Component {
   	}
   }
 
+  blink(prevState) {
+  	return {
+  		eyeScale: prevState.eyeScale ? 0 : 1
+  	}
+  }
+
   componentDidMount() {
 
 
@@ -66,6 +73,10 @@ export default class Robot1 extends React.Component {
   		this.setState(this.steam)
 
   	},1000)
+
+  	setInterval(()=>{
+  		this.setState(this.blink)
+  	},900)
   }
 
 
@@ -120,6 +131,9 @@ export default class Robot1 extends React.Component {
     		  		   <Proxy select="#steam:nth-child(even)" fill-opacity={1-data.steamOpacity}> </Proxy>
     		  		  </div>}
     		  		</Animate>
+
+
+    		  	
 
     		</Samy>
 
