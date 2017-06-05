@@ -64,7 +64,7 @@ export default class Robot1 extends React.Component {
   	setInterval(()=>{
   		this.setState(this.rotateHead)
   		this.setState(this.steam)
-  		
+
   	},1000)
   }
 
@@ -91,7 +91,7 @@ export default class Robot1 extends React.Component {
     		  		    steamOpacity: this.state.steamOpacity
     		  		  }}
     		  		  duration={50}
-    		  		  easing='cubicin' // anything from https://github.com/d3/d3-ease
+    		  		  easing='easePolyIn' // anything from https://github.com/d3/d3-ease
     		  		>
     		  		  {data => 
     		      		  <div><Proxy select="#core" transform={`translate(0 ${data.y})`}> </Proxy>
@@ -99,7 +99,6 @@ export default class Robot1 extends React.Component {
     		      		  <Proxy select="#arm2" transform={`translate(0 ${-data.y*0.5})`}> </Proxy>
     		      		  <Proxy select="#leg1" transform={`translate(0 ${data.leg1})`}> </Proxy>
     		      		  <Proxy select="#leg2" transform={`translate(0 ${data.leg2})`}> </Proxy>
-    		  			  <Proxy select="#head" transform={`rotate(${data.headRotation} 134 176)`}> </Proxy>
     		  			 
     		      		  </div>
     		  		  }
