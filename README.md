@@ -1,9 +1,8 @@
-# React npm package boilerplate
+# SamySVG
 
-Adapted from https://github.com/juliancwirko/react-npm-boilerplate
+Makes it easy to manipulate SVG in a declarative way (without having to inline the code manually)
 
-# Changes
+Robot Illustrations by [Broccolini](http://broccolini.net/)
+LICENSE: https://creativecommons.org/licenses/by-nc-sa/3.0/
 
-* Use tape for testing
-* Use standard for code format (TODO)
-
+[Source](http://robotodex.com/)

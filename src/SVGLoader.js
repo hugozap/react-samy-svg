@@ -33,4 +33,5 @@ import ReactSVG from 'react-svg'
       }
   }
 
+
 export default SVGLoader

@@ -55,7 +55,7 @@ export default class Proxy extends React.Component {
             elem[propName] = nextProps[propName]
           } else {
             elem.setAttribute(propName, nextProps[propName])
-            if (this.props.children && typeof this.props.children === 'string') {
+            if (typeof this.props.children === 'string' && this.props.children.trim().length > 0) {
               elem.innerHTML = this.props.children
             }
           }
