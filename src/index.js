@@ -8,7 +8,7 @@ class Samy extends React.Component {
   static propTypes = {
     path: React.PropTypes.string.isRequired,
     ref: React.PropTypes.func,
-    svgProps: React.PropTypes.object
+    svgAttributes: React.PropTypes.object
   }
 
   static childContextTypes = {
@@ -31,22 +31,22 @@ class Samy extends React.Component {
     this.setState({svg: svgNode})
     this.props.ref(svgNode)
 
-    //set svgProps
-      if (svgNode && this.props.svgProps) {
-        var keys = Object.keys(this.props.svgProps)
+    //set svgAttributes
+      if (svgNode && this.props.svgAttributes) {
+        var keys = Object.keys(this.props.svgAttributes)
         keys.forEach((k)=>{
-          svgNode.setAttribute(k, this.props.svgProps[k])
+          svgNode.setAttribute(k, this.props.svgAttributes[k])
         })
       }
   }
 
   componentWillReceiveProps(nextProps) {
     //Apply properties to svg element
-    if (this.props.svgProps  != nextProps.svgProps) {
+    if (this.props.svgAttributes  != nextProps.svgAttributes) {
       if (this.state.svg) {
-        var keys = Object.keys(nextProps.svgProps)
+        var keys = Object.keys(nextProps.svgAttributes)
         keys.forEach((k)=>{
-          this.state.svg.setAttribute(k, nextProps.svgProps[k])
+          this.state.svg.setAttribute(k, nextProps.svgAttributes[k])
         })
       }
     }

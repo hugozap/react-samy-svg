@@ -25,7 +25,7 @@ class Timer extends React.Component {
 
     render() {
         return (
-            <Samy path="1.svg" svgProps={{viewBox:`${this.state.offsetX} 0 50 50`}}>
+            <Samy path="1.svg" svgAttributes={{viewBox:`${this.state.offsetX} 0 50 50`}}>
                 <Proxy select={"polygon"} fill={this.state.fill} />
             </Samy>
         )
@@ -33,7 +33,7 @@ class Timer extends React.Component {
 }
 
 var ModifyViewBox = () => {
-    return <Samy path="1.svg" svgProps={{viewBox:'0 0 40 40'}}/>
+    return <Samy path="1.svg" svgAttributes={{viewBox:'0 0 40 40'}}/>
 }
 
 var appnode = document.createElement("div")
