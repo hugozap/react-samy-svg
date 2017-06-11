@@ -32,18 +32,6 @@
     };
   }
 
-  function _toConsumableArray(arr) {
-    if (Array.isArray(arr)) {
-      for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) {
-        arr2[i] = arr[i];
-      }
-
-      return arr2;
-    } else {
-      return Array.from(arr);
-    }
-  }
-
   function _classCallCheck(instance, Constructor) {
     if (!(instance instanceof Constructor)) {
       throw new TypeError("Cannot call a class as a function");
@@ -118,13 +106,45 @@
     _createClass(Samy, [{
       key: 'onSVGReady',
       value: function onSVGReady(svgNode) {
+        var _this2 = this;
+
         this.setState({ svg: svgNode });
         this.props.ref(svgNode);
+
+        //set svgAttributes
+        if (svgNode && this.props.svgAttributes) {
+          var keys = Object.keys(this.props.svgAttributes);
+          keys.forEach(function (k) {
+            svgNode.setAttribute(k, _this2.props.svgAttributes[k]);
+          });
+        }
+      }
+    }, {
+      key: 'componentWillReceiveProps',
+      value: function componentWillReceiveProps(nextProps) {
+        var _this3 = this;
+
+        //Apply properties to svg element
+        if (this.props.svgAttributes != nextProps.svgAttributes) {
+          if (this.state.svg) {
+            var keys = Object.keys(nextProps.svgAttributes);
+            keys.forEach(function (k) {
+              _this3.state.svg.setAttribute(k, nextProps.svgAttributes[k]);
+            });
+          }
+        }
       }
     }, {
       key: 'render',
       value: function render() {
-        return [_react2.default.createElement(_SVGLoader2.default, { className: this.props.className || '', style: this.props.style, path: this.props.path, onSVGReady: this.onSVGReady.bind(this) })].concat(_toConsumableArray(this.props.children || []));
+        return _react2.default.createElement(
+          'div',
+          null,
+          ' ',
+          _react2.default.createElement(_SVGLoader2.default, { className: this.props.className || '', style: this.props.style, path: this.props.path, onSVGReady: this.onSVGReady.bind(this) }),
+          this.props.children,
+          ' '
+        );
       }
     }]);
 
@@ -134,7 +154,10 @@
   Samy.propTypes = {
     path: _react2.default.PropTypes.string.isRequired,
     ref: _react2.default.PropTypes.func,
-    scene: _react2.default.PropTypes.object.isRequired
+    svgAttributes: _react2.default.PropTypes.object
+  };
+  Samy.childContextTypes = {
+    svg: _react2.default.PropTypes.object
   };
 
 
@@ -143,7 +166,6 @@
       console.log('samy ref default function');
     }
   };
-
   exports.Proxy = _Proxy2.default;
   exports.Samy = Samy;
   exports.motionUtils = _animate2.default;

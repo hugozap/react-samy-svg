@@ -61,5 +61,4 @@ class Samy extends React.Component {
 Samy.defaultProps = {
   ref: function () { console.log('samy ref default function') }
 }
-
 export {Proxy, Samy, motionUtils }

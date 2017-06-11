@@ -105,10 +105,14 @@
 
   SVGLoader.propTypes = {
     path: _react2.default.PropTypes.string.isRequired,
-    onSVGReady: _react2.default.PropTypes.function
+    onSVGReady: _react2.default.PropTypes.func
   };
+
   SVGLoader.defaultProps = {
-    onSVGReady: function onSVGReady() {}
+    onSVGReady: function onSVGReady() {
+      console.log('hey');
+    }
   };
+
   exports.default = SVGLoader;
 });

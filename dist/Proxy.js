@@ -122,7 +122,7 @@
                 elem[propName] = nextProps[propName];
               } else {
                 elem.setAttribute(propName, nextProps[propName]);
-                if (_this2.props.children && typeof _this2.props.children === 'string') {
+                if (typeof _this2.props.children === 'string' && _this2.props.children.trim().length > 0) {
                   elem.innerHTML = _this2.props.children;
                 }
               }

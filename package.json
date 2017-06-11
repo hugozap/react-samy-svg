@@ -1,6 +1,6 @@
 {
   "name": "react-samy-svg",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Convenient SVG loading and manipulation from react",
   "repository": {
     "type": "git",
@@ -16,7 +16,7 @@
     "react"
   ],
   "scripts": {
-    "build": "babel ./src --out-dir ./dis --presets=es2015,react,latest,stage-2",
+    "build": "babel ./src --out-dir ./dist --presets=es2015,react,latest,stage-2",
     "prepublish_disabled": "babel --presets=es2015,react,latest --plugins=transform-class-properties,transform-es2015-modules-umd src --out-dir ./dist",
     "examples": "cd examples && budo app.js --live --open  -- -t babelify --presets [ es2015,react,stage-2 ]",
     "buildexamples": "cd examples && cp -R robots ./dist/ && browserify app.js -t babelify --presets [ es2015,react,stage-2 ] > dist/bundle.js"
