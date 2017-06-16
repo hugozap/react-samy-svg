@@ -1,6 +1,6 @@
 # SamySVG :cyclone:
 
-The goal of this library is to improve the workflow when working with SVG from React. Usually, the SVG code has to be pasted into the markup to manipulate it. With SamySVG you can keep your .svg file separated without losing the ability to manipulate it in a declarative way. :ok_hand:
+Usually, the SVG code has to be pasted into the markup to manipulate it. With SamySVG you can keep your .svg file separated without losing the ability to manipulate it in a declarative way. :ok_hand:
 
 ### Installation
 
@@ -24,7 +24,7 @@ Inside the render method of your component:
   <Proxy select="#Star" stroke={this.state.strokeColor}> </Proxy>
 </Samy>
 ```
-In the previous code, the stroke attribute of the element with id "star" is set to the value of `state.strokeColor`
+In the previous code, the stroke attribute of the element with id "star" is set to the value of the state property `strokeColor`
 
 The .svg file can evolve separately as long as the selectors used by the `Proxy` elements are valid :star2: :star2: :star2:
 
