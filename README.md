@@ -24,10 +24,65 @@ Inside the render method of your component:
   <Proxy select="#Star" stroke={this.state.strokeColor}> </Proxy>
 </Samy>
 ```
-In the previous code, the stroke attribute of the element with id "star" is set to the value of the state property `strokeColor`
+In the previous code, the stroke attribute of the element with id "star" is set to the value of the state property `strokeColor`. **Any property set in the Proxy element will also be set in the svg child node**.
 
-The .svg file can evolve separately as long as the selectors used by the `Proxy` elements are valid :star2: :star2: :star2:
+### Components
 
+#### Samy
 
+The basic syntax to load and inject the SVG is:
 
+```jsx
+<Samy path="1.svg">...</Samy>
+```
+Properties:
+
+* path: (string) **required** the URL of the svg file
+* style: (object) style that will be applied to the SVG element when loaded
+* svgAttributes: (object) Use it to change the SVG root node attributes (like the viewbox).
+
+#### Proxy
+
+Whenever you want to manipulate an SVG internal element you can use the Proxy element.
+
+```jsx
+ <Proxy select="#myElementId" fill="#000"></Proxy>
+```
+
+the `select` attribute can target multiple elements, so this is valid:
+
+```jsx
+ <Proxy select="#rightEye,#leftEye" fill="#000"></Proxy>
+```
+
+Properties:
+
+* select: (string) CSS selector for the element(s)
+
+#### Changing text nodes
+
+The Proxy element can be used to change the text elements inside an SVG. (In this case by selecting the `tspan` inside `#myTextElement`)
+
+```jsx
+<Proxy select="#myTextElement tspan">Text changed </Proxy>
+```
+
+### Animating SVGS
+
+You can animate elements by using some of the popular React animation libraries like React-move. It's no different than animating other DOM elements.
+
+```jsx
+<Animate
+  // Set some default data
+  default={{
+    rotation: 0
+  }}
+  // Update your data to whatever you want
+  data={{ 
+  	rotation: this.state.rotation
+   }} duration={300} easing='cubicin' >
+  { data =>  <Proxy select="#box" transform={`rotate(${data.rotation})`}></Proxy> 
+  }
+</Animate>
+```
 
