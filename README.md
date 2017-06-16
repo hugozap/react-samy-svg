@@ -33,7 +33,7 @@ In the previous code, the stroke attribute of the element with id "star" is set 
 The basic syntax to load and inject the SVG is:
 
 ```jsx
-<Samy path="1.svg">...</Samy>
+<Samy path="1.svg"></Samy>
 ```
 Properties:
 
@@ -64,10 +64,10 @@ Properties:
 The Proxy element can be used to change the text elements inside an SVG. (In this case by selecting the `tspan` inside `#myTextElement`)
 
 ```jsx
-<Proxy select="#myTextElement tspan">Text changed </Proxy>
+<Proxy select="#myTextElement tspan">Text changed</Proxy>
 ```
 
-### Animating SVGS
+### Animation
 
 You can animate elements by using some of the popular React animation libraries like React-move. It's no different than animating other DOM elements.
 
