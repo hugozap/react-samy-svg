@@ -26,7 +26,8 @@ Inside the render method of your component:
 ```
 In the previous code, the stroke attribute of the element with id "star" is set to the value of `state.strokeColor`
 
-We can manipulate the SVG code in a declarative way without having to paste the code. We can continue working on the SVG file in our favorite editor separately :star2: :star2: :star2:
+The .svg file can evolve separately as long as the selectors used by the `Proxy` elements are valid :star2: :star2: :star2:
+
 
 
 
