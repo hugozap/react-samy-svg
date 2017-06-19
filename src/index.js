@@ -1,13 +1,12 @@
 import React from 'react'
 import Proxy from './Proxy'
-import motionUtils from './animate/'
 import SVGLoader from './SVGLoader'
 
 class Samy extends React.Component {
 
   static propTypes = {
     path: React.PropTypes.string.isRequired,
-    ref: React.PropTypes.func,
+    onSVGReady: React.PropTypes.func,
     svgAttributes: React.PropTypes.object
   }
 
@@ -29,7 +28,7 @@ class Samy extends React.Component {
   }
   onSVGReady (svgNode) {
     this.setState({svg: svgNode})
-    this.props.ref(svgNode)
+    this.props.onSVGReady(svgNode)
 
     //set svgAttributes
       if (svgNode && this.props.svgAttributes) {
@@ -61,4 +60,4 @@ class Samy extends React.Component {
 Samy.defaultProps = {
   ref: function () { console.log('samy ref default function') }
 }
-export {Proxy, Samy, motionUtils }
+export {Proxy, Samy }
