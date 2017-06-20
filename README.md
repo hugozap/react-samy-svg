@@ -18,15 +18,16 @@ Import the `Samy` and `Proxy` elements
 import {Samy, Proxy} from 'react-samy-svg'
 
 ```
-
-Inside the render method of your component:
+[Open an example on glitch](https://glitch.com/edit/#!/fossil-transport?path=src/App.js:1:0)
 
 ```jsx
-<Samy path="1.svg" style={{width:400, height:'auto'}}>
+<Samy path="1.svg">
   <Proxy select="#Star" stroke={this.state.strokeColor}> </Proxy>
 </Samy>
 ```
 In the previous code, the stroke attribute of the element with id "star" is set to the value of the state property `strokeColor`. **Any property set in the Proxy element will also be set in the svg child node**.
+
+Note: The SVG path can be an external URL (Thanks to SVGInjector and react-svg)
 
 ### Components
 
