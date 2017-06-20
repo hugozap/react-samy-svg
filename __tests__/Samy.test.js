@@ -11,6 +11,9 @@ var xhr
 var requests = []
 var testfile = fs.readFileSync(path.join(__dirname,'1.svg'), 'utf8')
 
+/* Note: We use a different svg filename to avoid the cache
+   otherwise errors will occur due to lack of SVGElement in jsdom
+*/
 jest.useFakeTimers()
 describe('SamySVG', ()=>{
 	beforeEach(()=>{
@@ -72,5 +75,23 @@ describe('SamySVG', ()=>{
 		jest.runAllTimers()
 
 	})
+
+	it('Proxy changes text', (done)=>{
+
+		const component = mount(<Samy path="5.svg"
+		 svgAttributes={{viewBox:'10 10 100 200'}}
+		 onSVGReady={(svg)=>{
+		 	console.log(svg.innerHTML)
+		 	expect(svg.querySelector('#Star').innerHTML.includes('hello')).toBe(true)
+		 	done()
+		 }}>
+		 	<Proxy select="#Star">hello</Proxy>
+		 </Samy>, {attachTo:container})
+		requests[0].respond(200, {}, testfile)
+		jest.runAllTimers()
+
+	})
+
+
 })
 
