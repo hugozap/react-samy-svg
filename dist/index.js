@@ -1,28 +1,26 @@
 (function (global, factory) {
   if (typeof define === "function" && define.amd) {
-    define(['exports', 'react', './Proxy', './animate/', './SVGLoader'], factory);
+    define(['exports', 'react', './Proxy', './SVGLoader'], factory);
   } else if (typeof exports !== "undefined") {
-    factory(exports, require('react'), require('./Proxy'), require('./animate/'), require('./SVGLoader'));
+    factory(exports, require('react'), require('./Proxy'), require('./SVGLoader'));
   } else {
     var mod = {
       exports: {}
     };
-    factory(mod.exports, global.react, global.Proxy, global.animate, global.SVGLoader);
+    factory(mod.exports, global.react, global.Proxy, global.SVGLoader);
     global.index = mod.exports;
   }
-})(this, function (exports, _react, _Proxy, _animate, _SVGLoader) {
+})(this, function (exports, _react, _Proxy, _SVGLoader) {
   'use strict';
 
   Object.defineProperty(exports, "__esModule", {
     value: true
   });
-  exports.motionUtils = exports.Samy = exports.Proxy = undefined;
+  exports.Samy = exports.Proxy = undefined;
 
   var _react2 = _interopRequireDefault(_react);
 
   var _Proxy2 = _interopRequireDefault(_Proxy);
-
-  var _animate2 = _interopRequireDefault(_animate);
 
   var _SVGLoader2 = _interopRequireDefault(_SVGLoader);
 
@@ -108,9 +106,6 @@
       value: function onSVGReady(svgNode) {
         var _this2 = this;
 
-        this.setState({ svg: svgNode });
-        this.props.ref(svgNode);
-
         //set svgAttributes
         if (svgNode && this.props.svgAttributes) {
           var keys = Object.keys(this.props.svgAttributes);
@@ -118,6 +113,9 @@
             svgNode.setAttribute(k, _this2.props.svgAttributes[k]);
           });
         }
+
+        this.setState({ svg: svgNode });
+        this.props.onSVGReady(svgNode);
       }
     }, {
       key: 'componentWillReceiveProps',
@@ -153,7 +151,7 @@
 
   Samy.propTypes = {
     path: _react2.default.PropTypes.string.isRequired,
-    ref: _react2.default.PropTypes.func,
+    onSVGReady: _react2.default.PropTypes.func,
     svgAttributes: _react2.default.PropTypes.object
   };
   Samy.childContextTypes = {
@@ -162,11 +160,8 @@
 
 
   Samy.defaultProps = {
-    ref: function ref() {
-      console.log('samy ref default function');
-    }
+    onSVGReady: new Function()
   };
   exports.Proxy = _Proxy2.default;
   exports.Samy = Samy;
-  exports.motionUtils = _animate2.default;
 });

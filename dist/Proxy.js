@@ -101,9 +101,9 @@
             //If the selector equls 'svg' or 'root' use the svg node
             nodes.push(nextContext.svg);
           }
-          // Call the ref callback with the element (or array)
-          if (this.props.ref && nodes.length > 0) {
-            this.props.ref(nodes.length === 1 ? nodes[0] : nodes);
+          // Call the onElementSelected callback with the element (or array)
+          if (this.props.onElementSelected && nodes.length > 0) {
+            this.props.onElementSelected(nodes.length === 1 ? nodes[0] : nodes);
           }
 
           elems = nodes;
@@ -146,7 +146,7 @@
 
   Proxy.propTypes = {
     select: _react2.default.PropTypes.string.isRequired,
-    ref: _react2.default.PropTypes.func,
+    onElementSelected: _react2.default.PropTypes.func,
     children: _react2.default.PropTypes.string
   };
   Proxy.contextTypes = {
@@ -156,6 +156,6 @@
 
 
   Proxy.defaultProps = {
-    ref: function ref() {}
+    onElementSelected: function onElementSelected() {}
   };
 });
