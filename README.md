@@ -1,3 +1,5 @@
+[![build status](https://img.shields.io/travis/hugozap/react-samy-svg/master.svg?style=flat-square)](https://travis-ci.org/hugozap/react-samy/svg)
+
 # SamySVG :cyclone:
 
 Usually, the SVG code has to be pasted into the markup to manipulate it. With SamySVG you can keep your .svg file separated without losing the ability to manipulate it in a declarative way. :ok_hand:
@@ -38,8 +40,9 @@ The basic syntax to load and inject the SVG is:
 Properties:
 
 * path: (string) **required** the URL of the svg file
-* style: (object) style that will be applied to the SVG element when loaded
+* style: (object) style that will be forwarded to the SVG element when loaded
 * svgAttributes: (object) Use it to change the SVG root node attributes (like the viewbox).
+* onSVGReady (function): Callback called with the svg element.
 
 #### Proxy
 
@@ -58,6 +61,7 @@ the `select` attribute can target multiple elements, so this is valid:
 Properties:
 
 * select: (string) CSS selector for the element(s)
+* onElementSelected: (function) callback that receives the element (or list of elements that this proxy tracks)
 
 #### Changing text nodes
 

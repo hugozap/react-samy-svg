@@ -1,10 +1,16 @@
-
-nmap <F1> :set paste<CR>:r !pbpaste<CR>:set nopaste<CR>
-vmap <F2> :w !pbcopy<CR><CR>
-
-
-bind -t vi-copy 'v' begin-selection
-bind -t vi-copy 'y' copy-selection
-bind -t vi-copy Escape cancel
-
-Escape cancel
+/* global module, exports: true, define */
+  // Node.js or CommonJS
+  if (typeof module === 'object' && typeof module.exports === 'object') {
+    module.exports = exports = SVGInjector;
+  }
+  // AMD support
+  else if (typeof define === 'function' && define.amd) {
+    define(function () {
+      return SVGInjector;
+    });
+  }
+  // Otherwise, attach to window as global
+  else if (typeof window === 'object') {
+    window.SVGInjector = SVGInjector;
+  }
+  /* global -module, -exports, -define */

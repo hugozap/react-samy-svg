@@ -27,16 +27,16 @@ class Samy extends React.Component {
     }
   }
   onSVGReady (svgNode) {
+    //set svgAttributes
+    if (svgNode && this.props.svgAttributes) {
+      var keys = Object.keys(this.props.svgAttributes)
+      keys.forEach((k)=>{
+        svgNode.setAttribute(k, this.props.svgAttributes[k])
+      })
+    }
+
     this.setState({svg: svgNode})
     this.props.onSVGReady(svgNode)
-
-    //set svgAttributes
-      if (svgNode && this.props.svgAttributes) {
-        var keys = Object.keys(this.props.svgAttributes)
-        keys.forEach((k)=>{
-          svgNode.setAttribute(k, this.props.svgAttributes[k])
-        })
-      }
   }
 
   componentWillReceiveProps(nextProps) {
@@ -58,6 +58,6 @@ class Samy extends React.Component {
 }
 
 Samy.defaultProps = {
-  ref: function () { console.log('samy ref default function') }
+  onSVGReady: new Function()
 }
 export {Proxy, Samy }
