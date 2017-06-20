@@ -1,4 +1,4 @@
-[![build status](https://img.shields.io/travis/hugozap/react-samy-svg/master.svg?style=flat-square)](https://travis-ci.org/hugozap/react-samy/svg)
+[![build status](https://img.shields.io/travis/hugozap/react-samy-svg/master.svg?style=flat-square)](https://travis-ci.org/hugozap/react-samy-svg)
 
 # SamySVG :cyclone:
 
