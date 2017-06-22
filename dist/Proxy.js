@@ -116,12 +116,16 @@
           var _loop = function _loop() {
             /* The proxy received properties, apply them to the svg element */
             var propName = pnames[i];
+            //Ignore component props
+            if (['select', 'onElementSelected'].includes(propName)) {
+              return 'continue';
+            }
             elems.forEach(function (elem) {
               // TODO: replace this with a faster alternative
               if (typeof nextProps[propName] === 'function') {
                 elem[propName] = nextProps[propName];
               } else {
-                elem.setAttribute(propName, nextProps[propName]);
+                elem.setAttributeNS(null, propName, nextProps[propName]);
                 if (typeof _this2.props.children === 'string' && _this2.props.children.trim().length > 0) {
                   elem.innerHTML = _this2.props.children;
                 }
@@ -130,7 +134,9 @@
           };
 
           for (var i = 0; i < pnames.length; i++) {
-            _loop();
+            var _ret = _loop();
+
+            if (_ret === 'continue') continue;
           }
         }
       }

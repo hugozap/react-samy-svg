@@ -49,12 +49,17 @@ export default class Proxy extends React.Component {
       for (var i = 0; i < pnames.length; i++) {
         /* The proxy received properties, apply them to the svg element */
         const propName = pnames[i]
+        //Ignore component props
+        if (['select','onElementSelected'].includes(propName)) {
+          continue;
+        }
         elems.forEach((elem) => {
             // TODO: replace this with a faster alternative
           if (typeof nextProps[propName] === 'function') {
             elem[propName] = nextProps[propName]
           } else {
-            elem.setAttribute(propName, nextProps[propName])
+            //https://developer.mozilla.org/en/docs/Web/SVG/Namespaces_Crash_Course
+            elem.setAttributeNS(null, propName, nextProps[propName])
             if (typeof this.props.children === 'string' && this.props.children.trim().length > 0) {
               elem.innerHTML = this.props.children
             }
