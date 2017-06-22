@@ -125,6 +125,7 @@
               if (typeof nextProps[propName] === 'function') {
                 elem[propName] = nextProps[propName];
               } else {
+                //https://developer.mozilla.org/en/docs/Web/SVG/Namespaces_Crash_Course
                 elem.setAttributeNS(null, propName, nextProps[propName]);
                 if (typeof _this2.props.children === 'string' && _this2.props.children.trim().length > 0) {
                   elem.innerHTML = _this2.props.children;
