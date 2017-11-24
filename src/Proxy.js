@@ -1,5 +1,5 @@
-
-import React from 'react'
+import React from 'react';
+import PropTypes from 'prop-types';
 
 /*
  * Proxy works as a virtual svg node.
@@ -9,71 +9,74 @@ import React from 'react'
  */
 export default class Proxy extends React.Component {
   static propTypes = {
-    select: React.PropTypes.string.isRequired,
-    onElementSelected: React.PropTypes.func,
-    children: React.PropTypes.string,
-  }
+    select: PropTypes.string.isRequired,
+    onElementSelected: PropTypes.func,
+    children: PropTypes.string
+  };
 
   static contextTypes = {
-    svg: React.PropTypes.object,
-  }
+    svg: PropTypes.object
+  };
 
-  constructor (props, context) {
-    super(props)
+  constructor(props, context) {
+    super(props);
     this.state = {
-      elemRefs: null
-    }
+      elemRefs: []
+    };
   }
 
-  componentWillReceiveProps (nextProps, nextContext) {
-    var elems = this.state.elemRefs || [] 
-    if (nextContext.svg && elems.length === 0) {
+  componentWillReceiveProps(nextProps, nextContext) {
+    let { elemRefs } = this.state;
+
+    if (nextContext.svg && elemRefs.length === 0) {
       //We don't have the svg element reference.
-      
-      var nodes = [].slice.call(nextContext.svg.querySelectorAll(this.props.select))
-      if(nodes.length === 0 && ['svg','root'].indexOf(this.props.select) >= 0 ) {
+
+      let nodes = Array.from(
+        nextContext.svg.querySelectorAll(this.props.select)
+      );
+      if (nodes.length === 0 && ['svg', 'root'].includes(this.props.select)) {
         //If the selector equls 'svg' or 'root' use the svg node
-        nodes.push(nextContext.svg)
+        nodes.push(nextContext.svg);
       }
       // Call the onElementSelected callback with the element (or array)
-      if (this.props.onElementSelected && nodes.length > 0) {
-        this.props.onElementSelected(nodes.length === 1 ? nodes[0] : nodes)
+      if (this.props.onElementSelected && nodes.length) {
+        this.props.onElementSelected(nodes.length === 1 ? nodes[0] : nodes);
       }
-      
-      elems = nodes
-      this.setState({elemRefs: nodes })
+
+      elemRefs = nodes;
+      this.setState({ elemRefs: nodes });
     }
 
-    if (elems) {
-      const pnames = Object.keys(nextProps)
-      for (var i = 0; i < pnames.length; i++) {
-        /* The proxy received properties, apply them to the svg element */
-        const propName = pnames[i]
+    if (elemRefs) {
+      for (let propName of Object.keys(nextProps)) {
         //Ignore component props
-        if (['select','onElementSelected'].includes(propName)) {
+        if (['select', 'onElementSelected'].includes(propName)) {
           continue;
         }
-        elems.forEach((elem) => {
-            // TODO: replace this with a faster alternative
+        elemRefs.forEach(elem => {
+          // TODO: replace this with a faster alternative
           if (typeof nextProps[propName] === 'function') {
-            elem[propName] = nextProps[propName]
+            elem[propName] = nextProps[propName];
           } else {
             //https://developer.mozilla.org/en/docs/Web/SVG/Namespaces_Crash_Course
-            elem.setAttributeNS(null, propName, nextProps[propName])
-            if (typeof this.props.children === 'string' && this.props.children.trim().length > 0) {
-              elem.innerHTML = this.props.children
+            elem.setAttributeNS(null, propName, nextProps[propName]);
+            if (
+              typeof this.props.children === 'string' &&
+              this.props.children.trim().length
+            ) {
+              elem.innerHTML = this.props.children;
             }
           }
-        })
+        });
       }
     }
   }
 
-  render () {
-    return null
+  render() {
+    return null;
   }
 }
 
 Proxy.defaultProps = {
   onElementSelected: () => {}
-}
+};

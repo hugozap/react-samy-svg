@@ -1,16 +1,16 @@
 (function (global, factory) {
   if (typeof define === "function" && define.amd) {
-    define(['exports', 'react', './SVGLoader'], factory);
+    define(['exports', 'react', 'prop-types', './SVGLoader'], factory);
   } else if (typeof exports !== "undefined") {
-    factory(exports, require('react'), require('./SVGLoader'));
+    factory(exports, require('react'), require('prop-types'), require('./SVGLoader'));
   } else {
     var mod = {
       exports: {}
     };
-    factory(mod.exports, global.react, global.SVGLoader);
+    factory(mod.exports, global.react, global.propTypes, global.SVGLoader);
     global.Samy = mod.exports;
   }
-})(this, function (exports, _react, _SVGLoader) {
+})(this, function (exports, _react, _propTypes, _SVGLoader) {
   'use strict';
 
   Object.defineProperty(exports, "__esModule", {
@@ -18,6 +18,8 @@
   });
 
   var _react2 = _interopRequireDefault(_react);
+
+  var _propTypes2 = _interopRequireDefault(_propTypes);
 
   var _SVGLoader2 = _interopRequireDefault(_SVGLoader);
 
@@ -95,6 +97,8 @@
       _this.state = {
         svg: null
       };
+
+      _this.onSVGReady = _this.onSVGReady.bind(_this);
       return _this;
     }
 
@@ -105,10 +109,10 @@
 
         //set svgAttributes
         if (svgNode && this.props.svgAttributes) {
-          var keys = Object.keys(this.props.svgAttributes);
-          keys.forEach(function (k) {
-            svgNode.setAttribute(k, _this2.props.svgAttributes[k]);
-          });
+          Object.keys(this.props.svgAttributes).reduce(function (svgNode, key) {
+            svgNode.setAttribute(key, _this2.props.svgAttributes[key]);
+            return svgNode;
+          }, svgNode);
         }
 
         this.setState({ svg: svgNode });
@@ -117,15 +121,13 @@
     }, {
       key: 'componentWillReceiveProps',
       value: function componentWillReceiveProps(nextProps) {
-        var _this3 = this;
-
         //Apply properties to svg element
         if (this.props.svgAttributes != nextProps.svgAttributes) {
           if (this.state.svg) {
-            var keys = Object.keys(nextProps.svgAttributes);
-            keys.forEach(function (k) {
-              _this3.state.svg.setAttribute(k, nextProps.svgAttributes[k]);
-            });
+            Object.keys(nextProps.svgAttributes).reduce(function (svgNode, key) {
+              svgNode.setAttribute(key, nextProps.svgAttributes[key]);
+              return svgNode;
+            }, this.state.svg);
           }
         }
       }
@@ -135,10 +137,13 @@
         return _react2.default.createElement(
           'div',
           null,
-          ' ',
-          _react2.default.createElement(_SVGLoader2.default, { className: this.props.className || '', style: this.props.style, path: this.props.path, onSVGReady: this.onSVGReady.bind(this) }),
-          this.props.children,
-          ' '
+          _react2.default.createElement(_SVGLoader2.default, {
+            className: this.props.className,
+            style: this.props.style,
+            path: this.props.path,
+            onSVGReady: this.onSVGReady
+          }),
+          this.props.children
         );
       }
     }]);
@@ -147,17 +152,17 @@
   }(_react2.default.Component);
 
   Samy.propTypes = {
-    path: _react2.default.PropTypes.string.isRequired,
-    onSVGReady: _react2.default.PropTypes.func,
-    svgAttributes: _react2.default.PropTypes.object
+    path: _propTypes2.default.string.isRequired,
+    onSVGReady: _propTypes2.default.func,
+    svgAttributes: _propTypes2.default.object
   };
   Samy.childContextTypes = {
-    svg: _react2.default.PropTypes.object
+    svg: _propTypes2.default.object
   };
 
 
   Samy.defaultProps = {
-    onSVGReady: new Function()
+    onSVGReady: function onSVGReady() {}
   };
 
   exports.default = Samy;
