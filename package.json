@@ -12,26 +12,21 @@
     "url": "https://github.com/hugozap/react-samy-svg/issues"
   },
   "homepage": "",
-  "keywords": [
-    "react"
-  ],
+  "keywords": ["react"],
   "scripts": {
     "test": "jest",
-    "build": "babel ./src --out-dir ./dist --presets=es2015,react,latest,stage-2",
-    "prepublish_disabled": "babel --presets=es2015,react,latest --plugins=transform-class-properties,transform-es2015-modules-umd src --out-dir ./dist",
-    "examples": "cd examples && budo app.js --live --open  -- -t babelify --presets [ es2015,react,stage-2 ]",
-    "buildexamples": "cd examples && cp -R robots ./dist/ && browserify app.js -t babelify --presets [ es2015,react,stage-2 ] > dist/bundle.js"
+    "build": "babel ./src --out-dir ./dist",
+    "prepublish_disabled": "babel src --out-dir ./dist",
+    "examples": "cd examples && budo app.js --live --open  -- -t babelify",
+    "examples:build":
+      "cd examples && cp -R robots ./dist/ && browserify app.js -t babelify > dist/bundle.js"
   },
   "devDependencies": {
     "babel-cli": "^6.6.4",
     "babel-core": "^6.7.4",
     "babel-jest": "^20.0.3",
-    "babel-plugin-transform-class-properties": "^6.22.0",
-    "babel-plugin-transform-es2015-modules-umd": "^6.6.5",
-    "babel-plugin-transform-es2015-template-literals": "^6.22.0",
     "babel-polyfill": "^6.7.4",
-    "babel-preset-es2015": "^6.24.1",
-    "babel-preset-latest": "^6.24.1",
+    "babel-preset-env": "1.6.1",
     "babel-preset-react": "^6.24.1",
     "babel-preset-stage-2": "^6.5.0",
     "babel-register": "^6.18.0",
@@ -48,11 +43,11 @@
     "tape": "^4.6.3"
   },
   "peerDependencies": {
+    "prop-types": "15.6.0",
     "react": "~0.14.8 || ^15.0.0",
     "react-dom": "~0.14.8 || ^15.0.0"
   },
   "dependencies": {
-    "prop-types": "^15.5.10",
     "react-svg": "^2.1.18"
   }
 }
