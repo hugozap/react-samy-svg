@@ -12,14 +12,15 @@
     "url": "https://github.com/hugozap/react-samy-svg/issues"
   },
   "homepage": "",
-  "keywords": ["react"],
+  "keywords": [
+    "react"
+  ],
   "scripts": {
     "test": "jest",
     "build": "babel ./src --out-dir ./dist",
     "prepublish_disabled": "babel src --out-dir ./dist",
     "examples": "cd examples && budo app.js --live --open  -- -t babelify",
-    "examples:build":
-      "cd examples && cp -R robots ./dist/ && browserify app.js -t babelify > dist/bundle.js"
+    "examples:build": "cd examples && cp -R robots ./dist/ && browserify app.js -t babelify > dist/bundle.js"
   },
   "devDependencies": {
     "babel-cli": "^6.6.4",
@@ -38,13 +39,14 @@
     "react": "^15.0.22",
     "react-addons-test-utils": "^15.0.0",
     "react-dom": "^15.0.0",
+    "react-move": "^2.6.0",
     "react-test-renderer": "^15.6.1",
     "sinon": "^2.3.4",
     "tape": "^4.6.3"
   },
   "peerDependencies": {
     "prop-types": "15.6.0",
-    "react": "~0.14.8 || ^15.0.0",
+    "react": "^15.4.2",
     "react-dom": "~0.14.8 || ^15.0.0"
   },
   "dependencies": {
