@@ -1,16 +1,17 @@
-import ReactDOM from 'react-dom'
-import React from 'react'
-import {Samy, Proxy} from '../src/index'
-import Basic from './basic'
-import Text from './text'
-import Robot1 from './robot1'
+import ReactDOM from 'react-dom';
+import React from 'react';
+import { Samy, Proxy } from '../src/index';
+import Basic from './basic';
+import Text from './text';
+import Robot1 from './robot1';
 
-console.log(Text)
+console.log(Text);
 
 ReactDOM.render(
-	<div>
-		<Basic/>
-		<Text/>
-		<Robot1/>
-	</div>, 
-document.querySelector('#root'))
+  <div>
+    <Basic />
+    <Text />
+    <Robot1 />
+  </div>,
+  document.querySelector('#root')
+);
