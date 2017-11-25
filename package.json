@@ -1,6 +1,6 @@
 {
   "name": "react-samy-svg",
-  "version": "1.0.10",
+  "version": "1.0.11",
   "description": "Convenient SVG loading and manipulation from react",
   "repository": {
     "type": "git",
@@ -35,7 +35,7 @@
     "enzyme": "^2.8.2",
     "jest-cli": "^20.0.4",
     "nodemon": "^1.9.1",
-    "react": "^15.0.0",
+    "react": "^15.0.22",
     "react-addons-test-utils": "^15.0.0",
     "react-dom": "^15.0.0",
     "react-test-renderer": "^15.6.1",
