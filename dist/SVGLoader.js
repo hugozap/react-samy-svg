@@ -1,16 +1,16 @@
 (function (global, factory) {
   if (typeof define === "function" && define.amd) {
-    define(['exports', 'react', 'react-svg'], factory);
+    define(['exports', 'react', 'prop-types', 'react-svg'], factory);
   } else if (typeof exports !== "undefined") {
-    factory(exports, require('react'), require('react-svg'));
+    factory(exports, require('react'), require('prop-types'), require('react-svg'));
   } else {
     var mod = {
       exports: {}
     };
-    factory(mod.exports, global.react, global.reactSvg);
+    factory(mod.exports, global.react, global.propTypes, global.reactSvg);
     global.SVGLoader = mod.exports;
   }
-})(this, function (exports, _react, _reactSvg) {
+})(this, function (exports, _react, _propTypes, _reactSvg) {
   'use strict';
 
   Object.defineProperty(exports, "__esModule", {
@@ -18,6 +18,8 @@
   });
 
   var _react2 = _interopRequireDefault(_react);
+
+  var _propTypes2 = _interopRequireDefault(_propTypes);
 
   var _reactSvg2 = _interopRequireDefault(_reactSvg);
 
@@ -87,16 +89,17 @@
     _createClass(SVGLoader, [{
       key: 'shouldComponentUpdate',
       value: function shouldComponentUpdate(nextProps) {
-        if (nextProps.path !== this.props.path) {
-          return true;
-        }
-
-        return false;
+        return nextProps.path !== this.props.path;
       }
     }, {
       key: 'render',
       value: function render() {
-        return _react2.default.createElement(_reactSvg2.default, { className: this.props.className || '', style: this.props.style || {}, path: this.props.path, callback: this.props.onSVGReady });
+        return _react2.default.createElement(_reactSvg2.default, {
+          className: this.props.className,
+          style: this.props.style,
+          path: this.props.path,
+          callback: this.props.onSVGReady
+        });
       }
     }]);
 
@@ -104,14 +107,12 @@
   }(_react2.default.Component);
 
   SVGLoader.propTypes = {
-    path: _react2.default.PropTypes.string.isRequired,
-    onSVGReady: _react2.default.PropTypes.func
+    path: _propTypes2.default.string.isRequired,
+    onSVGReady: _propTypes2.default.func
   };
 
   SVGLoader.defaultProps = {
-    onSVGReady: function onSVGReady() {
-      console.log('hey');
-    }
+    onSVGReady: function onSVGReady() {}
   };
 
   exports.default = SVGLoader;

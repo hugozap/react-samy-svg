@@ -1,63 +1,74 @@
-import React from 'react'
-import SVGLoader from './SVGLoader'
+import React from 'react';
+import PropTypes from 'prop-types';
+import SVGLoader from './SVGLoader';
 
 class Samy extends React.Component {
-
   static propTypes = {
-    path: React.PropTypes.string.isRequired,
-    onSVGReady: React.PropTypes.func,
-    svgAttributes: React.PropTypes.object
-  }
+    path: PropTypes.string.isRequired,
+    onSVGReady: PropTypes.func,
+    svgAttributes: PropTypes.object
+  };
 
   static childContextTypes = {
-    svg: React.PropTypes.object
-  }
+    svg: PropTypes.object
+  };
 
-  getChildContext () {
+  getChildContext() {
     return {
       svg: this.state.svg
-    }
+    };
   }
 
-  constructor (props) {
-    super(props)
+  constructor(props) {
+    super(props);
     this.state = {
       svg: null
-    }
+    };
+
+    this.onSVGReady = this.onSVGReady.bind(this);
   }
-  onSVGReady (svgNode) {
+  onSVGReady(svgNode) {
     //set svgAttributes
     if (svgNode && this.props.svgAttributes) {
-      var keys = Object.keys(this.props.svgAttributes)
-      keys.forEach((k)=>{
-        svgNode.setAttribute(k, this.props.svgAttributes[k])
-      })
+      Object.keys(this.props.svgAttributes).reduce((svgNode, key) => {
+        svgNode.setAttribute(key, this.props.svgAttributes[key]);
+        return svgNode;
+      }, svgNode);
     }
 
-    this.setState({svg: svgNode})
-    this.props.onSVGReady(svgNode)
+    this.setState({ svg: svgNode });
+    this.props.onSVGReady(svgNode);
   }
 
   componentWillReceiveProps(nextProps) {
     //Apply properties to svg element
-    if (this.props.svgAttributes  != nextProps.svgAttributes) {
+    if (this.props.svgAttributes != nextProps.svgAttributes) {
       if (this.state.svg) {
-        var keys = Object.keys(nextProps.svgAttributes)
-        keys.forEach((k)=>{
-          this.state.svg.setAttribute(k, nextProps.svgAttributes[k])
-        })
+        Object.keys(nextProps.svgAttributes).reduce((svgNode, key) => {
+          svgNode.setAttribute(key, nextProps.svgAttributes[key]);
+          return svgNode;
+        }, this.state.svg);
       }
     }
   }
 
-  render () {
-    return <div> <SVGLoader className={this.props.className || ''} style={this.props.style} path={this.props.path} onSVGReady={this.onSVGReady.bind(this)} />
-      {this.props.children} </div>
+  render() {
+    return (
+      <div>
+        <SVGLoader
+          className={this.props.className}
+          style={this.props.style}
+          path={this.props.path}
+          onSVGReady={this.onSVGReady}
+        />
+        {this.props.children}
+      </div>
+    );
   }
 }
 
 Samy.defaultProps = {
-  onSVGReady: new Function()
-}
+  onSVGReady: () => {}
+};
 
-export default Samy
+export default Samy;
