@@ -9,8 +9,6 @@ var _react = require('react');
 
 var _react2 = _interopRequireDefault(_react);
 
-var _index = require('../src/index');
-
 var _basic = require('./basic');
 
 var _basic2 = _interopRequireDefault(_basic);
@@ -35,7 +33,7 @@ _reactDom2.default.render(_react2.default.createElement(
   _react2.default.createElement(_robot2.default, null)
 ), document.querySelector('#root'));
 
-},{"../src/index":216,"./basic":2,"./robot1":3,"./text":4,"react":211,"react-dom":41}],2:[function(require,module,exports){
+},{"./basic":2,"./robot1":3,"./text":4,"react":211,"react-dom":41}],2:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -55,7 +53,7 @@ var React = require('react');
 
 var _require = require('../src/index'),
     Samy = _require.Samy,
-    Proxy = _require.Proxy;
+    SvgProxy = _require.SvgProxy;
 
 var basic = function (_React$Component) {
   _inherits(basic, _React$Component);
@@ -90,7 +88,7 @@ var basic = function (_React$Component) {
       return React.createElement(
         Samy,
         { path: '1.svg', style: { width: 400, height: 'auto' } },
-        React.createElement(Proxy, { select: '#Star', stroke: strokeColor })
+        React.createElement(SvgProxy, { selector: '#Star', stroke: strokeColor })
       );
     }
   }]);
@@ -123,7 +121,7 @@ var React = require('react');
 
 var _require = require('../src/index'),
     Samy = _require.Samy,
-    Proxy = _require.Proxy;
+    SvgProxy = _require.SvgProxy;
 
 var _require2 = require('react-move'),
     Animate = _require2.Animate;
@@ -254,21 +252,21 @@ var Robot1 = function (_React$Component) {
               return React.createElement(
                 'div',
                 null,
-                React.createElement(Proxy, { select: '#core', transform: 'translate(0 ' + data.y + ')' }),
-                React.createElement(Proxy, {
-                  select: '#arm1',
+                React.createElement(SvgProxy, { selector: '#core', transform: 'translate(0 ' + data.y + ')' }),
+                React.createElement(SvgProxy, {
+                  selector: '#arm1',
                   transform: 'translate(0 ' + data.y * 0.5 + ')'
                 }),
-                React.createElement(Proxy, {
-                  select: '#arm2',
+                React.createElement(SvgProxy, {
+                  selector: '#arm2',
                   transform: 'translate(0 ' + -data.y * 0.5 + ')'
                 }),
-                React.createElement(Proxy, {
-                  select: '#leg1',
+                React.createElement(SvgProxy, {
+                  selector: '#leg1',
                   transform: 'translate(0 ' + data.leg1 + ')'
                 }),
-                React.createElement(Proxy, {
-                  select: '#leg2',
+                React.createElement(SvgProxy, {
+                  selector: '#leg2',
                   transform: 'translate(0 ' + data.leg2 + ')'
                 })
               );
@@ -299,16 +297,16 @@ var Robot1 = function (_React$Component) {
               return React.createElement(
                 'div',
                 null,
-                React.createElement(Proxy, {
-                  select: '#head',
+                React.createElement(SvgProxy, {
+                  selector: '#head',
                   transform: 'rotate(' + data.headRotation + ' 134 176)'
                 }),
-                React.createElement(Proxy, {
-                  select: '#steam:nth-child(odd)',
+                React.createElement(SvgProxy, {
+                  selector: '#steam:nth-child(odd)',
                   'fill-opacity': data.steamOpacity
                 }),
-                React.createElement(Proxy, {
-                  select: '#steam:nth-child(even)',
+                React.createElement(SvgProxy, {
+                  selector: '#steam:nth-child(even)',
                   'fill-opacity': 1 - data.steamOpacity
                 })
               );
@@ -343,7 +341,7 @@ var React = require('react');
 
 var _require = require('../src/index'),
     Samy = _require.Samy,
-    Proxy = _require.Proxy;
+    SvgProxy = _require.SvgProxy;
 
 exports.default = function (props) {
   //Note: The selector is "#text-3 tspan"
@@ -351,8 +349,8 @@ exports.default = function (props) {
     Samy,
     { path: 'text.svg', style: { width: 400, height: 'auto' } },
     React.createElement(
-      Proxy,
-      { select: '#text-3 tspan' },
+      SvgProxy,
+      { selector: '#text-3 tspan' },
       'Text changed'
     )
   );
@@ -24463,149 +24461,6 @@ var _propTypes = require('prop-types');
 
 var _propTypes2 = _interopRequireDefault(_propTypes);
 
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-/*
- * Proxy works as a virtual svg node.
- * @select: The css selector of the element
- * @onElementSelected: callback in case the svg node is needed
- * @children : string supported (for text elements
- */
-var Proxy = function (_React$Component) {
-  _inherits(Proxy, _React$Component);
-
-  function Proxy(props, context) {
-    _classCallCheck(this, Proxy);
-
-    var _this = _possibleConstructorReturn(this, (Proxy.__proto__ || Object.getPrototypeOf(Proxy)).call(this, props));
-
-    _this.state = {
-      elemRefs: []
-    };
-    return _this;
-  }
-
-  _createClass(Proxy, [{
-    key: 'componentWillReceiveProps',
-    value: function componentWillReceiveProps(nextProps, nextContext) {
-      var _this2 = this;
-
-      var elemRefs = this.state.elemRefs;
-
-
-      if (nextContext.svg && elemRefs.length === 0) {
-        //We don't have the svg element reference.
-
-        var nodes = Array.from(nextContext.svg.querySelectorAll(this.props.select));
-        if (nodes.length === 0 && ['svg', 'root'].includes(this.props.select)) {
-          //If the selector equls 'svg' or 'root' use the svg node
-          nodes.push(nextContext.svg);
-        }
-        // Call the onElementSelected callback with the element (or array)
-        if (this.props.onElementSelected && nodes.length) {
-          this.props.onElementSelected(nodes.length === 1 ? nodes[0] : nodes);
-        }
-
-        elemRefs = nodes;
-        this.setState({ elemRefs: nodes });
-      }
-
-      if (elemRefs) {
-        var _loop = function _loop(propName) {
-          //Ignore component props
-          if (['select', 'onElementSelected'].includes(propName)) {
-            return 'continue';
-          }
-          elemRefs.forEach(function (elem) {
-            // TODO: replace this with a faster alternative
-            if (typeof nextProps[propName] === 'function') {
-              elem[propName] = nextProps[propName];
-            } else {
-              //https://developer.mozilla.org/en/docs/Web/SVG/Namespaces_Crash_Course
-              elem.setAttributeNS(null, propName, nextProps[propName]);
-              if (typeof _this2.props.children === 'string' && _this2.props.children.trim().length) {
-                elem.innerHTML = _this2.props.children;
-              }
-            }
-          });
-        };
-
-        var _iteratorNormalCompletion = true;
-        var _didIteratorError = false;
-        var _iteratorError = undefined;
-
-        try {
-          for (var _iterator = Object.keys(nextProps)[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-            var propName = _step.value;
-
-            var _ret = _loop(propName);
-
-            if (_ret === 'continue') continue;
-          }
-        } catch (err) {
-          _didIteratorError = true;
-          _iteratorError = err;
-        } finally {
-          try {
-            if (!_iteratorNormalCompletion && _iterator.return) {
-              _iterator.return();
-            }
-          } finally {
-            if (_didIteratorError) {
-              throw _iteratorError;
-            }
-          }
-        }
-      }
-    }
-  }, {
-    key: 'render',
-    value: function render() {
-      return null;
-    }
-  }]);
-
-  return Proxy;
-}(_react2.default.Component);
-
-Proxy.propTypes = {
-  select: _propTypes2.default.string.isRequired,
-  onElementSelected: _propTypes2.default.func,
-  children: _propTypes2.default.string
-};
-Proxy.contextTypes = {
-  svg: _propTypes2.default.object
-};
-exports.default = Proxy;
-
-
-Proxy.defaultProps = {
-  onElementSelected: function onElementSelected() {}
-};
-
-},{"prop-types":36,"react":211}],214:[function(require,module,exports){
-'use strict';
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-var _react = require('react');
-
-var _react2 = _interopRequireDefault(_react);
-
-var _propTypes = require('prop-types');
-
-var _propTypes2 = _interopRequireDefault(_propTypes);
-
 var _reactSvg = require('react-svg');
 
 var _reactSvg2 = _interopRequireDefault(_reactSvg);
@@ -24659,7 +24514,7 @@ SVGLoader.defaultProps = {
 
 exports.default = SVGLoader;
 
-},{"prop-types":36,"react":211,"react-svg":186}],215:[function(require,module,exports){
+},{"prop-types":36,"react":211,"react-svg":186}],214:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -24778,25 +24633,168 @@ Samy.defaultProps = {
 
 exports.default = Samy;
 
-},{"./SVGLoader":214,"prop-types":36,"react":211}],216:[function(require,module,exports){
+},{"./SVGLoader":213,"prop-types":36,"react":211}],215:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.Samy = exports.Proxy = undefined;
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _react = require('react');
+
+var _react2 = _interopRequireDefault(_react);
+
+var _propTypes = require('prop-types');
+
+var _propTypes2 = _interopRequireDefault(_propTypes);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+/*
+ * SvgProxy works as a virtual svg node.
+ * @selector: The css selector of the element
+ * @onElementSelected: callback in case the svg node is needed
+ * @children : string supported (for text elements
+ */
+var SvgProxy = function (_React$Component) {
+  _inherits(SvgProxy, _React$Component);
+
+  function SvgProxy(props, context) {
+    _classCallCheck(this, SvgProxy);
+
+    var _this = _possibleConstructorReturn(this, (SvgProxy.__proto__ || Object.getPrototypeOf(SvgProxy)).call(this, props));
+
+    _this.state = {
+      elemRefs: []
+    };
+    return _this;
+  }
+
+  _createClass(SvgProxy, [{
+    key: 'componentWillReceiveProps',
+    value: function componentWillReceiveProps(nextProps, nextContext) {
+      var _this2 = this;
+
+      var elemRefs = this.state.elemRefs;
+
+
+      if (nextContext.svg && elemRefs.length === 0) {
+        //We don't have the svg element reference.
+
+        var nodes = Array.from(nextContext.svg.querySelectorAll(this.props.selector));
+        if (nodes.length === 0 && ['svg', 'root'].includes(this.props.selector)) {
+          //If the selector equls 'svg' or 'root' use the svg node
+          nodes.push(nextContext.svg);
+        }
+        // Call the onElementSelected callback with the element (or array)
+        if (this.props.onElementSelected && nodes.length) {
+          this.props.onElementSelected(nodes.length === 1 ? nodes[0] : nodes);
+        }
+
+        elemRefs = nodes;
+        this.setState({ elemRefs: nodes });
+      }
+
+      if (elemRefs) {
+        var _loop = function _loop(propName) {
+          //Ignore component props
+          if (['select', 'onElementSelected'].includes(propName)) {
+            return 'continue';
+          }
+          elemRefs.forEach(function (elem) {
+            // TODO: replace this with a faster alternative
+            if (typeof nextProps[propName] === 'function') {
+              elem[propName] = nextProps[propName];
+            } else {
+              //https://developer.mozilla.org/en/docs/Web/SVG/Namespaces_Crash_Course
+              elem.setAttributeNS(null, propName, nextProps[propName]);
+              if (typeof _this2.props.children === 'string' && _this2.props.children.trim().length) {
+                elem.innerHTML = _this2.props.children;
+              }
+            }
+          });
+        };
+
+        var _iteratorNormalCompletion = true;
+        var _didIteratorError = false;
+        var _iteratorError = undefined;
+
+        try {
+          for (var _iterator = Object.keys(nextProps)[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+            var propName = _step.value;
+
+            var _ret = _loop(propName);
+
+            if (_ret === 'continue') continue;
+          }
+        } catch (err) {
+          _didIteratorError = true;
+          _iteratorError = err;
+        } finally {
+          try {
+            if (!_iteratorNormalCompletion && _iterator.return) {
+              _iterator.return();
+            }
+          } finally {
+            if (_didIteratorError) {
+              throw _iteratorError;
+            }
+          }
+        }
+      }
+    }
+  }, {
+    key: 'render',
+    value: function render() {
+      return null;
+    }
+  }]);
+
+  return SvgProxy;
+}(_react2.default.Component);
+
+SvgProxy.propTypes = {
+  selector: _propTypes2.default.string.isRequired,
+  onElementSelected: _propTypes2.default.func,
+  children: _propTypes2.default.string
+};
+SvgProxy.contextTypes = {
+  svg: _propTypes2.default.object
+};
+exports.default = SvgProxy;
+
+
+SvgProxy.defaultProps = {
+  onElementSelected: function onElementSelected() {}
+};
+
+},{"prop-types":36,"react":211}],216:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.Samy = exports.SvgProxy = undefined;
 
 var _Samy = require('./Samy');
 
 var _Samy2 = _interopRequireDefault(_Samy);
 
-var _Proxy = require('./Proxy');
+var _SvgProxy = require('./SvgProxy');
 
-var _Proxy2 = _interopRequireDefault(_Proxy);
+var _SvgProxy2 = _interopRequireDefault(_SvgProxy);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-exports.Proxy = _Proxy2.default;
+exports.SvgProxy = _SvgProxy2.default;
 exports.Samy = _Samy2.default;
 
-},{"./Proxy":213,"./Samy":215}]},{},[1]);
+},{"./Samy":214,"./SvgProxy":215}]},{},[1]);

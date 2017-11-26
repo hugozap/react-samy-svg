@@ -1,6 +1,6 @@
 const ReactDom = require('react-dom');
 const React = require('react');
-const { Samy, Proxy } = require('../src/index');
+const { Samy, SvgProxy } = require('../src/index');
 const { Animate } = require('react-move');
 
 export default class Robot1 extends React.Component {
@@ -105,21 +105,21 @@ export default class Robot1 extends React.Component {
               }
               return (
                 <div>
-                  <Proxy select="#core" transform={`translate(0 ${data.y})`} />
-                  <Proxy
-                    select="#arm1"
+                  <SvgProxy selector="#core" transform={`translate(0 ${data.y})`} />
+                  <SvgProxy
+                    selector="#arm1"
                     transform={`translate(0 ${data.y * 0.5})`}
                   />
-                  <Proxy
-                    select="#arm2"
+                  <SvgProxy
+                    selector="#arm2"
                     transform={`translate(0 ${-data.y * 0.5})`}
                   />
-                  <Proxy
-                    select="#leg1"
+                  <SvgProxy
+                    selector="#leg1"
                     transform={`translate(0 ${data.leg1})`}
                   />
-                  <Proxy
-                    select="#leg2"
+                  <SvgProxy
+                    selector="#leg2"
                     transform={`translate(0 ${data.leg2})`}
                   />
                 </div>
@@ -144,16 +144,16 @@ export default class Robot1 extends React.Component {
           >
             {(data) => (
               <div>
-                <Proxy
-                  select="#head"
+                <SvgProxy
+                  selector="#head"
                   transform={`rotate(${data.headRotation} 134 176)`}
                 />
-                <Proxy
-                  select="#steam:nth-child(odd)"
+                <SvgProxy
+                  selector="#steam:nth-child(odd)"
                   fill-opacity={data.steamOpacity}
                 />
-                <Proxy
-                  select="#steam:nth-child(even)"
+                <SvgProxy
+                  selector="#steam:nth-child(even)"
                   fill-opacity={1 - data.steamOpacity}
                 />
               </div>

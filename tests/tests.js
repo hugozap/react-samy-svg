@@ -1,6 +1,6 @@
 var ReactDOM = require("react-dom")
 var React = require("react")
-var { Samy, Proxy } = require("../src/index")
+var { Samy, SvgProxy } = require("../src/index")
 
 var Basic = () => {
     return <Samy path="1.svg" scene={{}} />
@@ -26,7 +26,7 @@ class Timer extends React.Component {
     render() {
         return (
             <Samy path="1.svg" svgAttributes={{viewBox:`${this.state.offsetX} 0 50 50`}}>
-                <Proxy select={"polygon"} fill={this.state.fill} />
+                <SvgProxy selector={"polygon"} fill={this.state.fill} />
             </Samy>
         )
     }

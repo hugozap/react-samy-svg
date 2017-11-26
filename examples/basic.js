@@ -1,6 +1,6 @@
 const ReactDom = require('react-dom');
 const React = require('react');
-const { Samy, Proxy } = require('../src/index');
+const { Samy, SvgProxy } = require('../src/index');
 
 export default class basic extends React.Component {
   static propTypes = {
@@ -30,7 +30,7 @@ export default class basic extends React.Component {
     const strokeColor = this.state.colors[this.state.strokeColorIndex];
     return (
       <Samy path="1.svg" style={{ width: 400, height: 'auto' }}>
-        <Proxy select="#Star" stroke={strokeColor} />
+        <SvgProxy selector="#Star" stroke={strokeColor} />
       </Samy>
     );
   }

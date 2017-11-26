@@ -1,5 +1,5 @@
 import React from 'react';
-import { Samy, Proxy } from '../src';
+import { Samy, SvgProxy } from '../src';
 import renderer from 'react-test-renderer';
 import sinon from 'sinon';
 import { mount } from 'enzyme';
@@ -77,7 +77,7 @@ describe('SamySVG', () => {
     jest.runAllTimers();
   });
 
-  it('Proxy changes attribute', done => {
+  it('SvgProxy changes attribute', done => {
     const component = mount(
       <Samy
         path="4.svg"
@@ -87,7 +87,7 @@ describe('SamySVG', () => {
           done();
         }}
       >
-        <Proxy select="#Star" test="xyz" />
+        <SvgProxy selector="#Star" test="xyz" />
       </Samy>,
       { attachTo: container }
     );
@@ -95,7 +95,7 @@ describe('SamySVG', () => {
     jest.runAllTimers();
   });
 
-  it('Proxy changes text', done => {
+  it('SvgProxy changes text', done => {
     const component = mount(
       <Samy
         path="5.svg"
@@ -108,7 +108,7 @@ describe('SamySVG', () => {
           done();
         }}
       >
-        <Proxy select="#Star">hello</Proxy>
+        <SvgProxy selector="#Star">hello</SvgProxy>
       </Samy>,
       { attachTo: container }
     );

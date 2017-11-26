@@ -12,20 +12,20 @@ npm install react-samy-svg
 
 ### Usage
 
-Import the `Samy` and `Proxy` elements
+Import the `Samy` and `SvgProxy` elements
 
 ```js
-import {Samy, Proxy} from 'react-samy-svg'
+import {Samy, SvgProxy} from 'react-samy-svg'
 
 ```
-[Open an example on glitch](https://glitch.com/edit/#!/fossil-transport?path=src/App.js:1:0)
+
 
 ```jsx
 <Samy path="1.svg">
-  <Proxy select="#Star" stroke={this.state.strokeColor}> </Proxy>
+  <SvgProxy selector="#Star" stroke={this.state.strokeColor}> </SvgProxy>
 </Samy>
 ```
-In the previous code, the stroke attribute of the element with id "star" is set to the value of the state property `strokeColor`. **Any property set in the Proxy element will also be set in the svg child node**.
+In the previous code, the stroke attribute of the element with id "star" is set to the value of the state property `strokeColor`. **Any property set in the SvgProxy element will also be set in the svg child node**.
 
 Note: The SVG path can be an external URL (Thanks to SVGInjector and react-svg)
 
@@ -45,31 +45,31 @@ Properties:
 * svgAttributes: (object) Use it to change the SVG root node attributes (like the viewbox).
 * onSVGReady (function): Callback called with the svg element.
 
-#### Proxy
+#### SvgProxy
 
-Whenever you want to manipulate an SVG internal element you can use the Proxy element.
+Whenever you want to manipulate an SVG internal element you can use the SvgProxy element.
 
 ```jsx
- <Proxy select="#myElementId" fill="#000"></Proxy>
+ <SvgProxy selector="#myElementId" fill="#000"></SvgProxy>
 ```
 
 the `select` attribute can target multiple elements, so this is valid:
 
 ```jsx
- <Proxy select="#rightEye,#leftEye" fill="#000"></Proxy>
+ <SvgProxy selector="#rightEye,#leftEye" fill="#000"></SvgProxy>
 ```
 
 Properties:
 
 * select: (string) CSS selector for the element(s)
-* onElementSelected: (function) callback that receives the element (or list of elements that this proxy tracks)
+* onElementSelected: (function) callback that receives the element (or list of elements that this SvgProxy tracks)
 
 #### Changing text nodes
 
-The Proxy element can be used to change the text elements inside an SVG. (In this case by selecting the `tspan` inside `#myTextElement`)
+The SvgProxy element can be used to change the text elements inside an SVG. (In this case by selecting the `tspan` inside `#myTextElement`)
 
 ```jsx
-<Proxy select="#myTextElement tspan">Text changed</Proxy>
+<SvgProxy selector="#myTextElement tspan">Text changed</SvgProxy>
 ```
 
 ### Animation
@@ -86,7 +86,7 @@ You can animate elements by using some of the popular React animation libraries 
   data={{ 
   	rotation: this.state.rotation
    }} duration={300} easing='cubicin' >
-  { data =>  <Proxy select="#box" transform={`rotate(${data.rotation})`}></Proxy> 
+  { data =>  <SvgProxy selector="#box" transform={`rotate(${data.rotation})`}></SvgProxy> 
   }
 </Animate>
 ```

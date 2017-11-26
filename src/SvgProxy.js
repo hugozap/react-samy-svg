@@ -2,14 +2,14 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 /*
- * Proxy works as a virtual svg node.
- * @select: The css selector of the element
+ * SvgProxy works as a virtual svg node.
+ * @selector: The css selector of the element
  * @onElementSelected: callback in case the svg node is needed
  * @children : string supported (for text elements
  */
-export default class Proxy extends React.Component {
+export default class SvgProxy extends React.Component {
   static propTypes = {
-    select: PropTypes.string.isRequired,
+    selector: PropTypes.string.isRequired,
     onElementSelected: PropTypes.func,
     children: PropTypes.string
   };
@@ -32,9 +32,9 @@ export default class Proxy extends React.Component {
       //We don't have the svg element reference.
 
       let nodes = Array.from(
-        nextContext.svg.querySelectorAll(this.props.select)
+        nextContext.svg.querySelectorAll(this.props.selector)
       );
-      if (nodes.length === 0 && ['svg', 'root'].includes(this.props.select)) {
+      if (nodes.length === 0 && ['svg', 'root'].includes(this.props.selector)) {
         //If the selector equls 'svg' or 'root' use the svg node
         nodes.push(nextContext.svg);
       }
@@ -77,6 +77,6 @@ export default class Proxy extends React.Component {
   }
 }
 
-Proxy.defaultProps = {
+SvgProxy.defaultProps = {
   onElementSelected: () => {}
 };
