@@ -3,8 +3,8 @@
 ## [2.0.0] - 2017-11-26
 
 - Api Breaking changes
-  - Rename "select" attribute to "selector"
-  - Rename "Proxy" to "SvgProxy"
+  - Renamed "select" attribute to "selector"
+  - Renamed "Proxy" to "SvgProxy"
 
 ## [1.0.11] - 2017-11-25
 
