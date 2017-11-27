@@ -1,6 +1,6 @@
 {
   "name": "react-samy-svg",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "Convenient SVG loading and manipulation from react",
   "repository": {
     "type": "git",
