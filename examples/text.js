@@ -1,6 +1,5 @@
-const ReactDom = require('react-dom');
-const React = require('react');
-const { Samy, SvgProxy } = require('../src/index');
+import React from 'react';
+import { Samy, SvgProxy } from '../src';
 
 export default props => {
   //Note: The selector is "#text-3 tspan"

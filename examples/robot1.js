@@ -1,11 +1,11 @@
-const ReactDom = require('react-dom');
-const React = require('react');
-const { Samy, SvgProxy } = require('../src/index');
-const { Animate } = require('react-move');
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
+import { Animate } from 'react-move';
+import { Samy, SvgProxy } from '../src';
 
-export default class Robot1 extends React.Component {
+export default class Robot1 extends Component {
   static propTypes = {
-    name: React.PropTypes.string
+    name: PropTypes.string
   };
 
   constructor(props) {
@@ -79,33 +79,33 @@ export default class Robot1 extends React.Component {
       <div>
         <Samy path="./robots/gertbot.svg" style={{ width: 268, height: 406 }}>
           <Animate
-            
             start={() => ({
               y: 0,
               leg1: 0,
               leg2: 0,
               headRotation: 0
             })}
-
-            update={()=>({
+            update={() => ({
               y: this.state.bodyY,
               leg1: this.state.leg1Y,
               leg2: -this.state.leg1Y,
               headRotation: this.state.headRotation,
               steamOpacity: this.state.steamOpacity
             })}
-
             duration={50}
             easing="easePolyIn" // anything from https://github.com/d3/d3-ease
           >
             {data => {
               console.log({ data });
               if (data == null) {
-                return null
+                return null;
               }
               return (
                 <div>
-                  <SvgProxy selector="#core" transform={`translate(0 ${data.y})`} />
+                  <SvgProxy
+                    selector="#core"
+                    transform={`translate(0 ${data.y})`}
+                  />
                   <SvgProxy
                     selector="#arm1"
                     transform={`translate(0 ${data.y * 0.5})`}
@@ -128,21 +128,19 @@ export default class Robot1 extends React.Component {
           </Animate>
 
           <Animate
-            
-            start={()=>({
+            start={() => ({
               headRotation: 0,
               steamOpacity: 0
             })}
             // Update your data to whatever you want
-            update={()=>({
+            update={() => ({
               headRotation: this.state.headRotation,
               steamOpacity: this.state.steamOpacity
             })}
-
             duration={300}
             easing="cubicin"
           >
-            {(data) => (
+            {data => (
               <div>
                 <SvgProxy
                   selector="#head"
