@@ -24,7 +24,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 
 /*
  * SvgProxy works as a virtual svg node.
- * @select: The css selector of the element
+ * @selector: The css selector of the element
  * @onElementSelected: callback in case the svg node is needed
  * @children : string supported (for text elements
  */
@@ -53,8 +53,8 @@ var SvgProxy = function (_React$Component) {
       if (nextContext.svg && elemRefs.length === 0) {
         //We don't have the svg element reference.
 
-        var nodes = Array.from(nextContext.svg.querySelectorAll(this.props.select));
-        if (nodes.length === 0 && ['svg', 'root'].includes(this.props.select)) {
+        var nodes = Array.from(nextContext.svg.querySelectorAll(this.props.selector));
+        if (nodes.length === 0 && ['svg', 'root'].includes(this.props.selector)) {
           //If the selector equls 'svg' or 'root' use the svg node
           nodes.push(nextContext.svg);
         }
@@ -70,7 +70,7 @@ var SvgProxy = function (_React$Component) {
       if (elemRefs) {
         var _loop = function _loop(propName) {
           //Ignore component props
-          if (['select', 'onElementSelected'].includes(propName)) {
+          if (['selector', 'onElementSelected'].includes(propName)) {
             return 'continue';
           }
           elemRefs.forEach(function (elem) {
@@ -126,7 +126,7 @@ var SvgProxy = function (_React$Component) {
 }(_react2.default.Component);
 
 SvgProxy.propTypes = {
-  select: _propTypes2.default.string.isRequired,
+  selector: _propTypes2.default.string.isRequired,
   onElementSelected: _propTypes2.default.func,
   children: _propTypes2.default.string
 };

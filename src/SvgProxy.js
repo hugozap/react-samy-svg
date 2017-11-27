@@ -50,7 +50,7 @@ export default class SvgProxy extends React.Component {
     if (elemRefs) {
       for (let propName of Object.keys(nextProps)) {
         //Ignore component props
-        if (['select', 'onElementSelected'].includes(propName)) {
+        if (['selector', 'onElementSelected'].includes(propName)) {
           continue;
         }
         elemRefs.forEach(elem => {
