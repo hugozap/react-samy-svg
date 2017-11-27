@@ -1,21 +1,21 @@
-import React from 'react';
-import { Samy, SvgProxy } from '../src';
-import renderer from 'react-test-renderer';
-import sinon from 'sinon';
 import { mount } from 'enzyme';
 import fs from 'fs';
 import path from 'path';
-
-let container;
-let xhr;
-let requests = [];
-let testfile = fs.readFileSync(path.join(__dirname, '1.svg'), 'utf8');
+import React from 'react';
+import renderer from 'react-test-renderer';
+import sinon from 'sinon';
+import { Samy, SvgProxy } from '../src';
 
 /* Note: We use a different svg filename to avoid the cache
    otherwise errors will occur due to lack of SVGElement in jsdom
 */
 jest.useFakeTimers();
 describe('SamySVG', () => {
+  let container;
+  let xhr;
+  let requests = [];
+  let testfile = fs.readFileSync(path.join(__dirname, '1.svg'), 'utf8');
+
   beforeEach(() => {
     container = document.body.appendChild(document.createElement('div'));
     xhr = sinon.useFakeXMLHttpRequest();
@@ -101,7 +101,6 @@ describe('SamySVG', () => {
         path="5.svg"
         svgAttributes={{ viewBox: '10 10 100 200' }}
         onSVGReady={svg => {
-          console.log(svg.innerHTML);
           expect(svg.querySelector('#Star').innerHTML.includes('hello')).toBe(
             true
           );
