@@ -1,10 +1,10 @@
-const ReactDom = require('react-dom');
-const React = require('react');
-const { Samy, SvgProxy } = require('../src/index');
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
+import { Samy, SvgProxy } from '../src';
 
-export default class basic extends React.Component {
+export default class basic extends Component {
   static propTypes = {
-    name: React.PropTypes.string
+    name: PropTypes.string
   };
 
   constructor(props) {
