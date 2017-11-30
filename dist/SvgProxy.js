@@ -76,7 +76,7 @@ var SvgProxy = function (_React$Component) {
           elemRefs.forEach(function (elem) {
             // TODO: replace this with a faster alternative
             if (typeof nextProps[propName] === 'function') {
-              elem[propName] = nextProps[propName];
+              elem[propName.toLowerCase()] = nextProps[propName];
             } else {
               //https://developer.mozilla.org/en/docs/Web/SVG/Namespaces_Crash_Course
               elem.setAttributeNS(null, propName, nextProps[propName]);

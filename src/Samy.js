@@ -7,7 +7,10 @@ class Samy extends React.Component {
   static propTypes = {
     path: PropTypes.string.isRequired,
     onSVGReady: PropTypes.func,
-    children: PropTypes.element,
+    children: PropTypes.oneOfType([
+      PropTypes.arrayOf(PropTypes.element),
+      PropTypes.element
+    ]),
     style: PropTypes.object
   };
 

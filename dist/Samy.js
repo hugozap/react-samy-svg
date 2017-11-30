@@ -132,7 +132,7 @@ var Samy = function (_React$Component) {
 Samy.propTypes = {
   path: _propTypes2.default.string.isRequired,
   onSVGReady: _propTypes2.default.func,
-  children: _propTypes2.default.element,
+  children: _propTypes2.default.oneOfType([_propTypes2.default.arrayOf(_propTypes2.default.element), _propTypes2.default.element]),
   style: _propTypes2.default.object
 };
 Samy.childContextTypes = {
