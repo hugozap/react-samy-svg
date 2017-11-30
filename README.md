@@ -22,9 +22,7 @@ import { Samy, SvgProxy } from 'react-samy-svg';
 
 ```jsx
 <Samy path="1.svg">
-  <SvgProxy selector="#Star" stroke={this.state.strokeColor}>
-    {' '}
-  </SvgProxy>
+  <SvgProxy selector="#Star" stroke={this.state.strokeColor} />
 </Samy>;
 ```
 
