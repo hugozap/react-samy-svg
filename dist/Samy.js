@@ -4,6 +4,8 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
+var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
+
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 var _react = require('react');
@@ -18,7 +20,13 @@ var _SVGLoader = require('./SVGLoader');
 
 var _SVGLoader2 = _interopRequireDefault(_SVGLoader);
 
+var _isEqual = require('lodash/fp/isEqual');
+
+var _isEqual2 = _interopRequireDefault(_isEqual);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _objectWithoutProperties(obj, keys) { var target = {}; for (var i in obj) { if (keys.indexOf(i) >= 0) continue; if (!Object.prototype.hasOwnProperty.call(obj, i)) continue; target[i] = obj[i]; } return target; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -54,12 +62,15 @@ var Samy = function (_React$Component) {
   _createClass(Samy, [{
     key: 'onSVGReady',
     value: function onSVGReady(svgNode) {
-      var _this2 = this;
+      var _props = this.props,
+          path = _props.path,
+          onSVGReady = _props.onSVGReady,
+          style = _props.style,
+          props = _objectWithoutProperties(_props, ['path', 'onSVGReady', 'style']);
 
-      //set svgAttributes
-      if (svgNode && this.props.svgAttributes) {
-        Object.keys(this.props.svgAttributes).reduce(function (svgNode, key) {
-          svgNode.setAttribute(key, _this2.props.svgAttributes[key]);
+      if (svgNode && props) {
+        Object.keys(props).reduce(function (svgNode, key) {
+          svgNode.setAttribute(key, props[key]);
           return svgNode;
         }, svgNode);
       }
@@ -69,12 +80,30 @@ var Samy = function (_React$Component) {
     }
   }, {
     key: 'componentWillReceiveProps',
-    value: function componentWillReceiveProps(nextProps) {
+    value: function componentWillReceiveProps(_ref) {
+      var nextPath = _ref.path,
+          nextOnSVGReady = _ref.onSVGReady,
+          nextChildren = _ref.children,
+          nextStyle = _ref.style,
+          nextProps = _objectWithoutProperties(_ref, ['path', 'onSVGReady', 'children', 'style']);
+
+      var _props2 = this.props,
+          path = _props2.path,
+          onSVGReady = _props2.onSVGReady,
+          style = _props2.style,
+          children = _props2.children,
+          props = _objectWithoutProperties(_props2, ['path', 'onSVGReady', 'style', 'children']);
       //Apply properties to svg element
-      if (this.props.svgAttributes != nextProps.svgAttributes) {
+
+
+      if (!(0, _isEqual2.default)(props, nextProps)) {
         if (this.state.svg) {
-          Object.keys(nextProps.svgAttributes).reduce(function (svgNode, key) {
-            svgNode.setAttribute(key, nextProps.svgAttributes[key]);
+          Object.entries(nextProps).reduce(function (svgNode, _ref2) {
+            var _ref3 = _slicedToArray(_ref2, 2),
+                key = _ref3[0],
+                value = _ref3[1];
+
+            svgNode.setAttribute(key, value);
             return svgNode;
           }, this.state.svg);
         }
@@ -103,7 +132,8 @@ var Samy = function (_React$Component) {
 Samy.propTypes = {
   path: _propTypes2.default.string.isRequired,
   onSVGReady: _propTypes2.default.func,
-  svgAttributes: _propTypes2.default.object
+  children: _propTypes2.default.element,
+  style: _propTypes2.default.object
 };
 Samy.childContextTypes = {
   svg: _propTypes2.default.object
