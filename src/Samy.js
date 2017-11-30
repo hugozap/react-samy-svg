@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import SVGLoader from './SVGLoader';
+import isEqual from 'lodash/fp/isEqual';
 
 class Samy extends React.Component {
   static propTypes = {
@@ -42,7 +43,7 @@ class Samy extends React.Component {
 
   componentWillReceiveProps(nextProps) {
     //Apply properties to svg element
-    if (this.props.svgAttributes != nextProps.svgAttributes) {
+    if (!isEqual(this.props.svgAttributes, nextProps.svgAttributes)) {
       if (this.state.svg) {
         Object.keys(nextProps.svgAttributes).reduce((svgNode, key) => {
           svgNode.setAttribute(key, nextProps.svgAttributes[key]);
