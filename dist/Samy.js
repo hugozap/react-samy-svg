@@ -20,9 +20,9 @@ var _SVGLoader = require('./SVGLoader');
 
 var _SVGLoader2 = _interopRequireDefault(_SVGLoader);
 
-var _isEqual = require('lodash/fp/isEqual');
+var _lodash = require('lodash.isequal');
 
-var _isEqual2 = _interopRequireDefault(_isEqual);
+var _lodash2 = _interopRequireDefault(_lodash);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -96,7 +96,7 @@ var Samy = function (_React$Component) {
       //Apply properties to svg element
 
 
-      if (!(0, _isEqual2.default)(props, nextProps)) {
+      if (!(0, _lodash2.default)(props, nextProps)) {
         if (this.state.svg) {
           Object.entries(nextProps).reduce(function (svgNode, _ref2) {
             var _ref3 = _slicedToArray(_ref2, 2),

@@ -12,16 +12,14 @@
     "url": "https://github.com/hugozap/react-samy-svg/issues"
   },
   "homepage": "",
-  "keywords": [
-    "react",
-    "svg"
-  ],
+  "keywords": ["react", "svg"],
   "scripts": {
     "test": "jest",
     "build": "babel ./src --out-dir ./dist",
     "prepublish_disabled": "babel src --out-dir ./dist",
     "examples": "cd examples && budo app.js --live --open  -- -t babelify",
-    "examples:build": "cd examples && cp -R robots ./dist/ && browserify app.js -t babelify > dist/bundle.js"
+    "examples:build":
+      "cd examples && cp -R robots ./dist/ && browserify app.js -t babelify > dist/bundle.js"
   },
   "devDependencies": {
     "babel-cli": "^6.6.4",
@@ -50,13 +48,11 @@
     "react-dom": "16.1.1"
   },
   "dependencies": {
-    "lodash": "4.17.4",
+    "lodash.isequal": "4.5.0",
     "react-svg": "^2.1.18"
   },
   "jest": {
-    "setupFiles": [
-      "raf/polyfill"
-    ],
+    "setupFiles": ["raf/polyfill"],
     "setupTestFrameworkScriptFile": "<rootDir>/test-setup.js"
   }
 }

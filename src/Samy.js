@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import SVGLoader from './SVGLoader';
-import isEqual from 'lodash/fp/isEqual';
+import isEqual from 'lodash.isequal';
 
 class Samy extends React.Component {
   static propTypes = {
