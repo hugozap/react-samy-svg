@@ -1,12 +1,17 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import SVGLoader from './SVGLoader';
+import isEqual from 'lodash.isequal';
 
 class Samy extends React.Component {
   static propTypes = {
     path: PropTypes.string.isRequired,
     onSVGReady: PropTypes.func,
-    svgAttributes: PropTypes.object
+    children: PropTypes.oneOfType([
+      PropTypes.arrayOf(PropTypes.element),
+      PropTypes.element
+    ]),
+    style: PropTypes.object
   };
 
   static childContextTypes = {
@@ -28,10 +33,10 @@ class Samy extends React.Component {
     this.onSVGReady = this.onSVGReady.bind(this);
   }
   onSVGReady(svgNode) {
-    //set svgAttributes
-    if (svgNode && this.props.svgAttributes) {
-      Object.keys(this.props.svgAttributes).reduce((svgNode, key) => {
-        svgNode.setAttribute(key, this.props.svgAttributes[key]);
+    const { path, onSVGReady, style, children, ...props } = this.props;
+    if (svgNode && props) {
+      Object.keys(props).reduce((svgNode, key) => {
+        svgNode.setAttribute(key, props[key]);
         return svgNode;
       }, svgNode);
     }
@@ -40,12 +45,19 @@ class Samy extends React.Component {
     this.props.onSVGReady(svgNode);
   }
 
-  componentWillReceiveProps(nextProps) {
+  componentWillReceiveProps({
+    path: nextPath,
+    onSVGReady: nextOnSVGReady,
+    children: nextChildren,
+    style: nextStyle,
+    ...nextProps
+  }) {
+    const { path, onSVGReady, style, children, ...props } = this.props;
     //Apply properties to svg element
-    if (this.props.svgAttributes != nextProps.svgAttributes) {
+    if (!isEqual(props, nextProps)) {
       if (this.state.svg) {
-        Object.keys(nextProps.svgAttributes).reduce((svgNode, key) => {
-          svgNode.setAttribute(key, nextProps.svgAttributes[key]);
+        Object.entries(nextProps).reduce((svgNode, [key, value]) => {
+          svgNode.setAttribute(key, value);
           return svgNode;
         }, this.state.svg);
       }

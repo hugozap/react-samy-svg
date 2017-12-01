@@ -65,7 +65,7 @@ describe('SamySVG', () => {
     const component = mount(
       <Samy
         path="3.svg"
-        svgAttributes={{ viewBox: '10 10 100 200' }}
+        viewBox="10 10 100 200"
         onSVGReady={svg => {
           expect(svg.getAttribute('viewBox')).toBe('10 10 100 200');
           done();
@@ -81,7 +81,7 @@ describe('SamySVG', () => {
     const component = mount(
       <Samy
         path="4.svg"
-        svgAttributes={{ viewBox: '10 10 100 200' }}
+        viewBox="10 10 100 200"
         onSVGReady={svg => {
           expect(svg.querySelector('#Star').getAttribute('test')).toBe('xyz');
           done();
@@ -99,7 +99,7 @@ describe('SamySVG', () => {
     const component = mount(
       <Samy
         path="5.svg"
-        svgAttributes={{ viewBox: '10 10 100 200' }}
+        viewBox="10 10 100 200"
         onSVGReady={svg => {
           expect(svg.querySelector('#Star').innerHTML.includes('hello')).toBe(
             true
