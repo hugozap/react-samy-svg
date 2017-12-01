@@ -33,7 +33,7 @@ class Samy extends React.Component {
     this.onSVGReady = this.onSVGReady.bind(this);
   }
   onSVGReady(svgNode) {
-    const { path, onSVGReady, style, ...props } = this.props;
+    const { path, onSVGReady, style, children, ...props } = this.props;
     if (svgNode && props) {
       Object.keys(props).reduce((svgNode, key) => {
         svgNode.setAttribute(key, props[key]);

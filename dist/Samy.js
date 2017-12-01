@@ -66,7 +66,8 @@ var Samy = function (_React$Component) {
           path = _props.path,
           onSVGReady = _props.onSVGReady,
           style = _props.style,
-          props = _objectWithoutProperties(_props, ['path', 'onSVGReady', 'style']);
+          children = _props.children,
+          props = _objectWithoutProperties(_props, ['path', 'onSVGReady', 'style', 'children']);
 
       if (svgNode && props) {
         Object.keys(props).reduce(function (svgNode, key) {
