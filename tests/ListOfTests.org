@@ -1,3 +1,0 @@
-* ref works on root elem
-* ref works on SvgProxy elem
-
