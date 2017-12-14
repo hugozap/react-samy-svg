@@ -141,7 +141,7 @@ export default class Robot1 extends Component {
             easing="cubicin"
           >
             {data => (
-              <div>
+              <React.Fragment>
                 <SvgProxy
                   selector="#head"
                   transform={`rotate(${data.headRotation} 134 176)`}
@@ -154,7 +154,7 @@ export default class Robot1 extends Component {
                   selector="#steam:nth-child(even)"
                   fill-opacity={1 - data.steamOpacity}
                 />
-              </div>
+              </React.Fragment>
             )}
           </Animate>
         </Samy>
