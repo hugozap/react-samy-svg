@@ -66,7 +66,7 @@ class Samy extends React.Component {
 
   render() {
     return (
-      <div>
+      <React.Fragment>
         <SVGLoader
           className={this.props.className}
           style={this.props.style}
@@ -74,7 +74,7 @@ class Samy extends React.Component {
           onSVGReady={this.onSVGReady}
         />
         {this.props.children}
-      </div>
+      </React.Fragment>
     );
   }
 }

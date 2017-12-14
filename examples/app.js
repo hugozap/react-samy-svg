@@ -7,10 +7,10 @@ import Robot1 from './robot1';
 console.log(Text);
 
 ReactDOM.render(
-  <div>
+  <React.Fragment>
     <Basic />
     <Text />
     <Robot1 />
-  </div>,
+  </React.Fragment>,
   document.querySelector('#root')
 );
