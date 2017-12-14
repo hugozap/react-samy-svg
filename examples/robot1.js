@@ -76,7 +76,7 @@ export default class Robot1 extends Component {
   render() {
     console.log(this.state.headRotation);
     return (
-      <div>
+      <React.Fragment>
         <Samy path="./robots/gertbot.svg" style={{ width: 268, height: 406 }}>
           <Animate
             start={() => ({
@@ -101,7 +101,7 @@ export default class Robot1 extends Component {
                 return null;
               }
               return (
-                <div>
+                <React.Fragment>
                   <SvgProxy
                     selector="#core"
                     transform={`translate(0 ${data.y})`}
@@ -122,7 +122,7 @@ export default class Robot1 extends Component {
                     selector="#leg2"
                     transform={`translate(0 ${data.leg2})`}
                   />
-                </div>
+                </React.Fragment>
               );
             }}
           </Animate>
@@ -158,7 +158,7 @@ export default class Robot1 extends Component {
             )}
           </Animate>
         </Samy>
-      </div>
+      </React.Fragment>
     );
   }
 }
