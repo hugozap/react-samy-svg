@@ -1,4 +1,8 @@
 # Changelog
+## [2.1.0] - 2017-12-19
+
+- Removes wrapper div. Uses React fragments.
+- Updated react-svg dependency.
 
 ## [2.0.2] - 2017-12-03
 
