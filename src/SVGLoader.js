@@ -13,16 +13,13 @@ class SVGLoader extends React.Component {
     super(props);
   }
 
-  shouldComponentUpdate(nextProps) {
-    return nextProps.path !== this.props.path;
-  }
   render() {
+    const {path, onSVGReady, ...props} = this.props;
     return (
       <ReactSVG
-        className={this.props.className}
-        style={this.props.style}
         path={this.props.path}
         callback={this.props.onSVGReady}
+        {...props}
       />
     );
   }

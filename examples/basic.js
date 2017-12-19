@@ -11,7 +11,8 @@ export default class basic extends Component {
     super(props);
     this.state = {
       colors: ['yellow', 'red', 'black'],
-      strokeColorIndex: 0
+      strokeColorIndex: 0,
+      width: 150
     };
   }
 
@@ -19,16 +20,18 @@ export default class basic extends Component {
     setInterval(() => {
       const nextIndex =
         (this.state.strokeColorIndex + 1) % this.state.colors.length;
-      this.setState(
-        Object.assign({}, this.state, { strokeColorIndex: nextIndex })
+      const newWidth = this.state.width === 150 ? 100 : 150;
+      console.log('newWidth', newWidth)
+      this.setState( { ...this.state, strokeColorIndex: nextIndex, width: newWidth }
       );
-    }, 500);
+    }, 1000);
   }
 
   render() {
     const strokeColor = this.state.colors[this.state.strokeColorIndex];
+    console.log(this.state.width);
     return (
-      <Samy className="test-class" path="1.svg" style={{ width: 400, height: 'auto' }}>
+      <Samy viewBox='0 0 400 400' className="test-class" path="1.svg" style={{ width: this.state.width + 'px', height: 'auto' }}>
         <SvgProxy selector="#Star" stroke={strokeColor} />
       </Samy>
     );

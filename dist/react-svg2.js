@@ -4,6 +4,8 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 var _propTypes = require('prop-types');
@@ -20,16 +22,42 @@ var _server2 = _interopRequireDefault(_server);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+function _objectWithoutProperties(obj, keys) { var target = {}; for (var i in obj) { if (keys.indexOf(i) >= 0) continue; if (!Object.prototype.hasOwnProperty.call(obj, i)) continue; target[i] = obj[i]; } return target; }
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
 
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /* Modified from the react-svg code to remove external divs */
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /* Adapted from the react-svg module source code;
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 - removes <divs>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 Original LiCENSE text:
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 The MIT License (MIT)
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 Copyright (c) 2014 Atomic
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 Permission is hereby granted, free of charge, to any person obtaining a copy
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 of this software and associated documentation files (the "Software"), to deal
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 in the Software without restriction, including without limitation the rights
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 copies of the Software, and to permit persons to whom the Software is
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 furnished to do so, subject to the following conditions:
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 The above copyright notice and this permission notice shall be included in all
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 copies or substantial portions of the Software.
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 SOFTWARE.
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               */
 
 
 // See: https://github.com/webpack/react-starter/issues/37
 var isBrowser = typeof window !== 'undefined';
-var SVGInjector = isBrowser ? require('svg-injector') : undefined;
+var SVGInjector = isBrowser ? require('./svg-injector') : undefined;
 
 var ReactSVG = function (_React$Component) {
   _inherits(ReactSVG, _React$Component);
@@ -59,33 +87,41 @@ var ReactSVG = function (_React$Component) {
     key: 'renderSVG',
     value: function renderSVG() {
       var props = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : this.props;
+
+      var svgNode = this.container;
+
       var each = props.callback,
-          evalScripts = props.evalScripts;
+          evalScripts = props.evalScripts,
+          path = props.path,
+          htmlProps = _objectWithoutProperties(props, ['callback', 'evalScripts', 'path']);
+
+      //Update SVG element
 
 
-      SVGInjector(this.container, {
+      SVGInjector(svgNode, {
         evalScripts: evalScripts,
         each: each
       });
-    }
-  }, {
-    key: 'componentWillReceiveProps',
-    value: function componentWillReceiveProps(nextProps) {
-      this.renderSVG(nextProps);
-    }
-  }, {
-    key: 'shouldComponentUpdate',
-    value: function shouldComponentUpdate() {
-      return false;
+
+      //SVGInjector will override the initial attributes set
+      //by props. So we need to re apply them.
+      if (svgNode && htmlProps) {
+        Object.keys(htmlProps).reduce(function (svgNode, key) {
+          svgNode.setAttribute(key, htmlProps[key]);
+          return svgNode;
+        }, svgNode);
+      }
     }
   }, {
     key: 'render',
     value: function render() {
       var _props = this.props,
-          style = _props.style,
-          className = _props.className;
+          callback = _props.callback,
+          evalScripts = _props.evalScripts,
+          path = _props.path,
+          props = _objectWithoutProperties(_props, ['callback', 'evalScripts', 'path']);
 
-      return _react2.default.createElement('svg', { style: style, className: className, ref: this.refCallback, 'data-src': this.props.path });
+      return _react2.default.createElement('svg', _extends({ ref: this.refCallback, 'data-src': this.props.path }, props));
     }
   }]);
 
@@ -95,16 +131,11 @@ var ReactSVG = function (_React$Component) {
 ReactSVG.defaultProps = {
   callback: function callback() {},
   className: null,
-  evalScripts: 'once',
-  style: {},
-  wrapperClassName: null
+  evalScripts: 'once'
 };
 ReactSVG.propTypes = {
   callback: _propTypes2.default.func,
-  className: _propTypes2.default.string,
   evalScripts: _propTypes2.default.oneOf(['always', 'once', 'never']),
-  path: _propTypes2.default.string.isRequired,
-  style: _propTypes2.default.object,
-  wrapperClassName: _propTypes2.default.string
+  path: _propTypes2.default.string.isRequired
 };
 exports.default = ReactSVG;

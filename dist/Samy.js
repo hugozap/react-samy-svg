@@ -4,7 +4,7 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
@@ -62,66 +62,25 @@ var Samy = function (_React$Component) {
   _createClass(Samy, [{
     key: 'onSVGReady',
     value: function onSVGReady(svgNode) {
-      var _props = this.props,
-          path = _props.path,
-          onSVGReady = _props.onSVGReady,
-          style = _props.style,
-          children = _props.children,
-          props = _objectWithoutProperties(_props, ['path', 'onSVGReady', 'style', 'children']);
-
-      if (svgNode && props) {
-        Object.keys(props).reduce(function (svgNode, key) {
-          svgNode.setAttribute(key, props[key]);
-          return svgNode;
-        }, svgNode);
-      }
-
       this.setState({ svg: svgNode });
       this.props.onSVGReady(svgNode);
     }
   }, {
-    key: 'componentWillReceiveProps',
-    value: function componentWillReceiveProps(_ref) {
-      var nextPath = _ref.path,
-          nextOnSVGReady = _ref.onSVGReady,
-          nextChildren = _ref.children,
-          nextStyle = _ref.style,
-          nextProps = _objectWithoutProperties(_ref, ['path', 'onSVGReady', 'children', 'style']);
-
-      var _props2 = this.props,
-          path = _props2.path,
-          onSVGReady = _props2.onSVGReady,
-          style = _props2.style,
-          children = _props2.children,
-          props = _objectWithoutProperties(_props2, ['path', 'onSVGReady', 'style', 'children']);
-      //Apply properties to svg element
-
-
-      if (!(0, _lodash2.default)(props, nextProps)) {
-        if (this.state.svg) {
-          Object.entries(nextProps).reduce(function (svgNode, _ref2) {
-            var _ref3 = _slicedToArray(_ref2, 2),
-                key = _ref3[0],
-                value = _ref3[1];
-
-            svgNode.setAttribute(key, value);
-            return svgNode;
-          }, this.state.svg);
-        }
-      }
-    }
-  }, {
     key: 'render',
     value: function render() {
+      var _props = this.props,
+          path = _props.path,
+          onSVGReady = _props.onSVGReady,
+          children = _props.children,
+          props = _objectWithoutProperties(_props, ['path', 'onSVGReady', 'children']);
+
       return _react2.default.createElement(
         _react2.default.Fragment,
         null,
-        _react2.default.createElement(_SVGLoader2.default, {
-          className: this.props.className,
-          style: this.props.style,
+        _react2.default.createElement(_SVGLoader2.default, _extends({
           path: this.props.path,
           onSVGReady: this.onSVGReady
-        }),
+        }, props)),
         this.props.children
       );
     }

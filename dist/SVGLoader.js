@@ -4,6 +4,8 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 var _react = require('react');
@@ -19,6 +21,8 @@ var _reactSvg = require('./react-svg2');
 var _reactSvg2 = _interopRequireDefault(_reactSvg);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _objectWithoutProperties(obj, keys) { var target = {}; for (var i in obj) { if (keys.indexOf(i) >= 0) continue; if (!Object.prototype.hasOwnProperty.call(obj, i)) continue; target[i] = obj[i]; } return target; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -37,19 +41,17 @@ var SVGLoader = function (_React$Component) {
   }
 
   _createClass(SVGLoader, [{
-    key: 'shouldComponentUpdate',
-    value: function shouldComponentUpdate(nextProps) {
-      return nextProps.path !== this.props.path;
-    }
-  }, {
     key: 'render',
     value: function render() {
-      return _react2.default.createElement(_reactSvg2.default, {
-        className: this.props.className,
-        style: this.props.style,
+      var _props = this.props,
+          path = _props.path,
+          onSVGReady = _props.onSVGReady,
+          props = _objectWithoutProperties(_props, ['path', 'onSVGReady']);
+
+      return _react2.default.createElement(_reactSvg2.default, _extends({
         path: this.props.path,
         callback: this.props.onSVGReady
-      });
+      }, props));
     }
   }]);
 

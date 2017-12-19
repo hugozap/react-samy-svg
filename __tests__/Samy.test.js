@@ -95,6 +95,24 @@ describe('SamySVG', () => {
     jest.runAllTimers();
   });
 
+  it('Changing parent element prop updates the SVG node', done => {
+    const component = mount(
+      <Samy
+        path="4.svg"
+        viewBox="10 10 100 200"
+        onSVGReady={svg => {
+          component.setProps({width:'200px'});
+          expect(svg.getAttribute('width')).toBe('200px')
+        }}
+      >
+        <SvgProxy selector="#Star" test="xyz" />
+      </Samy>,
+      { attachTo: container }
+    );
+    requests[0].respond(200, {}, testfile);
+    jest.runAllTimers();
+  });
+
   it('SvgProxy changes text', done => {
     const component = mount(
       <Samy

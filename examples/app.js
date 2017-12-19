@@ -10,7 +10,7 @@ ReactDOM.render(
   <React.Fragment>
     <Basic />
     <Text />
-    <Robot1 />
+    {/*<Robot1 />*/}
   </React.Fragment>,
   document.querySelector('#root')
 );
