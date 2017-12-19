@@ -28,7 +28,7 @@ export default class basic extends Component {
   render() {
     const strokeColor = this.state.colors[this.state.strokeColorIndex];
     return (
-      <Samy path="1.svg" style={{ width: 400, height: 'auto' }}>
+      <Samy className="test-class" path="1.svg" style={{ width: 400, height: 'auto' }}>
         <SvgProxy selector="#Star" stroke={strokeColor} />
       </Samy>
     );

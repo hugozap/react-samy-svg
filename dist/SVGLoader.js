@@ -14,7 +14,7 @@ var _propTypes = require('prop-types');
 
 var _propTypes2 = _interopRequireDefault(_propTypes);
 
-var _reactSvg = require('react-svg');
+var _reactSvg = require('./react-svg2');
 
 var _reactSvg2 = _interopRequireDefault(_reactSvg);
 
