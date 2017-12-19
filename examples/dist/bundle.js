@@ -83,7 +83,6 @@ var basic = function (_Component) {
       setInterval(function () {
         var nextIndex = (_this2.state.strokeColorIndex + 1) % _this2.state.colors.length;
         _this2.setState(Object.assign({}, _this2.state, { strokeColorIndex: nextIndex }));
-        console.log('Color state changed:' + nextIndex);
       }, 500);
     }
   }, {
@@ -220,7 +219,6 @@ var Robot1 = function (_Component) {
     value: function render() {
       var _this3 = this;
 
-      console.log(this.state.headRotation);
       return _react2.default.createElement(
         _react2.default.Fragment,
         null,
@@ -251,7 +249,6 @@ var Robot1 = function (_Component) {
               easing: 'easePolyIn' // anything from https://github.com/d3/d3-ease
             },
             function (data) {
-              console.log({ data: data });
               if (data == null) {
                 return null;
               }
@@ -333,9 +330,7 @@ Robot1.propTypes = {
 exports.default = Robot1;
 
 
-var animateBody = function animateBody() {
-  console.log('yeah');
-};
+var animateBody = function animateBody() {};
 
 },{"../src":68,"prop-types":14,"react":59,"react-move":55}],4:[function(require,module,exports){
 'use strict';

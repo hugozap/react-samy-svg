@@ -22,7 +22,6 @@ export default class basic extends Component {
       this.setState(
         Object.assign({}, this.state, { strokeColorIndex: nextIndex })
       );
-      console.log('Color state changed:' + nextIndex);
     }, 500);
   }
 

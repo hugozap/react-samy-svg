@@ -74,7 +74,6 @@ export default class Robot1 extends Component {
   }
 
   render() {
-    console.log(this.state.headRotation);
     return (
       <React.Fragment>
         <Samy path="./robots/gertbot.svg" style={{ width: 268, height: 406 }}>
@@ -96,7 +95,6 @@ export default class Robot1 extends Component {
             easing="easePolyIn" // anything from https://github.com/d3/d3-ease
           >
             {data => {
-              console.log({ data });
               if (data == null) {
                 return null;
               }
@@ -164,5 +162,4 @@ export default class Robot1 extends Component {
 }
 
 const animateBody = () => {
-  console.log('yeah');
 };
