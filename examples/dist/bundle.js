@@ -29,16 +29,17 @@ _reactDom2.default.render(_react2.default.createElement(
   _react2.default.Fragment,
   null,
   _react2.default.createElement(_basic2.default, null),
-  _react2.default.createElement(_text2.default, null),
-  _react2.default.createElement(_robot2.default, null)
+  _react2.default.createElement(_text2.default, null)
 ), document.querySelector('#root'));
 
-},{"./basic":2,"./robot1":3,"./text":4,"react":59,"react-dom":23}],2:[function(require,module,exports){
+},{"./basic":2,"./robot1":3,"./text":4,"react":58,"react-dom":40}],2:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
+
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
@@ -70,7 +71,8 @@ var basic = function (_Component) {
 
     _this.state = {
       colors: ['yellow', 'red', 'black'],
-      strokeColorIndex: 0
+      strokeColorIndex: 0,
+      width: 150
     };
     return _this;
   }
@@ -82,16 +84,19 @@ var basic = function (_Component) {
 
       setInterval(function () {
         var nextIndex = (_this2.state.strokeColorIndex + 1) % _this2.state.colors.length;
-        _this2.setState(Object.assign({}, _this2.state, { strokeColorIndex: nextIndex }));
-      }, 500);
+        var newWidth = _this2.state.width === 150 ? 100 : 150;
+        console.log('newWidth', newWidth);
+        _this2.setState(_extends({}, _this2.state, { strokeColorIndex: nextIndex, width: newWidth }));
+      }, 1000);
     }
   }, {
     key: 'render',
     value: function render() {
       var strokeColor = this.state.colors[this.state.strokeColorIndex];
+      console.log(this.state.width);
       return _react2.default.createElement(
         _src.Samy,
-        { path: '1.svg', style: { width: 400, height: 'auto' } },
+        { viewBox: '0 0 400 400', className: 'test-class', path: '1.svg', style: { width: this.state.width + 'px', height: 'auto' } },
         _react2.default.createElement(_src.SvgProxy, { selector: '#Star', stroke: strokeColor })
       );
     }
@@ -105,7 +110,7 @@ basic.propTypes = {
 };
 exports.default = basic;
 
-},{"../src":68,"prop-types":14,"react":59}],3:[function(require,module,exports){
+},{"../src":66,"prop-types":31,"react":58}],3:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -332,7 +337,7 @@ exports.default = Robot1;
 
 var animateBody = function animateBody() {};
 
-},{"../src":68,"prop-types":14,"react":59,"react-move":55}],4:[function(require,module,exports){
+},{"../src":66,"prop-types":31,"react":58,"react-move":55}],4:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -351,7 +356,7 @@ exports.default = function (props) {
   //Note: The selector is "#text-3 tspan"
   return _react2.default.createElement(
     _src.Samy,
-    { path: 'text.svg', style: { width: 400, height: 'auto' } },
+    { path: 'text.svg', viewBox: '0 0 150 150', style: { width: 400, height: 'auto' } },
     _react2.default.createElement(
       _src.SvgProxy,
       { selector: '#text-3 tspan' },
@@ -360,7 +365,7 @@ exports.default = function (props) {
   );
 };
 
-},{"../src":68,"react":59}],5:[function(require,module,exports){
+},{"../src":66,"react":58}],5:[function(require,module,exports){
 // https://d3js.org/d3-color/ Version 1.0.3. Copyright 2017 Mike Bostock.
 (function (global, factory) {
 	typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
@@ -1584,6 +1589,671 @@ Object.defineProperty(exports, '__esModule', { value: true });
 })));
 
 },{}],8:[function(require,module,exports){
+(function (process){
+'use strict';
+
+/**
+ * Copyright (c) 2013-present, Facebook, Inc.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ *
+ * @typechecks
+ */
+
+var emptyFunction = require('./emptyFunction');
+
+/**
+ * Upstream version of event listener. Does not take into account specific
+ * nature of platform.
+ */
+var EventListener = {
+  /**
+   * Listen to DOM events during the bubble phase.
+   *
+   * @param {DOMEventTarget} target DOM element to register listener on.
+   * @param {string} eventType Event type, e.g. 'click' or 'mouseover'.
+   * @param {function} callback Callback function.
+   * @return {object} Object with a `remove` method.
+   */
+  listen: function listen(target, eventType, callback) {
+    if (target.addEventListener) {
+      target.addEventListener(eventType, callback, false);
+      return {
+        remove: function remove() {
+          target.removeEventListener(eventType, callback, false);
+        }
+      };
+    } else if (target.attachEvent) {
+      target.attachEvent('on' + eventType, callback);
+      return {
+        remove: function remove() {
+          target.detachEvent('on' + eventType, callback);
+        }
+      };
+    }
+  },
+
+  /**
+   * Listen to DOM events during the capture phase.
+   *
+   * @param {DOMEventTarget} target DOM element to register listener on.
+   * @param {string} eventType Event type, e.g. 'click' or 'mouseover'.
+   * @param {function} callback Callback function.
+   * @return {object} Object with a `remove` method.
+   */
+  capture: function capture(target, eventType, callback) {
+    if (target.addEventListener) {
+      target.addEventListener(eventType, callback, true);
+      return {
+        remove: function remove() {
+          target.removeEventListener(eventType, callback, true);
+        }
+      };
+    } else {
+      if (process.env.NODE_ENV !== 'production') {
+        console.error('Attempted to listen to events during the capture phase on a ' + 'browser that does not support the capture phase. Your application ' + 'will not receive some events.');
+      }
+      return {
+        remove: emptyFunction
+      };
+    }
+  },
+
+  registerDefault: function registerDefault() {}
+};
+
+module.exports = EventListener;
+}).call(this,require('_process'))
+},{"./emptyFunction":13,"_process":27}],9:[function(require,module,exports){
+/**
+ * Copyright (c) 2013-present, Facebook, Inc.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ *
+ */
+
+'use strict';
+
+var canUseDOM = !!(typeof window !== 'undefined' && window.document && window.document.createElement);
+
+/**
+ * Simple, lightweight module assisting with the detection and context of
+ * Worker. Helps avoid circular dependencies and allows code to reason about
+ * whether or not they are in a Worker, even if they never include the main
+ * `ReactWorker` dependency.
+ */
+var ExecutionEnvironment = {
+
+  canUseDOM: canUseDOM,
+
+  canUseWorkers: typeof Worker !== 'undefined',
+
+  canUseEventListeners: canUseDOM && !!(window.addEventListener || window.attachEvent),
+
+  canUseViewport: canUseDOM && !!window.screen,
+
+  isInWorker: !canUseDOM // For now, this is true - might change in the future.
+
+};
+
+module.exports = ExecutionEnvironment;
+},{}],10:[function(require,module,exports){
+"use strict";
+
+/**
+ * Copyright (c) 2013-present, Facebook, Inc.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ *
+ * @typechecks
+ */
+
+var _hyphenPattern = /-(.)/g;
+
+/**
+ * Camelcases a hyphenated string, for example:
+ *
+ *   > camelize('background-color')
+ *   < "backgroundColor"
+ *
+ * @param {string} string
+ * @return {string}
+ */
+function camelize(string) {
+  return string.replace(_hyphenPattern, function (_, character) {
+    return character.toUpperCase();
+  });
+}
+
+module.exports = camelize;
+},{}],11:[function(require,module,exports){
+/**
+ * Copyright (c) 2013-present, Facebook, Inc.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ *
+ * @typechecks
+ */
+
+'use strict';
+
+var camelize = require('./camelize');
+
+var msPattern = /^-ms-/;
+
+/**
+ * Camelcases a hyphenated CSS property name, for example:
+ *
+ *   > camelizeStyleName('background-color')
+ *   < "backgroundColor"
+ *   > camelizeStyleName('-moz-transition')
+ *   < "MozTransition"
+ *   > camelizeStyleName('-ms-transition')
+ *   < "msTransition"
+ *
+ * As Andi Smith suggests
+ * (http://www.andismith.com/blog/2012/02/modernizr-prefixed/), an `-ms` prefix
+ * is converted to lowercase `ms`.
+ *
+ * @param {string} string
+ * @return {string}
+ */
+function camelizeStyleName(string) {
+  return camelize(string.replace(msPattern, 'ms-'));
+}
+
+module.exports = camelizeStyleName;
+},{"./camelize":10}],12:[function(require,module,exports){
+'use strict';
+
+/**
+ * Copyright (c) 2013-present, Facebook, Inc.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ *
+ * 
+ */
+
+var isTextNode = require('./isTextNode');
+
+/*eslint-disable no-bitwise */
+
+/**
+ * Checks if a given DOM node contains or is another DOM node.
+ */
+function containsNode(outerNode, innerNode) {
+  if (!outerNode || !innerNode) {
+    return false;
+  } else if (outerNode === innerNode) {
+    return true;
+  } else if (isTextNode(outerNode)) {
+    return false;
+  } else if (isTextNode(innerNode)) {
+    return containsNode(outerNode, innerNode.parentNode);
+  } else if ('contains' in outerNode) {
+    return outerNode.contains(innerNode);
+  } else if (outerNode.compareDocumentPosition) {
+    return !!(outerNode.compareDocumentPosition(innerNode) & 16);
+  } else {
+    return false;
+  }
+}
+
+module.exports = containsNode;
+},{"./isTextNode":21}],13:[function(require,module,exports){
+"use strict";
+
+/**
+ * Copyright (c) 2013-present, Facebook, Inc.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ *
+ * 
+ */
+
+function makeEmptyFunction(arg) {
+  return function () {
+    return arg;
+  };
+}
+
+/**
+ * This function accepts and discards inputs; it has no side effects. This is
+ * primarily useful idiomatically for overridable function endpoints which
+ * always need to be callable, since JS lacks a null-call idiom ala Cocoa.
+ */
+var emptyFunction = function emptyFunction() {};
+
+emptyFunction.thatReturns = makeEmptyFunction;
+emptyFunction.thatReturnsFalse = makeEmptyFunction(false);
+emptyFunction.thatReturnsTrue = makeEmptyFunction(true);
+emptyFunction.thatReturnsNull = makeEmptyFunction(null);
+emptyFunction.thatReturnsThis = function () {
+  return this;
+};
+emptyFunction.thatReturnsArgument = function (arg) {
+  return arg;
+};
+
+module.exports = emptyFunction;
+},{}],14:[function(require,module,exports){
+(function (process){
+/**
+ * Copyright (c) 2013-present, Facebook, Inc.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ *
+ */
+
+'use strict';
+
+var emptyObject = {};
+
+if (process.env.NODE_ENV !== 'production') {
+  Object.freeze(emptyObject);
+}
+
+module.exports = emptyObject;
+}).call(this,require('_process'))
+},{"_process":27}],15:[function(require,module,exports){
+/**
+ * Copyright (c) 2013-present, Facebook, Inc.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ *
+ */
+
+'use strict';
+
+/**
+ * @param {DOMElement} node input/textarea to focus
+ */
+
+function focusNode(node) {
+  // IE8 can throw "Can't move focus to the control because it is invisible,
+  // not enabled, or of a type that does not accept the focus." for all kinds of
+  // reasons that are too expensive and fragile to test.
+  try {
+    node.focus();
+  } catch (e) {}
+}
+
+module.exports = focusNode;
+},{}],16:[function(require,module,exports){
+'use strict';
+
+/**
+ * Copyright (c) 2013-present, Facebook, Inc.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ *
+ * @typechecks
+ */
+
+/* eslint-disable fb-www/typeof-undefined */
+
+/**
+ * Same as document.activeElement but wraps in a try-catch block. In IE it is
+ * not safe to call document.activeElement if there is nothing focused.
+ *
+ * The activeElement will be null only if the document or document body is not
+ * yet defined.
+ *
+ * @param {?DOMDocument} doc Defaults to current document.
+ * @return {?DOMElement}
+ */
+function getActiveElement(doc) /*?DOMElement*/{
+  doc = doc || (typeof document !== 'undefined' ? document : undefined);
+  if (typeof doc === 'undefined') {
+    return null;
+  }
+  try {
+    return doc.activeElement || doc.body;
+  } catch (e) {
+    return doc.body;
+  }
+}
+
+module.exports = getActiveElement;
+},{}],17:[function(require,module,exports){
+'use strict';
+
+/**
+ * Copyright (c) 2013-present, Facebook, Inc.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ *
+ * @typechecks
+ */
+
+var _uppercasePattern = /([A-Z])/g;
+
+/**
+ * Hyphenates a camelcased string, for example:
+ *
+ *   > hyphenate('backgroundColor')
+ *   < "background-color"
+ *
+ * For CSS style names, use `hyphenateStyleName` instead which works properly
+ * with all vendor prefixes, including `ms`.
+ *
+ * @param {string} string
+ * @return {string}
+ */
+function hyphenate(string) {
+  return string.replace(_uppercasePattern, '-$1').toLowerCase();
+}
+
+module.exports = hyphenate;
+},{}],18:[function(require,module,exports){
+/**
+ * Copyright (c) 2013-present, Facebook, Inc.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ *
+ * @typechecks
+ */
+
+'use strict';
+
+var hyphenate = require('./hyphenate');
+
+var msPattern = /^ms-/;
+
+/**
+ * Hyphenates a camelcased CSS property name, for example:
+ *
+ *   > hyphenateStyleName('backgroundColor')
+ *   < "background-color"
+ *   > hyphenateStyleName('MozTransition')
+ *   < "-moz-transition"
+ *   > hyphenateStyleName('msTransition')
+ *   < "-ms-transition"
+ *
+ * As Modernizr suggests (http://modernizr.com/docs/#prefixed), an `ms` prefix
+ * is converted to `-ms-`.
+ *
+ * @param {string} string
+ * @return {string}
+ */
+function hyphenateStyleName(string) {
+  return hyphenate(string).replace(msPattern, '-ms-');
+}
+
+module.exports = hyphenateStyleName;
+},{"./hyphenate":17}],19:[function(require,module,exports){
+(function (process){
+/**
+ * Copyright (c) 2013-present, Facebook, Inc.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ *
+ */
+
+'use strict';
+
+/**
+ * Use invariant() to assert state which your program assumes to be true.
+ *
+ * Provide sprintf-style format (only %s is supported) and arguments
+ * to provide information about what broke and what you were
+ * expecting.
+ *
+ * The invariant message will be stripped in production, but the invariant
+ * will remain to ensure logic does not differ in production.
+ */
+
+var validateFormat = function validateFormat(format) {};
+
+if (process.env.NODE_ENV !== 'production') {
+  validateFormat = function validateFormat(format) {
+    if (format === undefined) {
+      throw new Error('invariant requires an error message argument');
+    }
+  };
+}
+
+function invariant(condition, format, a, b, c, d, e, f) {
+  validateFormat(format);
+
+  if (!condition) {
+    var error;
+    if (format === undefined) {
+      error = new Error('Minified exception occurred; use the non-minified dev environment ' + 'for the full error message and additional helpful warnings.');
+    } else {
+      var args = [a, b, c, d, e, f];
+      var argIndex = 0;
+      error = new Error(format.replace(/%s/g, function () {
+        return args[argIndex++];
+      }));
+      error.name = 'Invariant Violation';
+    }
+
+    error.framesToPop = 1; // we don't care about invariant's own frame
+    throw error;
+  }
+}
+
+module.exports = invariant;
+}).call(this,require('_process'))
+},{"_process":27}],20:[function(require,module,exports){
+'use strict';
+
+/**
+ * Copyright (c) 2013-present, Facebook, Inc.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ *
+ * @typechecks
+ */
+
+/**
+ * @param {*} object The object to check.
+ * @return {boolean} Whether or not the object is a DOM node.
+ */
+function isNode(object) {
+  var doc = object ? object.ownerDocument || object : document;
+  var defaultView = doc.defaultView || window;
+  return !!(object && (typeof defaultView.Node === 'function' ? object instanceof defaultView.Node : typeof object === 'object' && typeof object.nodeType === 'number' && typeof object.nodeName === 'string'));
+}
+
+module.exports = isNode;
+},{}],21:[function(require,module,exports){
+'use strict';
+
+/**
+ * Copyright (c) 2013-present, Facebook, Inc.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ *
+ * @typechecks
+ */
+
+var isNode = require('./isNode');
+
+/**
+ * @param {*} object The object to check.
+ * @return {boolean} Whether or not the object is a DOM text node.
+ */
+function isTextNode(object) {
+  return isNode(object) && object.nodeType == 3;
+}
+
+module.exports = isTextNode;
+},{"./isNode":20}],22:[function(require,module,exports){
+/**
+ * Copyright (c) 2013-present, Facebook, Inc.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ *
+ * 
+ * @typechecks static-only
+ */
+
+'use strict';
+
+/**
+ * Memoizes the return value of a function that accepts one string argument.
+ */
+
+function memoizeStringOnly(callback) {
+  var cache = {};
+  return function (string) {
+    if (!cache.hasOwnProperty(string)) {
+      cache[string] = callback.call(this, string);
+    }
+    return cache[string];
+  };
+}
+
+module.exports = memoizeStringOnly;
+},{}],23:[function(require,module,exports){
+/**
+ * Copyright (c) 2013-present, Facebook, Inc.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ *
+ * @typechecks
+ * 
+ */
+
+/*eslint-disable no-self-compare */
+
+'use strict';
+
+var hasOwnProperty = Object.prototype.hasOwnProperty;
+
+/**
+ * inlined Object.is polyfill to avoid requiring consumers ship their own
+ * https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/is
+ */
+function is(x, y) {
+  // SameValue algorithm
+  if (x === y) {
+    // Steps 1-5, 7-10
+    // Steps 6.b-6.e: +0 != -0
+    // Added the nonzero y check to make Flow happy, but it is redundant
+    return x !== 0 || y !== 0 || 1 / x === 1 / y;
+  } else {
+    // Step 6.a: NaN == NaN
+    return x !== x && y !== y;
+  }
+}
+
+/**
+ * Performs equality by iterating through keys on an object and returning false
+ * when any key has values which are not strictly equal between the arguments.
+ * Returns true when the values of all keys are strictly equal.
+ */
+function shallowEqual(objA, objB) {
+  if (is(objA, objB)) {
+    return true;
+  }
+
+  if (typeof objA !== 'object' || objA === null || typeof objB !== 'object' || objB === null) {
+    return false;
+  }
+
+  var keysA = Object.keys(objA);
+  var keysB = Object.keys(objB);
+
+  if (keysA.length !== keysB.length) {
+    return false;
+  }
+
+  // Test for A's keys different from B.
+  for (var i = 0; i < keysA.length; i++) {
+    if (!hasOwnProperty.call(objB, keysA[i]) || !is(objA[keysA[i]], objB[keysA[i]])) {
+      return false;
+    }
+  }
+
+  return true;
+}
+
+module.exports = shallowEqual;
+},{}],24:[function(require,module,exports){
+(function (process){
+/**
+ * Copyright (c) 2014-present, Facebook, Inc.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ *
+ */
+
+'use strict';
+
+var emptyFunction = require('./emptyFunction');
+
+/**
+ * Similar to invariant but only logs a warning if the condition is not met.
+ * This can be used to log issues in development environments in critical
+ * paths. Removing the logging code for production environments will keep the
+ * same logic and follow the same code paths.
+ */
+
+var warning = emptyFunction;
+
+if (process.env.NODE_ENV !== 'production') {
+  var printWarning = function printWarning(format) {
+    for (var _len = arguments.length, args = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
+      args[_key - 1] = arguments[_key];
+    }
+
+    var argIndex = 0;
+    var message = 'Warning: ' + format.replace(/%s/g, function () {
+      return args[argIndex++];
+    });
+    if (typeof console !== 'undefined') {
+      console.error(message);
+    }
+    try {
+      // --- Welcome to debugging React ---
+      // This error was thrown as a convenience so that you can use this stack
+      // to find the callsite that caused this warning to fire.
+      throw new Error(message);
+    } catch (x) {}
+  };
+
+  warning = function warning(condition, format) {
+    if (format === undefined) {
+      throw new Error('`warning(condition, format, ...args)` requires a warning ' + 'message argument');
+    }
+
+    if (format.indexOf('Failed Composite propType: ') === 0) {
+      return; // Ignore CompositeComponent proptype check.
+    }
+
+    if (!condition) {
+      for (var _len2 = arguments.length, args = Array(_len2 > 2 ? _len2 - 2 : 0), _key2 = 2; _key2 < _len2; _key2++) {
+        args[_key2 - 2] = arguments[_key2];
+      }
+
+      printWarning.apply(undefined, [format].concat(args));
+    }
+  };
+}
+
+module.exports = warning;
+}).call(this,require('_process'))
+},{"./emptyFunction":13,"_process":27}],25:[function(require,module,exports){
 (function (global){
 /**
  * Lodash (Custom Build) <https://lodash.com/>
@@ -3435,7 +4105,7 @@ function stubFalse() {
 module.exports = isEqual;
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],9:[function(require,module,exports){
+},{}],26:[function(require,module,exports){
 /*
 object-assign
 (c) Sindre Sorhus
@@ -3527,7 +4197,7 @@ module.exports = shouldUseNative() ? Object.assign : function (target, source) {
 	return to;
 };
 
-},{}],10:[function(require,module,exports){
+},{}],27:[function(require,module,exports){
 // shim for using process in browser
 var process = module.exports = {};
 
@@ -3709,7 +4379,7 @@ process.chdir = function (dir) {
 };
 process.umask = function() { return 0; };
 
-},{}],11:[function(require,module,exports){
+},{}],28:[function(require,module,exports){
 (function (process){
 /**
  * Copyright (c) 2013-present, Facebook, Inc.
@@ -3772,7 +4442,7 @@ function checkPropTypes(typeSpecs, values, location, componentName, getStack) {
 module.exports = checkPropTypes;
 
 }).call(this,require('_process'))
-},{"./lib/ReactPropTypesSecret":15,"_process":10,"fbjs/lib/invariant":17,"fbjs/lib/warning":18}],12:[function(require,module,exports){
+},{"./lib/ReactPropTypesSecret":32,"_process":27,"fbjs/lib/invariant":34,"fbjs/lib/warning":35}],29:[function(require,module,exports){
 /**
  * Copyright (c) 2013-present, Facebook, Inc.
  *
@@ -3832,7 +4502,7 @@ module.exports = function() {
   return ReactPropTypes;
 };
 
-},{"./lib/ReactPropTypesSecret":15,"fbjs/lib/emptyFunction":16,"fbjs/lib/invariant":17}],13:[function(require,module,exports){
+},{"./lib/ReactPropTypesSecret":32,"fbjs/lib/emptyFunction":33,"fbjs/lib/invariant":34}],30:[function(require,module,exports){
 (function (process){
 /**
  * Copyright (c) 2013-present, Facebook, Inc.
@@ -4378,7 +5048,7 @@ module.exports = function(isValidElement, throwOnDirectAccess) {
 };
 
 }).call(this,require('_process'))
-},{"./checkPropTypes":11,"./lib/ReactPropTypesSecret":15,"_process":10,"fbjs/lib/emptyFunction":16,"fbjs/lib/invariant":17,"fbjs/lib/warning":18,"object-assign":9}],14:[function(require,module,exports){
+},{"./checkPropTypes":28,"./lib/ReactPropTypesSecret":32,"_process":27,"fbjs/lib/emptyFunction":33,"fbjs/lib/invariant":34,"fbjs/lib/warning":35,"object-assign":26}],31:[function(require,module,exports){
 (function (process){
 /**
  * Copyright (c) 2013-present, Facebook, Inc.
@@ -4410,7 +5080,7 @@ if (process.env.NODE_ENV !== 'production') {
 }
 
 }).call(this,require('_process'))
-},{"./factoryWithThrowingShims":12,"./factoryWithTypeCheckers":13,"_process":10}],15:[function(require,module,exports){
+},{"./factoryWithThrowingShims":29,"./factoryWithTypeCheckers":30,"_process":27}],32:[function(require,module,exports){
 /**
  * Copyright (c) 2013-present, Facebook, Inc.
  *
@@ -4424,165 +5094,13 @@ var ReactPropTypesSecret = 'SECRET_DO_NOT_PASS_THIS_OR_YOU_WILL_BE_FIRED';
 
 module.exports = ReactPropTypesSecret;
 
-},{}],16:[function(require,module,exports){
-"use strict";
-
-/**
- * Copyright (c) 2013-present, Facebook, Inc.
- *
- * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
- *
- * 
- */
-
-function makeEmptyFunction(arg) {
-  return function () {
-    return arg;
-  };
-}
-
-/**
- * This function accepts and discards inputs; it has no side effects. This is
- * primarily useful idiomatically for overridable function endpoints which
- * always need to be callable, since JS lacks a null-call idiom ala Cocoa.
- */
-var emptyFunction = function emptyFunction() {};
-
-emptyFunction.thatReturns = makeEmptyFunction;
-emptyFunction.thatReturnsFalse = makeEmptyFunction(false);
-emptyFunction.thatReturnsTrue = makeEmptyFunction(true);
-emptyFunction.thatReturnsNull = makeEmptyFunction(null);
-emptyFunction.thatReturnsThis = function () {
-  return this;
-};
-emptyFunction.thatReturnsArgument = function (arg) {
-  return arg;
-};
-
-module.exports = emptyFunction;
-},{}],17:[function(require,module,exports){
-(function (process){
-/**
- * Copyright (c) 2013-present, Facebook, Inc.
- *
- * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
- *
- */
-
-'use strict';
-
-/**
- * Use invariant() to assert state which your program assumes to be true.
- *
- * Provide sprintf-style format (only %s is supported) and arguments
- * to provide information about what broke and what you were
- * expecting.
- *
- * The invariant message will be stripped in production, but the invariant
- * will remain to ensure logic does not differ in production.
- */
-
-var validateFormat = function validateFormat(format) {};
-
-if (process.env.NODE_ENV !== 'production') {
-  validateFormat = function validateFormat(format) {
-    if (format === undefined) {
-      throw new Error('invariant requires an error message argument');
-    }
-  };
-}
-
-function invariant(condition, format, a, b, c, d, e, f) {
-  validateFormat(format);
-
-  if (!condition) {
-    var error;
-    if (format === undefined) {
-      error = new Error('Minified exception occurred; use the non-minified dev environment ' + 'for the full error message and additional helpful warnings.');
-    } else {
-      var args = [a, b, c, d, e, f];
-      var argIndex = 0;
-      error = new Error(format.replace(/%s/g, function () {
-        return args[argIndex++];
-      }));
-      error.name = 'Invariant Violation';
-    }
-
-    error.framesToPop = 1; // we don't care about invariant's own frame
-    throw error;
-  }
-}
-
-module.exports = invariant;
-}).call(this,require('_process'))
-},{"_process":10}],18:[function(require,module,exports){
-(function (process){
-/**
- * Copyright (c) 2014-present, Facebook, Inc.
- *
- * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
- *
- */
-
-'use strict';
-
-var emptyFunction = require('./emptyFunction');
-
-/**
- * Similar to invariant but only logs a warning if the condition is not met.
- * This can be used to log issues in development environments in critical
- * paths. Removing the logging code for production environments will keep the
- * same logic and follow the same code paths.
- */
-
-var warning = emptyFunction;
-
-if (process.env.NODE_ENV !== 'production') {
-  var printWarning = function printWarning(format) {
-    for (var _len = arguments.length, args = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
-      args[_key - 1] = arguments[_key];
-    }
-
-    var argIndex = 0;
-    var message = 'Warning: ' + format.replace(/%s/g, function () {
-      return args[argIndex++];
-    });
-    if (typeof console !== 'undefined') {
-      console.error(message);
-    }
-    try {
-      // --- Welcome to debugging React ---
-      // This error was thrown as a convenience so that you can use this stack
-      // to find the callsite that caused this warning to fire.
-      throw new Error(message);
-    } catch (x) {}
-  };
-
-  warning = function warning(condition, format) {
-    if (format === undefined) {
-      throw new Error('`warning(condition, format, ...args)` requires a warning ' + 'message argument');
-    }
-
-    if (format.indexOf('Failed Composite propType: ') === 0) {
-      return; // Ignore CompositeComponent proptype check.
-    }
-
-    if (!condition) {
-      for (var _len2 = arguments.length, args = Array(_len2 > 2 ? _len2 - 2 : 0), _key2 = 2; _key2 < _len2; _key2++) {
-        args[_key2 - 2] = arguments[_key2];
-      }
-
-      printWarning.apply(undefined, [format].concat(args));
-    }
-  };
-}
-
-module.exports = warning;
-}).call(this,require('_process'))
-},{"./emptyFunction":16,"_process":10}],19:[function(require,module,exports){
+},{}],33:[function(require,module,exports){
+arguments[4][13][0].apply(exports,arguments)
+},{"dup":13}],34:[function(require,module,exports){
+arguments[4][19][0].apply(exports,arguments)
+},{"_process":27,"dup":19}],35:[function(require,module,exports){
+arguments[4][24][0].apply(exports,arguments)
+},{"./emptyFunction":33,"_process":27,"dup":24}],36:[function(require,module,exports){
 (function (process){
 /** @license React v16.2.0
  * react-dom-server.browser.development.js
@@ -7130,7 +7648,7 @@ module.exports = server_browser;
 }
 
 }).call(this,require('_process'))
-},{"_process":10,"fbjs/lib/camelizeStyleName":27,"fbjs/lib/emptyFunction":29,"fbjs/lib/emptyObject":30,"fbjs/lib/hyphenateStyleName":34,"fbjs/lib/invariant":35,"fbjs/lib/memoizeStringOnly":38,"fbjs/lib/warning":40,"object-assign":9,"prop-types/checkPropTypes":11,"react":59}],20:[function(require,module,exports){
+},{"_process":27,"fbjs/lib/camelizeStyleName":11,"fbjs/lib/emptyFunction":13,"fbjs/lib/emptyObject":14,"fbjs/lib/hyphenateStyleName":18,"fbjs/lib/invariant":19,"fbjs/lib/memoizeStringOnly":22,"fbjs/lib/warning":24,"object-assign":26,"prop-types/checkPropTypes":28,"react":58}],37:[function(require,module,exports){
 /** @license React v16.2.0
  * react-dom-server.browser.production.min.js
  *
@@ -7174,7 +7692,7 @@ void 0:w("61")),null!=e.style&&"object"!==typeof e.style?w("62",Y()):void 0;e=f;
 d){if(null!=d.__html){d=d.__html;break a}}else if(d=f.children,"string"===typeof d||"number"===typeof d){d=Q(d);break a}d=null}null!=d?(f=[],oa[b]&&"\n"===d.charAt(0)&&(r+="\n"),r+=d):f=X(f.children);a=a.type;c=null==c||"http://www.w3.org/1999/xhtml"===c?U(a):"http://www.w3.org/2000/svg"===c&&"foreignObject"===a?"http://www.w3.org/1999/xhtml":c;this.stack.push({domNamespace:c,tag:b,children:f,childIndex:0,context:g,footer:e});this.previousWasTextNode=!1;return r};return a}(),za={renderToString:function(a){return(new ya(a,
 !1)).read(Infinity)},renderToStaticMarkup:function(a){return(new ya(a,!0)).read(Infinity)},renderToNodeStream:function(){w("207")},renderToStaticNodeStream:function(){w("208")},version:"16.2.0"},Aa=Object.freeze({default:za}),Z=Aa&&za||Aa;module.exports=Z["default"]?Z["default"]:Z;
 
-},{"fbjs/lib/emptyFunction":29,"fbjs/lib/emptyObject":30,"fbjs/lib/hyphenateStyleName":34,"fbjs/lib/memoizeStringOnly":38,"object-assign":9,"react":59}],21:[function(require,module,exports){
+},{"fbjs/lib/emptyFunction":13,"fbjs/lib/emptyObject":14,"fbjs/lib/hyphenateStyleName":18,"fbjs/lib/memoizeStringOnly":22,"object-assign":26,"react":58}],38:[function(require,module,exports){
 (function (process){
 /** @license React v16.2.0
  * react-dom.development.js
@@ -22572,7 +23090,7 @@ module.exports = reactDom;
 }
 
 }).call(this,require('_process'))
-},{"_process":10,"fbjs/lib/EventListener":24,"fbjs/lib/ExecutionEnvironment":25,"fbjs/lib/camelizeStyleName":27,"fbjs/lib/containsNode":28,"fbjs/lib/emptyFunction":29,"fbjs/lib/emptyObject":30,"fbjs/lib/focusNode":31,"fbjs/lib/getActiveElement":32,"fbjs/lib/hyphenateStyleName":34,"fbjs/lib/invariant":35,"fbjs/lib/shallowEqual":39,"fbjs/lib/warning":40,"object-assign":9,"prop-types/checkPropTypes":11,"react":59}],22:[function(require,module,exports){
+},{"_process":27,"fbjs/lib/EventListener":8,"fbjs/lib/ExecutionEnvironment":9,"fbjs/lib/camelizeStyleName":11,"fbjs/lib/containsNode":12,"fbjs/lib/emptyFunction":13,"fbjs/lib/emptyObject":14,"fbjs/lib/focusNode":15,"fbjs/lib/getActiveElement":16,"fbjs/lib/hyphenateStyleName":18,"fbjs/lib/invariant":19,"fbjs/lib/shallowEqual":23,"fbjs/lib/warning":24,"object-assign":26,"prop-types/checkPropTypes":28,"react":58}],39:[function(require,module,exports){
 /** @license React v16.2.0
  * react-dom.production.min.js
  *
@@ -22803,7 +23321,7 @@ var Sg={createPortal:Qg,findDOMNode:function(a){if(null==a)return null;if(1===a.
 E("40");return a._reactRootContainer?(Z.unbatchedUpdates(function(){Pg(null,null,a,!1,function(){a._reactRootContainer=null})}),!0):!1},unstable_createPortal:Qg,unstable_batchedUpdates:tc,unstable_deferredUpdates:Z.deferredUpdates,flushSync:Z.flushSync,__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED:{EventPluginHub:mb,EventPluginRegistry:Va,EventPropagators:Cb,ReactControlledComponent:qc,ReactDOMComponentTree:sb,ReactDOMEventListener:xd}};
 Z.injectIntoDevTools({findFiberByHostInstance:pb,bundleType:0,version:"16.2.0",rendererPackageName:"react-dom"});var Tg=Object.freeze({default:Sg}),Ug=Tg&&Sg||Tg;module.exports=Ug["default"]?Ug["default"]:Ug;
 
-},{"fbjs/lib/EventListener":24,"fbjs/lib/ExecutionEnvironment":25,"fbjs/lib/containsNode":28,"fbjs/lib/emptyFunction":29,"fbjs/lib/emptyObject":30,"fbjs/lib/focusNode":31,"fbjs/lib/getActiveElement":32,"fbjs/lib/shallowEqual":39,"object-assign":9,"react":59}],23:[function(require,module,exports){
+},{"fbjs/lib/EventListener":8,"fbjs/lib/ExecutionEnvironment":9,"fbjs/lib/containsNode":12,"fbjs/lib/emptyFunction":13,"fbjs/lib/emptyObject":14,"fbjs/lib/focusNode":15,"fbjs/lib/getActiveElement":16,"fbjs/lib/shallowEqual":23,"object-assign":26,"react":58}],40:[function(require,module,exports){
 (function (process){
 'use strict';
 
@@ -22845,520 +23363,7 @@ if (process.env.NODE_ENV === 'production') {
 }
 
 }).call(this,require('_process'))
-},{"./cjs/react-dom.development.js":21,"./cjs/react-dom.production.min.js":22,"_process":10}],24:[function(require,module,exports){
-(function (process){
-'use strict';
-
-/**
- * Copyright (c) 2013-present, Facebook, Inc.
- *
- * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
- *
- * @typechecks
- */
-
-var emptyFunction = require('./emptyFunction');
-
-/**
- * Upstream version of event listener. Does not take into account specific
- * nature of platform.
- */
-var EventListener = {
-  /**
-   * Listen to DOM events during the bubble phase.
-   *
-   * @param {DOMEventTarget} target DOM element to register listener on.
-   * @param {string} eventType Event type, e.g. 'click' or 'mouseover'.
-   * @param {function} callback Callback function.
-   * @return {object} Object with a `remove` method.
-   */
-  listen: function listen(target, eventType, callback) {
-    if (target.addEventListener) {
-      target.addEventListener(eventType, callback, false);
-      return {
-        remove: function remove() {
-          target.removeEventListener(eventType, callback, false);
-        }
-      };
-    } else if (target.attachEvent) {
-      target.attachEvent('on' + eventType, callback);
-      return {
-        remove: function remove() {
-          target.detachEvent('on' + eventType, callback);
-        }
-      };
-    }
-  },
-
-  /**
-   * Listen to DOM events during the capture phase.
-   *
-   * @param {DOMEventTarget} target DOM element to register listener on.
-   * @param {string} eventType Event type, e.g. 'click' or 'mouseover'.
-   * @param {function} callback Callback function.
-   * @return {object} Object with a `remove` method.
-   */
-  capture: function capture(target, eventType, callback) {
-    if (target.addEventListener) {
-      target.addEventListener(eventType, callback, true);
-      return {
-        remove: function remove() {
-          target.removeEventListener(eventType, callback, true);
-        }
-      };
-    } else {
-      if (process.env.NODE_ENV !== 'production') {
-        console.error('Attempted to listen to events during the capture phase on a ' + 'browser that does not support the capture phase. Your application ' + 'will not receive some events.');
-      }
-      return {
-        remove: emptyFunction
-      };
-    }
-  },
-
-  registerDefault: function registerDefault() {}
-};
-
-module.exports = EventListener;
-}).call(this,require('_process'))
-},{"./emptyFunction":29,"_process":10}],25:[function(require,module,exports){
-/**
- * Copyright (c) 2013-present, Facebook, Inc.
- *
- * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
- *
- */
-
-'use strict';
-
-var canUseDOM = !!(typeof window !== 'undefined' && window.document && window.document.createElement);
-
-/**
- * Simple, lightweight module assisting with the detection and context of
- * Worker. Helps avoid circular dependencies and allows code to reason about
- * whether or not they are in a Worker, even if they never include the main
- * `ReactWorker` dependency.
- */
-var ExecutionEnvironment = {
-
-  canUseDOM: canUseDOM,
-
-  canUseWorkers: typeof Worker !== 'undefined',
-
-  canUseEventListeners: canUseDOM && !!(window.addEventListener || window.attachEvent),
-
-  canUseViewport: canUseDOM && !!window.screen,
-
-  isInWorker: !canUseDOM // For now, this is true - might change in the future.
-
-};
-
-module.exports = ExecutionEnvironment;
-},{}],26:[function(require,module,exports){
-"use strict";
-
-/**
- * Copyright (c) 2013-present, Facebook, Inc.
- *
- * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
- *
- * @typechecks
- */
-
-var _hyphenPattern = /-(.)/g;
-
-/**
- * Camelcases a hyphenated string, for example:
- *
- *   > camelize('background-color')
- *   < "backgroundColor"
- *
- * @param {string} string
- * @return {string}
- */
-function camelize(string) {
-  return string.replace(_hyphenPattern, function (_, character) {
-    return character.toUpperCase();
-  });
-}
-
-module.exports = camelize;
-},{}],27:[function(require,module,exports){
-/**
- * Copyright (c) 2013-present, Facebook, Inc.
- *
- * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
- *
- * @typechecks
- */
-
-'use strict';
-
-var camelize = require('./camelize');
-
-var msPattern = /^-ms-/;
-
-/**
- * Camelcases a hyphenated CSS property name, for example:
- *
- *   > camelizeStyleName('background-color')
- *   < "backgroundColor"
- *   > camelizeStyleName('-moz-transition')
- *   < "MozTransition"
- *   > camelizeStyleName('-ms-transition')
- *   < "msTransition"
- *
- * As Andi Smith suggests
- * (http://www.andismith.com/blog/2012/02/modernizr-prefixed/), an `-ms` prefix
- * is converted to lowercase `ms`.
- *
- * @param {string} string
- * @return {string}
- */
-function camelizeStyleName(string) {
-  return camelize(string.replace(msPattern, 'ms-'));
-}
-
-module.exports = camelizeStyleName;
-},{"./camelize":26}],28:[function(require,module,exports){
-'use strict';
-
-/**
- * Copyright (c) 2013-present, Facebook, Inc.
- *
- * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
- *
- * 
- */
-
-var isTextNode = require('./isTextNode');
-
-/*eslint-disable no-bitwise */
-
-/**
- * Checks if a given DOM node contains or is another DOM node.
- */
-function containsNode(outerNode, innerNode) {
-  if (!outerNode || !innerNode) {
-    return false;
-  } else if (outerNode === innerNode) {
-    return true;
-  } else if (isTextNode(outerNode)) {
-    return false;
-  } else if (isTextNode(innerNode)) {
-    return containsNode(outerNode, innerNode.parentNode);
-  } else if ('contains' in outerNode) {
-    return outerNode.contains(innerNode);
-  } else if (outerNode.compareDocumentPosition) {
-    return !!(outerNode.compareDocumentPosition(innerNode) & 16);
-  } else {
-    return false;
-  }
-}
-
-module.exports = containsNode;
-},{"./isTextNode":37}],29:[function(require,module,exports){
-arguments[4][16][0].apply(exports,arguments)
-},{"dup":16}],30:[function(require,module,exports){
-(function (process){
-/**
- * Copyright (c) 2013-present, Facebook, Inc.
- *
- * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
- *
- */
-
-'use strict';
-
-var emptyObject = {};
-
-if (process.env.NODE_ENV !== 'production') {
-  Object.freeze(emptyObject);
-}
-
-module.exports = emptyObject;
-}).call(this,require('_process'))
-},{"_process":10}],31:[function(require,module,exports){
-/**
- * Copyright (c) 2013-present, Facebook, Inc.
- *
- * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
- *
- */
-
-'use strict';
-
-/**
- * @param {DOMElement} node input/textarea to focus
- */
-
-function focusNode(node) {
-  // IE8 can throw "Can't move focus to the control because it is invisible,
-  // not enabled, or of a type that does not accept the focus." for all kinds of
-  // reasons that are too expensive and fragile to test.
-  try {
-    node.focus();
-  } catch (e) {}
-}
-
-module.exports = focusNode;
-},{}],32:[function(require,module,exports){
-'use strict';
-
-/**
- * Copyright (c) 2013-present, Facebook, Inc.
- *
- * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
- *
- * @typechecks
- */
-
-/* eslint-disable fb-www/typeof-undefined */
-
-/**
- * Same as document.activeElement but wraps in a try-catch block. In IE it is
- * not safe to call document.activeElement if there is nothing focused.
- *
- * The activeElement will be null only if the document or document body is not
- * yet defined.
- *
- * @param {?DOMDocument} doc Defaults to current document.
- * @return {?DOMElement}
- */
-function getActiveElement(doc) /*?DOMElement*/{
-  doc = doc || (typeof document !== 'undefined' ? document : undefined);
-  if (typeof doc === 'undefined') {
-    return null;
-  }
-  try {
-    return doc.activeElement || doc.body;
-  } catch (e) {
-    return doc.body;
-  }
-}
-
-module.exports = getActiveElement;
-},{}],33:[function(require,module,exports){
-'use strict';
-
-/**
- * Copyright (c) 2013-present, Facebook, Inc.
- *
- * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
- *
- * @typechecks
- */
-
-var _uppercasePattern = /([A-Z])/g;
-
-/**
- * Hyphenates a camelcased string, for example:
- *
- *   > hyphenate('backgroundColor')
- *   < "background-color"
- *
- * For CSS style names, use `hyphenateStyleName` instead which works properly
- * with all vendor prefixes, including `ms`.
- *
- * @param {string} string
- * @return {string}
- */
-function hyphenate(string) {
-  return string.replace(_uppercasePattern, '-$1').toLowerCase();
-}
-
-module.exports = hyphenate;
-},{}],34:[function(require,module,exports){
-/**
- * Copyright (c) 2013-present, Facebook, Inc.
- *
- * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
- *
- * @typechecks
- */
-
-'use strict';
-
-var hyphenate = require('./hyphenate');
-
-var msPattern = /^ms-/;
-
-/**
- * Hyphenates a camelcased CSS property name, for example:
- *
- *   > hyphenateStyleName('backgroundColor')
- *   < "background-color"
- *   > hyphenateStyleName('MozTransition')
- *   < "-moz-transition"
- *   > hyphenateStyleName('msTransition')
- *   < "-ms-transition"
- *
- * As Modernizr suggests (http://modernizr.com/docs/#prefixed), an `ms` prefix
- * is converted to `-ms-`.
- *
- * @param {string} string
- * @return {string}
- */
-function hyphenateStyleName(string) {
-  return hyphenate(string).replace(msPattern, '-ms-');
-}
-
-module.exports = hyphenateStyleName;
-},{"./hyphenate":33}],35:[function(require,module,exports){
-arguments[4][17][0].apply(exports,arguments)
-},{"_process":10,"dup":17}],36:[function(require,module,exports){
-'use strict';
-
-/**
- * Copyright (c) 2013-present, Facebook, Inc.
- *
- * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
- *
- * @typechecks
- */
-
-/**
- * @param {*} object The object to check.
- * @return {boolean} Whether or not the object is a DOM node.
- */
-function isNode(object) {
-  var doc = object ? object.ownerDocument || object : document;
-  var defaultView = doc.defaultView || window;
-  return !!(object && (typeof defaultView.Node === 'function' ? object instanceof defaultView.Node : typeof object === 'object' && typeof object.nodeType === 'number' && typeof object.nodeName === 'string'));
-}
-
-module.exports = isNode;
-},{}],37:[function(require,module,exports){
-'use strict';
-
-/**
- * Copyright (c) 2013-present, Facebook, Inc.
- *
- * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
- *
- * @typechecks
- */
-
-var isNode = require('./isNode');
-
-/**
- * @param {*} object The object to check.
- * @return {boolean} Whether or not the object is a DOM text node.
- */
-function isTextNode(object) {
-  return isNode(object) && object.nodeType == 3;
-}
-
-module.exports = isTextNode;
-},{"./isNode":36}],38:[function(require,module,exports){
-/**
- * Copyright (c) 2013-present, Facebook, Inc.
- *
- * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
- *
- * 
- * @typechecks static-only
- */
-
-'use strict';
-
-/**
- * Memoizes the return value of a function that accepts one string argument.
- */
-
-function memoizeStringOnly(callback) {
-  var cache = {};
-  return function (string) {
-    if (!cache.hasOwnProperty(string)) {
-      cache[string] = callback.call(this, string);
-    }
-    return cache[string];
-  };
-}
-
-module.exports = memoizeStringOnly;
-},{}],39:[function(require,module,exports){
-/**
- * Copyright (c) 2013-present, Facebook, Inc.
- *
- * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
- *
- * @typechecks
- * 
- */
-
-/*eslint-disable no-self-compare */
-
-'use strict';
-
-var hasOwnProperty = Object.prototype.hasOwnProperty;
-
-/**
- * inlined Object.is polyfill to avoid requiring consumers ship their own
- * https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/is
- */
-function is(x, y) {
-  // SameValue algorithm
-  if (x === y) {
-    // Steps 1-5, 7-10
-    // Steps 6.b-6.e: +0 != -0
-    // Added the nonzero y check to make Flow happy, but it is redundant
-    return x !== 0 || y !== 0 || 1 / x === 1 / y;
-  } else {
-    // Step 6.a: NaN == NaN
-    return x !== x && y !== y;
-  }
-}
-
-/**
- * Performs equality by iterating through keys on an object and returning false
- * when any key has values which are not strictly equal between the arguments.
- * Returns true when the values of all keys are strictly equal.
- */
-function shallowEqual(objA, objB) {
-  if (is(objA, objB)) {
-    return true;
-  }
-
-  if (typeof objA !== 'object' || objA === null || typeof objB !== 'object' || objB === null) {
-    return false;
-  }
-
-  var keysA = Object.keys(objA);
-  var keysB = Object.keys(objB);
-
-  if (keysA.length !== keysB.length) {
-    return false;
-  }
-
-  // Test for A's keys different from B.
-  for (var i = 0; i < keysA.length; i++) {
-    if (!hasOwnProperty.call(objB, keysA[i]) || !is(objA[keysA[i]], objB[keysA[i]])) {
-      return false;
-    }
-  }
-
-  return true;
-}
-
-module.exports = shallowEqual;
-},{}],40:[function(require,module,exports){
-arguments[4][18][0].apply(exports,arguments)
-},{"./emptyFunction":29,"_process":10,"dup":18}],41:[function(require,module,exports){
+},{"./cjs/react-dom.development.js":38,"./cjs/react-dom.production.min.js":39,"_process":27}],41:[function(require,module,exports){
 (function (process){
 'use strict';
 
@@ -23369,7 +23374,7 @@ if (process.env.NODE_ENV === 'production') {
 }
 
 }).call(this,require('_process'))
-},{"./cjs/react-dom-server.browser.development.js":19,"./cjs/react-dom-server.browser.production.min.js":20,"_process":10}],42:[function(require,module,exports){
+},{"./cjs/react-dom-server.browser.development.js":36,"./cjs/react-dom-server.browser.production.min.js":37,"_process":27}],42:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -23497,7 +23502,7 @@ Animate.defaultProps = {
   show: true
 };
 exports.default = Animate;
-},{"../core/transition":49,"d3-timer":7,"react":59}],43:[function(require,module,exports){
+},{"../core/transition":49,"d3-timer":7,"react":58}],43:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -23765,7 +23770,7 @@ NodeGroup.defaultProps = {
   leave: function leave() {}
 };
 exports.default = NodeGroup;
-},{"../Node":45,"../core/mergeKeys":48,"../core/transition":49,"../core/types":54,"d3-timer":7,"react":59}],47:[function(require,module,exports){
+},{"../Node":45,"../core/mergeKeys":48,"../core/transition":49,"../core/types":54,"d3-timer":7,"react":58}],47:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -24314,134 +24319,6 @@ exports.Animate = _Animate3.default; /* eslint-disable flowtype/require-valid-fi
 
 exports.NodeGroup = _NodeGroup3.default;
 },{"./Animate":43,"./NodeGroup":47}],56:[function(require,module,exports){
-'use strict';
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-var _propTypes = require('prop-types');
-
-var _propTypes2 = _interopRequireDefault(_propTypes);
-
-var _react = require('react');
-
-var _react2 = _interopRequireDefault(_react);
-
-var _server = require('react-dom/server');
-
-var _server2 = _interopRequireDefault(_server);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-// See: https://github.com/webpack/react-starter/issues/37
-var isBrowser = typeof window !== 'undefined';
-var SVGInjector = isBrowser ? require('svg-injector') : undefined;
-
-var ReactSVG = function (_React$Component) {
-  _inherits(ReactSVG, _React$Component);
-
-  function ReactSVG() {
-    var _ref;
-
-    var _temp, _this, _ret;
-
-    _classCallCheck(this, ReactSVG);
-
-    for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
-      args[_key] = arguments[_key];
-    }
-
-    return _ret = (_temp = (_this = _possibleConstructorReturn(this, (_ref = ReactSVG.__proto__ || Object.getPrototypeOf(ReactSVG)).call.apply(_ref, [this].concat(args))), _this), _this.refCallback = function (container) {
-      if (!container) {
-        _this.removeSVG();
-        return;
-      }
-
-      _this.container = container;
-      _this.renderSVG();
-    }, _temp), _possibleConstructorReturn(_this, _ret);
-  }
-
-  _createClass(ReactSVG, [{
-    key: 'renderSVG',
-    value: function renderSVG() {
-      var props = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : this.props;
-      var each = props.callback,
-          className = props.className,
-          evalScripts = props.evalScripts,
-          path = props.path,
-          style = props.style;
-
-
-      var div = document.createElement('div');
-      div.innerHTML = _server2.default.renderToStaticMarkup(_react2.default.createElement(
-        'div',
-        null,
-        _react2.default.createElement('div', { className: className, 'data-src': path, style: style })
-      ));
-
-      var wrapper = this.container.appendChild(div.firstChild);
-
-      SVGInjector(wrapper.firstChild, {
-        evalScripts: evalScripts,
-        each: each
-      });
-    }
-  }, {
-    key: 'removeSVG',
-    value: function removeSVG() {
-      if (this.container instanceof Node && this.container.firstChild instanceof Node) {
-        this.container.removeChild(this.container.firstChild);
-      }
-    }
-  }, {
-    key: 'componentWillReceiveProps',
-    value: function componentWillReceiveProps(nextProps) {
-      this.removeSVG();
-      this.renderSVG(nextProps);
-    }
-  }, {
-    key: 'shouldComponentUpdate',
-    value: function shouldComponentUpdate() {
-      return false;
-    }
-  }, {
-    key: 'render',
-    value: function render() {
-      return _react2.default.createElement('div', { ref: this.refCallback, className: this.props.wrapperClassName });
-    }
-  }]);
-
-  return ReactSVG;
-}(_react2.default.Component);
-
-ReactSVG.defaultProps = {
-  callback: function callback() {},
-  className: null,
-  evalScripts: 'once',
-  style: {},
-  wrapperClassName: null
-};
-ReactSVG.propTypes = {
-  callback: _propTypes2.default.func,
-  className: _propTypes2.default.string,
-  evalScripts: _propTypes2.default.oneOf(['always', 'once', 'never']),
-  path: _propTypes2.default.string.isRequired,
-  style: _propTypes2.default.object,
-  wrapperClassName: _propTypes2.default.string
-};
-exports.default = ReactSVG;
-module.exports = exports['default'];
-},{"prop-types":14,"react":59,"react-dom/server":41,"svg-injector":64}],57:[function(require,module,exports){
 (function (process){
 /** @license React v16.2.0
  * react.development.js
@@ -25802,7 +25679,7 @@ module.exports = react;
 }
 
 }).call(this,require('_process'))
-},{"_process":10,"fbjs/lib/emptyFunction":60,"fbjs/lib/emptyObject":61,"fbjs/lib/invariant":62,"fbjs/lib/warning":63,"object-assign":9,"prop-types/checkPropTypes":11}],58:[function(require,module,exports){
+},{"_process":27,"fbjs/lib/emptyFunction":59,"fbjs/lib/emptyObject":60,"fbjs/lib/invariant":61,"fbjs/lib/warning":62,"object-assign":26,"prop-types/checkPropTypes":28}],57:[function(require,module,exports){
 /** @license React v16.2.0
  * react.production.min.js
  *
@@ -25825,7 +25702,7 @@ var U={Children:{map:function(a,b,e){if(null==a)return a;var c=[];T(a,c,null,b,e
 d=a.key,g=a.ref,k=a._owner;if(null!=b){void 0!==b.ref&&(g=b.ref,k=G.current);void 0!==b.key&&(d=""+b.key);if(a.type&&a.type.defaultProps)var f=a.type.defaultProps;for(h in b)H.call(b,h)&&!I.hasOwnProperty(h)&&(c[h]=void 0===b[h]&&void 0!==f?f[h]:b[h])}var h=arguments.length-2;if(1===h)c.children=e;else if(1<h){f=Array(h);for(var l=0;l<h;l++)f[l]=arguments[l+2];c.children=f}return{$$typeof:r,type:a.type,key:d,ref:g,props:c,_owner:k}},createFactory:function(a){var b=J.bind(null,a);b.type=a;return b},
 isValidElement:K,version:"16.2.0",__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED:{ReactCurrentOwner:G,assign:m}},V=Object.freeze({default:U}),W=V&&U||V;module.exports=W["default"]?W["default"]:W;
 
-},{"fbjs/lib/emptyFunction":60,"fbjs/lib/emptyObject":61,"object-assign":9}],59:[function(require,module,exports){
+},{"fbjs/lib/emptyFunction":59,"fbjs/lib/emptyObject":60,"object-assign":26}],58:[function(require,module,exports){
 (function (process){
 'use strict';
 
@@ -25836,486 +25713,22 @@ if (process.env.NODE_ENV === 'production') {
 }
 
 }).call(this,require('_process'))
-},{"./cjs/react.development.js":57,"./cjs/react.production.min.js":58,"_process":10}],60:[function(require,module,exports){
-arguments[4][16][0].apply(exports,arguments)
-},{"dup":16}],61:[function(require,module,exports){
-arguments[4][30][0].apply(exports,arguments)
-},{"_process":10,"dup":30}],62:[function(require,module,exports){
-arguments[4][17][0].apply(exports,arguments)
-},{"_process":10,"dup":17}],63:[function(require,module,exports){
-arguments[4][18][0].apply(exports,arguments)
-},{"./emptyFunction":60,"_process":10,"dup":18}],64:[function(require,module,exports){
-/**
- * SVGInjector v1.1.3 - Fast, caching, dynamic inline SVG DOM injection library
- * https://github.com/iconic/SVGInjector
- *
- * Copyright (c) 2014-2015 Waybury <hello@waybury.com>
- * @license MIT
- */
-
-(function (window, document) {
-
-  'use strict';
-
-  // Environment
-  var isLocal = window.location.protocol === 'file:';
-  var hasSvgSupport = document.implementation.hasFeature('http://www.w3.org/TR/SVG11/feature#BasicStructure', '1.1');
-
-  function uniqueClasses(list) {
-    list = list.split(' ');
-
-    var hash = {};
-    var i = list.length;
-    var out = [];
-
-    while (i--) {
-      if (!hash.hasOwnProperty(list[i])) {
-        hash[list[i]] = 1;
-        out.unshift(list[i]);
-      }
-    }
-
-    return out.join(' ');
-  }
-
-  /**
-   * cache (or polyfill for <= IE8) Array.forEach()
-   * source: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/forEach
-   */
-  var forEach = Array.prototype.forEach || function (fn, scope) {
-    if (this === void 0 || this === null || typeof fn !== 'function') {
-      throw new TypeError();
-    }
-
-    /* jshint bitwise: false */
-    var i, len = this.length >>> 0;
-    /* jshint bitwise: true */
-
-    for (i = 0; i < len; ++i) {
-      if (i in this) {
-        fn.call(scope, this[i], i, this);
-      }
-    }
-  };
-
-  // SVG Cache
-  var svgCache = {};
-
-  var injectCount = 0;
-  var injectedElements = [];
-
-  // Request Queue
-  var requestQueue = [];
-
-  // Script running status
-  var ranScripts = {};
-
-  var cloneSvg = function (sourceSvg) {
-    return sourceSvg.cloneNode(true);
-  };
-
-  var queueRequest = function (url, callback) {
-    requestQueue[url] = requestQueue[url] || [];
-    requestQueue[url].push(callback);
-  };
-
-  var processRequestQueue = function (url) {
-    for (var i = 0, len = requestQueue[url].length; i < len; i++) {
-      // Make these calls async so we avoid blocking the page/renderer
-      /* jshint loopfunc: true */
-      (function (index) {
-        setTimeout(function () {
-          requestQueue[url][index](cloneSvg(svgCache[url]));
-        }, 0);
-      })(i);
-      /* jshint loopfunc: false */
-    }
-  };
-
-  var loadSvg = function (url, callback) {
-    if (svgCache[url] !== undefined) {
-      if (svgCache[url] instanceof SVGSVGElement) {
-        // We already have it in cache, so use it
-        callback(cloneSvg(svgCache[url]));
-      }
-      else {
-        // We don't have it in cache yet, but we are loading it, so queue this request
-        queueRequest(url, callback);
-      }
-    }
-    else {
-
-      if (!window.XMLHttpRequest) {
-        callback('Browser does not support XMLHttpRequest');
-        return false;
-      }
-
-      // Seed the cache to indicate we are loading this URL already
-      svgCache[url] = {};
-      queueRequest(url, callback);
-
-      var httpRequest = new XMLHttpRequest();
-
-      httpRequest.onreadystatechange = function () {
-        // readyState 4 = complete
-        if (httpRequest.readyState === 4) {
-
-          // Handle status
-          if (httpRequest.status === 404 || httpRequest.responseXML === null) {
-            callback('Unable to load SVG file: ' + url);
-
-            if (isLocal) callback('Note: SVG injection ajax calls do not work locally without adjusting security setting in your browser. Or consider using a local webserver.');
-
-            callback();
-            return false;
-          }
-
-          // 200 success from server, or 0 when using file:// protocol locally
-          if (httpRequest.status === 200 || (isLocal && httpRequest.status === 0)) {
-
-            /* globals Document */
-            if (httpRequest.responseXML instanceof Document) {
-              // Cache it
-              svgCache[url] = httpRequest.responseXML.documentElement;
-            }
-            /* globals -Document */
-
-            // IE9 doesn't create a responseXML Document object from loaded SVG,
-            // and throws a "DOM Exception: HIERARCHY_REQUEST_ERR (3)" error when injected.
-            //
-            // So, we'll just create our own manually via the DOMParser using
-            // the the raw XML responseText.
-            //
-            // :NOTE: IE8 and older doesn't have DOMParser, but they can't do SVG either, so...
-            else if (DOMParser && (DOMParser instanceof Function)) {
-              var xmlDoc;
-              try {
-                var parser = new DOMParser();
-                xmlDoc = parser.parseFromString(httpRequest.responseText, 'text/xml');
-              }
-              catch (e) {
-                xmlDoc = undefined;
-              }
-
-              if (!xmlDoc || xmlDoc.getElementsByTagName('parsererror').length) {
-                callback('Unable to parse SVG file: ' + url);
-                return false;
-              }
-              else {
-                // Cache it
-                svgCache[url] = xmlDoc.documentElement;
-              }
-            }
-
-            // We've loaded a new asset, so process any requests waiting for it
-            processRequestQueue(url);
-          }
-          else {
-            callback('There was a problem injecting the SVG: ' + httpRequest.status + ' ' + httpRequest.statusText);
-            return false;
-          }
-        }
-      };
-
-      httpRequest.open('GET', url);
-
-      // Treat and parse the response as XML, even if the
-      // server sends us a different mimetype
-      if (httpRequest.overrideMimeType) httpRequest.overrideMimeType('text/xml');
-
-      httpRequest.send();
-    }
-  };
-
-  // Inject a single element
-  var injectElement = function (el, evalScripts, pngFallback, callback) {
-
-    // Grab the src or data-src attribute
-    var imgUrl = el.getAttribute('data-src') || el.getAttribute('src');
-
-    // We can only inject SVG
-    if (!(/\.svg/i).test(imgUrl)) {
-      callback('Attempted to inject a file with a non-svg extension: ' + imgUrl);
-      return;
-    }
-
-    // If we don't have SVG support try to fall back to a png,
-    // either defined per-element via data-fallback or data-png,
-    // or globally via the pngFallback directory setting
-    if (!hasSvgSupport) {
-      var perElementFallback = el.getAttribute('data-fallback') || el.getAttribute('data-png');
-
-      // Per-element specific PNG fallback defined, so use that
-      if (perElementFallback) {
-        el.setAttribute('src', perElementFallback);
-        callback(null);
-      }
-      // Global PNG fallback directoriy defined, use the same-named PNG
-      else if (pngFallback) {
-        el.setAttribute('src', pngFallback + '/' + imgUrl.split('/').pop().replace('.svg', '.png'));
-        callback(null);
-      }
-      // um...
-      else {
-        callback('This browser does not support SVG and no PNG fallback was defined.');
-      }
-
-      return;
-    }
-
-    // Make sure we aren't already in the process of injecting this element to
-    // avoid a race condition if multiple injections for the same element are run.
-    // :NOTE: Using indexOf() only _after_ we check for SVG support and bail,
-    // so no need for IE8 indexOf() polyfill
-    if (injectedElements.indexOf(el) !== -1) {
-      return;
-    }
-
-    // Remember the request to inject this element, in case other injection
-    // calls are also trying to replace this element before we finish
-    injectedElements.push(el);
-
-    // Try to avoid loading the orginal image src if possible.
-    el.setAttribute('src', '');
-
-    // Load it up
-    loadSvg(imgUrl, function (svg) {
-
-      if (typeof svg === 'undefined' || typeof svg === 'string') {
-        callback(svg);
-        return false;
-      }
-
-      var imgId = el.getAttribute('id');
-      if (imgId) {
-        svg.setAttribute('id', imgId);
-      }
-
-      var imgTitle = el.getAttribute('title');
-      if (imgTitle) {
-        svg.setAttribute('title', imgTitle);
-      }
-
-      // Concat the SVG classes + 'injected-svg' + the img classes
-      var classMerge = [].concat(svg.getAttribute('class') || [], 'injected-svg', el.getAttribute('class') || []).join(' ');
-      svg.setAttribute('class', uniqueClasses(classMerge));
-
-      var imgStyle = el.getAttribute('style');
-      if (imgStyle) {
-        svg.setAttribute('style', imgStyle);
-      }
-
-      // Copy all the data elements to the svg
-      var imgData = [].filter.call(el.attributes, function (at) {
-        return (/^data-\w[\w\-]*$/).test(at.name);
-      });
-      forEach.call(imgData, function (dataAttr) {
-        if (dataAttr.name && dataAttr.value) {
-          svg.setAttribute(dataAttr.name, dataAttr.value);
-        }
-      });
-
-      // Make sure any internally referenced clipPath ids and their
-      // clip-path references are unique.
-      //
-      // This addresses the issue of having multiple instances of the
-      // same SVG on a page and only the first clipPath id is referenced.
-      //
-      // Browsers often shortcut the SVG Spec and don't use clipPaths
-      // contained in parent elements that are hidden, so if you hide the first
-      // SVG instance on the page, then all other instances lose their clipping.
-      // Reference: https://bugzilla.mozilla.org/show_bug.cgi?id=376027
-
-      // Handle all defs elements that have iri capable attributes as defined by w3c: http://www.w3.org/TR/SVG/linking.html#processingIRI
-      // Mapping IRI addressable elements to the properties that can reference them:
-      var iriElementsAndProperties = {
-        'clipPath': ['clip-path'],
-        'color-profile': ['color-profile'],
-        'cursor': ['cursor'],
-        'filter': ['filter'],
-        'linearGradient': ['fill', 'stroke'],
-        'marker': ['marker', 'marker-start', 'marker-mid', 'marker-end'],
-        'mask': ['mask'],
-        'pattern': ['fill', 'stroke'],
-        'radialGradient': ['fill', 'stroke']
-      };
-
-      var element, elementDefs, properties, currentId, newId;
-      Object.keys(iriElementsAndProperties).forEach(function (key) {
-        element = key;
-        properties = iriElementsAndProperties[key];
-
-        elementDefs = svg.querySelectorAll('defs ' + element + '[id]');
-        for (var i = 0, elementsLen = elementDefs.length; i < elementsLen; i++) {
-          currentId = elementDefs[i].id;
-          newId = currentId + '-' + injectCount;
-
-          // All of the properties that can reference this element type
-          var referencingElements;
-          forEach.call(properties, function (property) {
-            // :NOTE: using a substring match attr selector here to deal with IE "adding extra quotes in url() attrs"
-            referencingElements = svg.querySelectorAll('[' + property + '*="' + currentId + '"]');
-            for (var j = 0, referencingElementLen = referencingElements.length; j < referencingElementLen; j++) {
-              referencingElements[j].setAttribute(property, 'url(#' + newId + ')');
-            }
-          });
-
-          elementDefs[i].id = newId;
-        }
-      });
-
-      // Remove any unwanted/invalid namespaces that might have been added by SVG editing tools
-      svg.removeAttribute('xmlns:a');
-
-      // Post page load injected SVGs don't automatically have their script
-      // elements run, so we'll need to make that happen, if requested
-
-      // Find then prune the scripts
-      var scripts = svg.querySelectorAll('script');
-      var scriptsToEval = [];
-      var script, scriptType;
-
-      for (var k = 0, scriptsLen = scripts.length; k < scriptsLen; k++) {
-        scriptType = scripts[k].getAttribute('type');
-
-        // Only process javascript types.
-        // SVG defaults to 'application/ecmascript' for unset types
-        if (!scriptType || scriptType === 'application/ecmascript' || scriptType === 'application/javascript') {
-
-          // innerText for IE, textContent for other browsers
-          script = scripts[k].innerText || scripts[k].textContent;
-
-          // Stash
-          scriptsToEval.push(script);
-
-          // Tidy up and remove the script element since we don't need it anymore
-          svg.removeChild(scripts[k]);
-        }
-      }
-
-      // Run/Eval the scripts if needed
-      if (scriptsToEval.length > 0 && (evalScripts === 'always' || (evalScripts === 'once' && !ranScripts[imgUrl]))) {
-        for (var l = 0, scriptsToEvalLen = scriptsToEval.length; l < scriptsToEvalLen; l++) {
-
-          // :NOTE: Yup, this is a form of eval, but it is being used to eval code
-          // the caller has explictely asked to be loaded, and the code is in a caller
-          // defined SVG file... not raw user input.
-          //
-          // Also, the code is evaluated in a closure and not in the global scope.
-          // If you need to put something in global scope, use 'window'
-          new Function(scriptsToEval[l])(window); // jshint ignore:line
-        }
-
-        // Remember we already ran scripts for this svg
-        ranScripts[imgUrl] = true;
-      }
-
-      // :WORKAROUND:
-      // IE doesn't evaluate <style> tags in SVGs that are dynamically added to the page.
-      // This trick will trigger IE to read and use any existing SVG <style> tags.
-      //
-      // Reference: https://github.com/iconic/SVGInjector/issues/23
-      var styleTags = svg.querySelectorAll('style');
-      forEach.call(styleTags, function (styleTag) {
-        styleTag.textContent += '';
-      });
-
-      // Replace the image with the svg
-      el.parentNode.replaceChild(svg, el);
-
-      // Now that we no longer need it, drop references
-      // to the original element so it can be GC'd
-      delete injectedElements[injectedElements.indexOf(el)];
-      el = null;
-
-      // Increment the injected count
-      injectCount++;
-
-      callback(svg);
-    });
-  };
-
-  /**
-   * SVGInjector
-   *
-   * Replace the given elements with their full inline SVG DOM elements.
-   *
-   * :NOTE: We are using get/setAttribute with SVG because the SVG DOM spec differs from HTML DOM and
-   * can return other unexpected object types when trying to directly access svg properties.
-   * ex: "className" returns a SVGAnimatedString with the class value found in the "baseVal" property,
-   * instead of simple string like with HTML Elements.
-   *
-   * @param {mixes} Array of or single DOM element
-   * @param {object} options
-   * @param {function} callback
-   * @return {object} Instance of SVGInjector
-   */
-  var SVGInjector = function (elements, options, done) {
-
-    // Options & defaults
-    options = options || {};
-
-    // Should we run the scripts blocks found in the SVG
-    // 'always' - Run them every time
-    // 'once' - Only run scripts once for each SVG
-    // [false|'never'] - Ignore scripts
-    var evalScripts = options.evalScripts || 'always';
-
-    // Location of fallback pngs, if desired
-    var pngFallback = options.pngFallback || false;
-
-    // Callback to run during each SVG injection, returning the SVG injected
-    var eachCallback = options.each;
-
-    // Do the injection...
-    if (elements.length !== undefined) {
-      var elementsLoaded = 0;
-      forEach.call(elements, function (element) {
-        injectElement(element, evalScripts, pngFallback, function (svg) {
-          if (eachCallback && typeof eachCallback === 'function') eachCallback(svg);
-          if (done && elements.length === ++elementsLoaded) done(elementsLoaded);
-        });
-      });
-    }
-    else {
-      if (elements) {
-        injectElement(elements, evalScripts, pngFallback, function (svg) {
-          if (eachCallback && typeof eachCallback === 'function') eachCallback(svg);
-          if (done) done(1);
-          elements = null;
-        });
-      }
-      else {
-        if (done) done(0);
-      }
-    }
-  };
-
-  /* global module, exports: true, define */
-  // Node.js or CommonJS
-  if (typeof module === 'object' && typeof module.exports === 'object') {
-    module.exports = exports = SVGInjector;
-  }
-  // AMD support
-  else if (typeof define === 'function' && define.amd) {
-    define(function () {
-      return SVGInjector;
-    });
-  }
-  // Otherwise, attach to window as global
-  else if (typeof window === 'object') {
-    window.SVGInjector = SVGInjector;
-  }
-  /* global -module, -exports, -define */
-
-}(window, document));
-
-},{}],65:[function(require,module,exports){
+},{"./cjs/react.development.js":56,"./cjs/react.production.min.js":57,"_process":27}],59:[function(require,module,exports){
+arguments[4][13][0].apply(exports,arguments)
+},{"dup":13}],60:[function(require,module,exports){
+arguments[4][14][0].apply(exports,arguments)
+},{"_process":27,"dup":14}],61:[function(require,module,exports){
+arguments[4][19][0].apply(exports,arguments)
+},{"_process":27,"dup":19}],62:[function(require,module,exports){
+arguments[4][24][0].apply(exports,arguments)
+},{"./emptyFunction":59,"_process":27,"dup":24}],63:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
+
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
@@ -26327,11 +25740,13 @@ var _propTypes = require('prop-types');
 
 var _propTypes2 = _interopRequireDefault(_propTypes);
 
-var _reactSvg = require('react-svg');
+var _reactSvg = require('./react-svg2');
 
 var _reactSvg2 = _interopRequireDefault(_reactSvg);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _objectWithoutProperties(obj, keys) { var target = {}; for (var i in obj) { if (keys.indexOf(i) >= 0) continue; if (!Object.prototype.hasOwnProperty.call(obj, i)) continue; target[i] = obj[i]; } return target; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -26350,19 +25765,17 @@ var SVGLoader = function (_React$Component) {
   }
 
   _createClass(SVGLoader, [{
-    key: 'shouldComponentUpdate',
-    value: function shouldComponentUpdate(nextProps) {
-      return nextProps.path !== this.props.path;
-    }
-  }, {
     key: 'render',
     value: function render() {
-      return _react2.default.createElement(_reactSvg2.default, {
-        className: this.props.className,
-        style: this.props.style,
+      var _props = this.props,
+          path = _props.path,
+          onSVGReady = _props.onSVGReady,
+          props = _objectWithoutProperties(_props, ['path', 'onSVGReady']);
+
+      return _react2.default.createElement(_reactSvg2.default, _extends({
         path: this.props.path,
         callback: this.props.onSVGReady
-      });
+      }, props));
     }
   }]);
 
@@ -26380,14 +25793,14 @@ SVGLoader.defaultProps = {
 
 exports.default = SVGLoader;
 
-},{"prop-types":14,"react":59,"react-svg":56}],66:[function(require,module,exports){
+},{"./react-svg2":67,"prop-types":31,"react":58}],64:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
@@ -26445,66 +25858,25 @@ var Samy = function (_React$Component) {
   _createClass(Samy, [{
     key: 'onSVGReady',
     value: function onSVGReady(svgNode) {
-      var _props = this.props,
-          path = _props.path,
-          onSVGReady = _props.onSVGReady,
-          style = _props.style,
-          children = _props.children,
-          props = _objectWithoutProperties(_props, ['path', 'onSVGReady', 'style', 'children']);
-
-      if (svgNode && props) {
-        Object.keys(props).reduce(function (svgNode, key) {
-          svgNode.setAttribute(key, props[key]);
-          return svgNode;
-        }, svgNode);
-      }
-
       this.setState({ svg: svgNode });
       this.props.onSVGReady(svgNode);
     }
   }, {
-    key: 'componentWillReceiveProps',
-    value: function componentWillReceiveProps(_ref) {
-      var nextPath = _ref.path,
-          nextOnSVGReady = _ref.onSVGReady,
-          nextChildren = _ref.children,
-          nextStyle = _ref.style,
-          nextProps = _objectWithoutProperties(_ref, ['path', 'onSVGReady', 'children', 'style']);
-
-      var _props2 = this.props,
-          path = _props2.path,
-          onSVGReady = _props2.onSVGReady,
-          style = _props2.style,
-          children = _props2.children,
-          props = _objectWithoutProperties(_props2, ['path', 'onSVGReady', 'style', 'children']);
-      //Apply properties to svg element
-
-
-      if (!(0, _lodash2.default)(props, nextProps)) {
-        if (this.state.svg) {
-          Object.entries(nextProps).reduce(function (svgNode, _ref2) {
-            var _ref3 = _slicedToArray(_ref2, 2),
-                key = _ref3[0],
-                value = _ref3[1];
-
-            svgNode.setAttribute(key, value);
-            return svgNode;
-          }, this.state.svg);
-        }
-      }
-    }
-  }, {
     key: 'render',
     value: function render() {
+      var _props = this.props,
+          path = _props.path,
+          onSVGReady = _props.onSVGReady,
+          children = _props.children,
+          props = _objectWithoutProperties(_props, ['path', 'onSVGReady', 'children']);
+
       return _react2.default.createElement(
         _react2.default.Fragment,
         null,
-        _react2.default.createElement(_SVGLoader2.default, {
-          className: this.props.className,
-          style: this.props.style,
+        _react2.default.createElement(_SVGLoader2.default, _extends({
           path: this.props.path,
           onSVGReady: this.onSVGReady
-        }),
+        }, props)),
         this.props.children
       );
     }
@@ -26530,7 +25902,7 @@ Samy.defaultProps = {
 
 exports.default = Samy;
 
-},{"./SVGLoader":65,"lodash.isequal":8,"prop-types":14,"react":59}],67:[function(require,module,exports){
+},{"./SVGLoader":63,"lodash.isequal":25,"prop-types":31,"react":58}],65:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -26673,7 +26045,7 @@ SvgProxy.defaultProps = {
   onElementSelected: function onElementSelected() {}
 };
 
-},{"prop-types":14,"react":59}],68:[function(require,module,exports){
+},{"prop-types":31,"react":58}],66:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -26694,4 +26066,629 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 exports.SvgProxy = _SvgProxy2.default;
 exports.Samy = _Samy2.default;
 
-},{"./Samy":66,"./SvgProxy":67}]},{},[1]);
+},{"./Samy":64,"./SvgProxy":65}],67:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _propTypes = require('prop-types');
+
+var _propTypes2 = _interopRequireDefault(_propTypes);
+
+var _react = require('react');
+
+var _react2 = _interopRequireDefault(_react);
+
+var _server = require('react-dom/server');
+
+var _server2 = _interopRequireDefault(_server);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _objectWithoutProperties(obj, keys) { var target = {}; for (var i in obj) { if (keys.indexOf(i) >= 0) continue; if (!Object.prototype.hasOwnProperty.call(obj, i)) continue; target[i] = obj[i]; } return target; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /* Adapted from the react-svg module source code;
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 - removes <divs>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 Original LiCENSE text:
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 The MIT License (MIT)
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 Copyright (c) 2014 Atomic
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 Permission is hereby granted, free of charge, to any person obtaining a copy
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 of this software and associated documentation files (the "Software"), to deal
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 in the Software without restriction, including without limitation the rights
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 copies of the Software, and to permit persons to whom the Software is
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 furnished to do so, subject to the following conditions:
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 The above copyright notice and this permission notice shall be included in all
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 copies or substantial portions of the Software.
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 SOFTWARE.
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               */
+
+
+// See: https://github.com/webpack/react-starter/issues/37
+var isBrowser = typeof window !== 'undefined';
+var SVGInjector = isBrowser ? require('./svg-injector') : undefined;
+
+var ReactSVG = function (_React$Component) {
+  _inherits(ReactSVG, _React$Component);
+
+  function ReactSVG() {
+    var _ref;
+
+    var _temp, _this, _ret;
+
+    _classCallCheck(this, ReactSVG);
+
+    for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+      args[_key] = arguments[_key];
+    }
+
+    return _ret = (_temp = (_this = _possibleConstructorReturn(this, (_ref = ReactSVG.__proto__ || Object.getPrototypeOf(ReactSVG)).call.apply(_ref, [this].concat(args))), _this), _this.refCallback = function (container) {
+      if (!container) {
+        return;
+      }
+
+      _this.container = container;
+      _this.renderSVG();
+    }, _temp), _possibleConstructorReturn(_this, _ret);
+  }
+
+  _createClass(ReactSVG, [{
+    key: 'renderSVG',
+    value: function renderSVG() {
+      var props = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : this.props;
+
+      var svgNode = this.container;
+
+      var each = props.callback,
+          evalScripts = props.evalScripts,
+          path = props.path,
+          htmlProps = _objectWithoutProperties(props, ['callback', 'evalScripts', 'path']);
+
+      //Update SVG element
+
+
+      SVGInjector(svgNode, {
+        evalScripts: evalScripts,
+        each: each
+      });
+
+      //SVGInjector will override the initial attributes set
+      //by props. So we need to re apply them.
+      if (svgNode && htmlProps) {
+        Object.keys(htmlProps).reduce(function (svgNode, key) {
+          svgNode.setAttribute(key, htmlProps[key]);
+          return svgNode;
+        }, svgNode);
+      }
+    }
+  }, {
+    key: 'render',
+    value: function render() {
+      var _props = this.props,
+          callback = _props.callback,
+          evalScripts = _props.evalScripts,
+          path = _props.path,
+          props = _objectWithoutProperties(_props, ['callback', 'evalScripts', 'path']);
+
+      return _react2.default.createElement('svg', _extends({ ref: this.refCallback, 'data-src': this.props.path }, props));
+    }
+  }]);
+
+  return ReactSVG;
+}(_react2.default.Component);
+
+ReactSVG.defaultProps = {
+  callback: function callback() {},
+  className: null,
+  evalScripts: 'once'
+};
+ReactSVG.propTypes = {
+  callback: _propTypes2.default.func,
+  evalScripts: _propTypes2.default.oneOf(['always', 'once', 'never']),
+  path: _propTypes2.default.string.isRequired
+};
+exports.default = ReactSVG;
+
+},{"./svg-injector":68,"prop-types":31,"react":58,"react-dom/server":41}],68:[function(require,module,exports){
+'use strict';
+
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+
+/**
+ * Changes: 
+ * - Don't replace the node.  Justs its innerHTML
+ * Adapted from:
+ * Original Copyright notice ---------------------------
+ * SVGInjector v1.1.3 - Fast, caching, dynamic inline SVG DOM injection library
+ * https://github.com/iconic/SVGInjector
+ *
+ * Copyright (c) 2014-2015 Waybury <hello@waybury.com>
+ * @license MIT
+ * 
+ */
+
+(function (window, document) {
+
+  'use strict';
+
+  // Environment
+
+  var isLocal = window.location.protocol === 'file:';
+  var hasSvgSupport = document.implementation.hasFeature('http://www.w3.org/TR/SVG11/feature#BasicStructure', '1.1');
+
+  function uniqueClasses(list) {
+    list = list.split(' ');
+
+    var hash = {};
+    var i = list.length;
+    var out = [];
+
+    while (i--) {
+      if (!hash.hasOwnProperty(list[i])) {
+        hash[list[i]] = 1;
+        out.unshift(list[i]);
+      }
+    }
+
+    return out.join(' ');
+  }
+
+  /**
+   * cache (or polyfill for <= IE8) Array.forEach()
+   * source: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/forEach
+   */
+  var forEach = Array.prototype.forEach || function (fn, scope) {
+    if (this === void 0 || this === null || typeof fn !== 'function') {
+      throw new TypeError();
+    }
+
+    /* jshint bitwise: false */
+    var i,
+        len = this.length >>> 0;
+    /* jshint bitwise: true */
+
+    for (i = 0; i < len; ++i) {
+      if (i in this) {
+        fn.call(scope, this[i], i, this);
+      }
+    }
+  };
+
+  // SVG Cache
+  var svgCache = {};
+
+  var injectCount = 0;
+  var injectedElements = [];
+
+  // Request Queue
+  var requestQueue = [];
+
+  // Script running status
+  var ranScripts = {};
+
+  var cloneSvg = function cloneSvg(sourceSvg) {
+    return sourceSvg.cloneNode(true);
+  };
+
+  var queueRequest = function queueRequest(url, callback) {
+    requestQueue[url] = requestQueue[url] || [];
+    requestQueue[url].push(callback);
+  };
+
+  var processRequestQueue = function processRequestQueue(url) {
+    for (var i = 0, len = requestQueue[url].length; i < len; i++) {
+      // Make these calls async so we avoid blocking the page/renderer
+      /* jshint loopfunc: true */
+      (function (index) {
+        setTimeout(function () {
+          requestQueue[url][index](cloneSvg(svgCache[url]));
+        }, 0);
+      })(i);
+      /* jshint loopfunc: false */
+    }
+  };
+
+  var loadSvg = function loadSvg(url, callback) {
+    if (svgCache[url] !== undefined) {
+      if (svgCache[url] instanceof SVGSVGElement) {
+        // We already have it in cache, so use it
+        callback(cloneSvg(svgCache[url]));
+      } else {
+        // We don't have it in cache yet, but we are loading it, so queue this request
+        queueRequest(url, callback);
+      }
+    } else {
+
+      if (!window.XMLHttpRequest) {
+        callback('Browser does not support XMLHttpRequest');
+        return false;
+      }
+
+      // Seed the cache to indicate we are loading this URL already
+      svgCache[url] = {};
+      queueRequest(url, callback);
+
+      var httpRequest = new XMLHttpRequest();
+
+      httpRequest.onreadystatechange = function () {
+        // readyState 4 = complete
+        if (httpRequest.readyState === 4) {
+
+          // Handle status
+          if (httpRequest.status === 404 || httpRequest.responseXML === null) {
+            callback('Unable to load SVG file: ' + url);
+
+            if (isLocal) callback('Note: SVG injection ajax calls do not work locally without adjusting security setting in your browser. Or consider using a local webserver.');
+
+            callback();
+            return false;
+          }
+
+          // 200 success from server, or 0 when using file:// protocol locally
+          if (httpRequest.status === 200 || isLocal && httpRequest.status === 0) {
+
+            /* globals Document */
+            if (httpRequest.responseXML instanceof Document) {
+              // Cache it
+              svgCache[url] = httpRequest.responseXML.documentElement;
+            }
+            /* globals -Document */
+
+            // IE9 doesn't create a responseXML Document object from loaded SVG,
+            // and throws a "DOM Exception: HIERARCHY_REQUEST_ERR (3)" error when injected.
+            //
+            // So, we'll just create our own manually via the DOMParser using
+            // the the raw XML responseText.
+            //
+            // :NOTE: IE8 and older doesn't have DOMParser, but they can't do SVG either, so...
+            else if (DOMParser && DOMParser instanceof Function) {
+                var xmlDoc;
+                try {
+                  var parser = new DOMParser();
+                  xmlDoc = parser.parseFromString(httpRequest.responseText, 'text/xml');
+                } catch (e) {
+                  xmlDoc = undefined;
+                }
+
+                if (!xmlDoc || xmlDoc.getElementsByTagName('parsererror').length) {
+                  callback('Unable to parse SVG file: ' + url);
+                  return false;
+                } else {
+                  // Cache it
+                  svgCache[url] = xmlDoc.documentElement;
+                }
+              }
+
+            // We've loaded a new asset, so process any requests waiting for it
+            processRequestQueue(url);
+          } else {
+            callback('There was a problem injecting the SVG: ' + httpRequest.status + ' ' + httpRequest.statusText);
+            return false;
+          }
+        }
+      };
+
+      httpRequest.open('GET', url);
+
+      // Treat and parse the response as XML, even if the
+      // server sends us a different mimetype
+      if (httpRequest.overrideMimeType) httpRequest.overrideMimeType('text/xml');
+
+      httpRequest.send();
+    }
+  };
+
+  // Inject a single element
+  var injectElement = function injectElement(el, evalScripts, pngFallback, callback) {
+
+    // Grab the src or data-src attribute
+    var imgUrl = el.getAttribute('data-src') || el.getAttribute('src');
+
+    // We can only inject SVG
+    if (!/\.svg/i.test(imgUrl)) {
+      callback('Attempted to inject a file with a non-svg extension: ' + imgUrl);
+      return;
+    }
+
+    // If we don't have SVG support try to fall back to a png,
+    // either defined per-element via data-fallback or data-png,
+    // or globally via the pngFallback directory setting
+    if (!hasSvgSupport) {
+      var perElementFallback = el.getAttribute('data-fallback') || el.getAttribute('data-png');
+
+      // Per-element specific PNG fallback defined, so use that
+      if (perElementFallback) {
+        el.setAttribute('src', perElementFallback);
+        callback(null);
+      }
+      // Global PNG fallback directoriy defined, use the same-named PNG
+      else if (pngFallback) {
+          el.setAttribute('src', pngFallback + '/' + imgUrl.split('/').pop().replace('.svg', '.png'));
+          callback(null);
+        }
+        // um...
+        else {
+            callback('This browser does not support SVG and no PNG fallback was defined.');
+          }
+
+      return;
+    }
+
+    // Make sure we aren't already in the process of injecting this element to
+    // avoid a race condition if multiple injections for the same element are run.
+    // :NOTE: Using indexOf() only _after_ we check for SVG support and bail,
+    // so no need for IE8 indexOf() polyfill
+    if (injectedElements.indexOf(el) !== -1) {
+      return;
+    }
+
+    // Remember the request to inject this element, in case other injection
+    // calls are also trying to replace this element before we finish
+    injectedElements.push(el);
+
+    // Try to avoid loading the orginal image src if possible.
+    el.setAttribute('src', '');
+
+    // Load it up
+    loadSvg(imgUrl, function (svg) {
+
+      if (typeof svg === 'undefined' || typeof svg === 'string') {
+        callback(svg);
+        return false;
+      }
+
+      var imgId = el.getAttribute('id');
+      if (imgId) {
+        svg.setAttribute('id', imgId);
+      }
+
+      var imgTitle = el.getAttribute('title');
+      if (imgTitle) {
+        svg.setAttribute('title', imgTitle);
+      }
+
+      // Concat the SVG classes + 'injected-svg' + the img classes
+      var classMerge = [].concat(svg.getAttribute('class') || [], 'injected-svg', el.getAttribute('class') || []).join(' ');
+      svg.setAttribute('class', uniqueClasses(classMerge));
+
+      var imgStyle = el.getAttribute('style');
+      if (imgStyle) {
+        svg.setAttribute('style', imgStyle);
+      }
+
+      // Copy all the data elements to the svg
+      var imgData = [].filter.call(el.attributes, function (at) {
+        return (/^data-\w[\w\-]*$/.test(at.name)
+        );
+      });
+      forEach.call(imgData, function (dataAttr) {
+        if (dataAttr.name && dataAttr.value) {
+          svg.setAttribute(dataAttr.name, dataAttr.value);
+        }
+      });
+
+      // Make sure any internally referenced clipPath ids and their
+      // clip-path references are unique.
+      //
+      // This addresses the issue of having multiple instances of the
+      // same SVG on a page and only the first clipPath id is referenced.
+      //
+      // Browsers often shortcut the SVG Spec and don't use clipPaths
+      // contained in parent elements that are hidden, so if you hide the first
+      // SVG instance on the page, then all other instances lose their clipping.
+      // Reference: https://bugzilla.mozilla.org/show_bug.cgi?id=376027
+
+      // Handle all defs elements that have iri capable attributes as defined by w3c: http://www.w3.org/TR/SVG/linking.html#processingIRI
+      // Mapping IRI addressable elements to the properties that can reference them:
+      var iriElementsAndProperties = {
+        'clipPath': ['clip-path'],
+        'color-profile': ['color-profile'],
+        'cursor': ['cursor'],
+        'filter': ['filter'],
+        'linearGradient': ['fill', 'stroke'],
+        'marker': ['marker', 'marker-start', 'marker-mid', 'marker-end'],
+        'mask': ['mask'],
+        'pattern': ['fill', 'stroke'],
+        'radialGradient': ['fill', 'stroke']
+      };
+
+      var element, elementDefs, properties, currentId, newId;
+      Object.keys(iriElementsAndProperties).forEach(function (key) {
+        element = key;
+        properties = iriElementsAndProperties[key];
+
+        elementDefs = svg.querySelectorAll('defs ' + element + '[id]');
+        for (var i = 0, elementsLen = elementDefs.length; i < elementsLen; i++) {
+          currentId = elementDefs[i].id;
+          newId = currentId + '-' + injectCount;
+
+          // All of the properties that can reference this element type
+          var referencingElements;
+          forEach.call(properties, function (property) {
+            // :NOTE: using a substring match attr selector here to deal with IE "adding extra quotes in url() attrs"
+            referencingElements = svg.querySelectorAll('[' + property + '*="' + currentId + '"]');
+            for (var j = 0, referencingElementLen = referencingElements.length; j < referencingElementLen; j++) {
+              referencingElements[j].setAttribute(property, 'url(#' + newId + ')');
+            }
+          });
+
+          elementDefs[i].id = newId;
+        }
+      });
+
+      // Remove any unwanted/invalid namespaces that might have been added by SVG editing tools
+      svg.removeAttribute('xmlns:a');
+
+      // Post page load injected SVGs don't automatically have their script
+      // elements run, so we'll need to make that happen, if requested
+
+      // Find then prune the scripts
+      var scripts = svg.querySelectorAll('script');
+      var scriptsToEval = [];
+      var script, scriptType;
+
+      for (var k = 0, scriptsLen = scripts.length; k < scriptsLen; k++) {
+        scriptType = scripts[k].getAttribute('type');
+
+        // Only process javascript types.
+        // SVG defaults to 'application/ecmascript' for unset types
+        if (!scriptType || scriptType === 'application/ecmascript' || scriptType === 'application/javascript') {
+
+          // innerText for IE, textContent for other browsers
+          script = scripts[k].innerText || scripts[k].textContent;
+
+          // Stash
+          scriptsToEval.push(script);
+
+          // Tidy up and remove the script element since we don't need it anymore
+          svg.removeChild(scripts[k]);
+        }
+      }
+
+      // Run/Eval the scripts if needed
+      if (scriptsToEval.length > 0 && (evalScripts === 'always' || evalScripts === 'once' && !ranScripts[imgUrl])) {
+        for (var l = 0, scriptsToEvalLen = scriptsToEval.length; l < scriptsToEvalLen; l++) {
+
+          // :NOTE: Yup, this is a form of eval, but it is being used to eval code
+          // the caller has explictely asked to be loaded, and the code is in a caller
+          // defined SVG file... not raw user input.
+          //
+          // Also, the code is evaluated in a closure and not in the global scope.
+          // If you need to put something in global scope, use 'window'
+          new Function(scriptsToEval[l])(window); // jshint ignore:line
+        }
+
+        // Remember we already ran scripts for this svg
+        ranScripts[imgUrl] = true;
+      }
+
+      // :WORKAROUND:
+      // IE doesn't evaluate <style> tags in SVGs that are dynamically added to the page.
+      // This trick will trigger IE to read and use any existing SVG <style> tags.
+      //
+      // Reference: https://github.com/iconic/SVGInjector/issues/23
+      var styleTags = svg.querySelectorAll('style');
+      forEach.call(styleTags, function (styleTag) {
+        styleTag.textContent += '';
+      });
+
+      //--- Update for react-samy-svg ----//
+      // Before:el.parentNode.replaceChild(svg, el);
+      // To keep the element reference and avoid problems with react
+      // We replace innerHTML only
+      el.innerHTML = svg.innerHTML;
+      //copy original svg attributes to node
+      if (svg.hasAttributes()) {
+        var attrs = svg.attributes;
+        var output = "";
+        for (var i = attrs.length - 1; i >= 0; i--) {
+          output += attrs[i].name + "->" + attrs[i].value;
+          el.setAttribute(attrs[i].name, attrs[i].value);
+        }
+      }
+
+      // Now that we no longer need it, drop references
+      // to the original element so it can be GC'd
+      delete injectedElements[injectedElements.indexOf(el)];
+      el = null;
+
+      // Increment the injected count
+      injectCount++;
+
+      callback(svg);
+    });
+  };
+
+  /**
+   * SVGInjector
+   *
+   * Replace the given elements with their full inline SVG DOM elements.
+   *
+   * :NOTE: We are using get/setAttribute with SVG because the SVG DOM spec differs from HTML DOM and
+   * can return other unexpected object types when trying to directly access svg properties.
+   * ex: "className" returns a SVGAnimatedString with the class value found in the "baseVal" property,
+   * instead of simple string like with HTML Elements.
+   *
+   * @param {mixes} Array of or single DOM element
+   * @param {object} options
+   * @param {function} callback
+   * @return {object} Instance of SVGInjector
+   */
+  var SVGInjector = function SVGInjector(elements, options, done) {
+
+    // Options & defaults
+    options = options || {};
+
+    // Should we run the scripts blocks found in the SVG
+    // 'always' - Run them every time
+    // 'once' - Only run scripts once for each SVG
+    // [false|'never'] - Ignore scripts
+    var evalScripts = options.evalScripts || 'always';
+
+    // Location of fallback pngs, if desired
+    var pngFallback = options.pngFallback || false;
+
+    // Callback to run during each SVG injection, returning the SVG injected
+    var eachCallback = options.each;
+
+    // Do the injection...
+    if (elements.length !== undefined) {
+      var elementsLoaded = 0;
+      forEach.call(elements, function (element) {
+        injectElement(element, evalScripts, pngFallback, function (svg) {
+          if (eachCallback && typeof eachCallback === 'function') eachCallback(svg);
+          if (done && elements.length === ++elementsLoaded) done(elementsLoaded);
+        });
+      });
+    } else {
+      if (elements) {
+        injectElement(elements, evalScripts, pngFallback, function (svg) {
+          if (eachCallback && typeof eachCallback === 'function') eachCallback(svg);
+          if (done) done(1);
+          elements = null;
+        });
+      } else {
+        if (done) done(0);
+      }
+    }
+  };
+
+  /* global module, exports: true, define */
+  // Node.js or CommonJS
+  if ((typeof module === 'undefined' ? 'undefined' : _typeof(module)) === 'object' && _typeof(module.exports) === 'object') {
+    module.exports = exports = SVGInjector;
+  }
+  // AMD support
+  else if (typeof define === 'function' && define.amd) {
+      define(function () {
+        return SVGInjector;
+      });
+    }
+    // Otherwise, attach to window as global
+    else if ((typeof window === 'undefined' ? 'undefined' : _typeof(window)) === 'object') {
+        window.SVGInjector = SVGInjector;
+      }
+  /* global -module, -exports, -define */
+})(window, document);
+
+},{}]},{},[1]);

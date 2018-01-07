@@ -102,6 +102,7 @@ describe('SamySVG', () => {
         viewBox="10 10 100 200"
         onSVGReady={svg => {
           component.setProps({width:'200px'});
+          console.log(svg.innerHTML);
           expect(svg.getAttribute('width')).toBe('200px')
         }}
       >
