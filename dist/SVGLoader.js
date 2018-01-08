@@ -46,11 +46,13 @@ var SVGLoader = function (_React$Component) {
       var _props = this.props,
           path = _props.path,
           onSVGReady = _props.onSVGReady,
-          props = _objectWithoutProperties(_props, ['path', 'onSVGReady']);
+          svgXML = _props.svgXML,
+          props = _objectWithoutProperties(_props, ['path', 'onSVGReady', 'svgXML']);
 
       return _react2.default.createElement(_reactSvg2.default, _extends({
         path: this.props.path,
-        callback: this.props.onSVGReady
+        callback: this.props.onSVGReady,
+        svgXML: svgXML
       }, props));
     }
   }]);
@@ -59,8 +61,9 @@ var SVGLoader = function (_React$Component) {
 }(_react2.default.Component);
 
 SVGLoader.propTypes = {
-  path: _propTypes2.default.string.isRequired,
-  onSVGReady: _propTypes2.default.func
+  path: _propTypes2.default.string,
+  onSVGReady: _propTypes2.default.func,
+  svgXML: _propTypes2.default.string
 };
 
 SVGLoader.defaultProps = {

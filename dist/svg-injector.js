@@ -187,58 +187,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
   };
 
   // Inject a single element
-  var injectElement = function injectElement(el, evalScripts, pngFallback, callback) {
+  //@svgXML: if not null then we don't fetch the file because we alredy
+  //have its contents
+  var injectElement = function injectElement(el, evalScripts, pngFallback, svgXML, callback) {
 
-    // Grab the src or data-src attribute
-    var imgUrl = el.getAttribute('data-src') || el.getAttribute('src');
-
-    // We can only inject SVG
-    if (!/\.svg/i.test(imgUrl)) {
-      callback('Attempted to inject a file with a non-svg extension: ' + imgUrl);
-      return;
-    }
-
-    // If we don't have SVG support try to fall back to a png,
-    // either defined per-element via data-fallback or data-png,
-    // or globally via the pngFallback directory setting
-    if (!hasSvgSupport) {
-      var perElementFallback = el.getAttribute('data-fallback') || el.getAttribute('data-png');
-
-      // Per-element specific PNG fallback defined, so use that
-      if (perElementFallback) {
-        el.setAttribute('src', perElementFallback);
-        callback(null);
-      }
-      // Global PNG fallback directoriy defined, use the same-named PNG
-      else if (pngFallback) {
-          el.setAttribute('src', pngFallback + '/' + imgUrl.split('/').pop().replace('.svg', '.png'));
-          callback(null);
-        }
-        // um...
-        else {
-            callback('This browser does not support SVG and no PNG fallback was defined.');
-          }
-
-      return;
-    }
-
-    // Make sure we aren't already in the process of injecting this element to
-    // avoid a race condition if multiple injections for the same element are run.
-    // :NOTE: Using indexOf() only _after_ we check for SVG support and bail,
-    // so no need for IE8 indexOf() polyfill
-    if (injectedElements.indexOf(el) !== -1) {
-      return;
-    }
-
-    // Remember the request to inject this element, in case other injection
-    // calls are also trying to replace this element before we finish
-    injectedElements.push(el);
-
-    // Try to avoid loading the orginal image src if possible.
-    el.setAttribute('src', '');
-
-    // Load it up
-    loadSvg(imgUrl, function (svg) {
+    var processSvg = function processSvg(svg, callback) {
 
       if (typeof svg === 'undefined' || typeof svg === 'string') {
         callback(svg);
@@ -327,49 +280,6 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
       // Remove any unwanted/invalid namespaces that might have been added by SVG editing tools
       svg.removeAttribute('xmlns:a');
 
-      // Post page load injected SVGs don't automatically have their script
-      // elements run, so we'll need to make that happen, if requested
-
-      // Find then prune the scripts
-      var scripts = svg.querySelectorAll('script');
-      var scriptsToEval = [];
-      var script, scriptType;
-
-      for (var k = 0, scriptsLen = scripts.length; k < scriptsLen; k++) {
-        scriptType = scripts[k].getAttribute('type');
-
-        // Only process javascript types.
-        // SVG defaults to 'application/ecmascript' for unset types
-        if (!scriptType || scriptType === 'application/ecmascript' || scriptType === 'application/javascript') {
-
-          // innerText for IE, textContent for other browsers
-          script = scripts[k].innerText || scripts[k].textContent;
-
-          // Stash
-          scriptsToEval.push(script);
-
-          // Tidy up and remove the script element since we don't need it anymore
-          svg.removeChild(scripts[k]);
-        }
-      }
-
-      // Run/Eval the scripts if needed
-      if (scriptsToEval.length > 0 && (evalScripts === 'always' || evalScripts === 'once' && !ranScripts[imgUrl])) {
-        for (var l = 0, scriptsToEvalLen = scriptsToEval.length; l < scriptsToEvalLen; l++) {
-
-          // :NOTE: Yup, this is a form of eval, but it is being used to eval code
-          // the caller has explictely asked to be loaded, and the code is in a caller
-          // defined SVG file... not raw user input.
-          //
-          // Also, the code is evaluated in a closure and not in the global scope.
-          // If you need to put something in global scope, use 'window'
-          new Function(scriptsToEval[l])(window); // jshint ignore:line
-        }
-
-        // Remember we already ran scripts for this svg
-        ranScripts[imgUrl] = true;
-      }
-
       // :WORKAROUND:
       // IE doesn't evaluate <style> tags in SVGs that are dynamically added to the page.
       // This trick will trigger IE to read and use any existing SVG <style> tags.
@@ -404,7 +314,53 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
       injectCount++;
 
       callback(svg);
-    });
+    };
+
+    if (svgXML) {
+      //If the svgXML is passed then we don't need to fetch the svg
+      var xmlDoc;
+      try {
+        var parser = new DOMParser();
+        xmlDoc = parser.parseFromString(svgXML, 'text/xml');
+      } catch (e) {
+        xmlDoc = undefined;
+      }
+
+      if (!xmlDoc || xmlDoc.getElementsByTagName('parsererror').length) {
+        callback('Unable to parse SVG file: ' + url);
+        return false;
+      } else {
+        // Cache it
+        //svgCache[url] = xmlDoc.documentElement;
+        processSvg(xmlDoc.documentElement, callback);
+      }
+    } else {
+      // Grab the src or data-src attribute
+      var imgUrl = el.getAttribute('data-src') || el.getAttribute('src');
+
+      // We can only inject SVG
+      if (!/\.svg/i.test(imgUrl)) {
+        callback('Attempted to inject a file with a non-svg extension: ' + imgUrl);
+        return;
+      }
+
+      //avoid loading the asset
+      el.setAttribute('src', '');
+      // Make sure we aren't already in the process of injecting this element to
+      // avoid a race condition if multiple injections for the same element are run.
+      // :NOTE: Using indexOf() only _after_ we check for SVG support and bail,
+      // so no need for IE8 indexOf() polyfill
+      if (injectedElements.indexOf(el) !== -1) {
+        return;
+      }
+
+      // Remember the request to inject this element, in case other injection
+      // calls are also trying to replace this element before we finish
+      injectedElements.push(el);
+
+      // Load it up
+      loadSvg(imgUrl, processSvg);
+    }
   };
 
   /**
@@ -439,18 +395,20 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
     // Callback to run during each SVG injection, returning the SVG injected
     var eachCallback = options.each;
 
+    var svgXML = options.svgXML;
+
     // Do the injection...
     if (elements.length !== undefined) {
       var elementsLoaded = 0;
       forEach.call(elements, function (element) {
-        injectElement(element, evalScripts, pngFallback, function (svg) {
+        injectElement(element, evalScripts, pngFallback, svgXML, function (svg) {
           if (eachCallback && typeof eachCallback === 'function') eachCallback(svg);
           if (done && elements.length === ++elementsLoaded) done(elementsLoaded);
         });
       });
     } else {
       if (elements) {
-        injectElement(elements, evalScripts, pngFallback, function (svg) {
+        injectElement(elements, evalScripts, pngFallback, svgXML, function (svg) {
           if (eachCallback && typeof eachCallback === 'function') eachCallback(svg);
           if (done) done(1);
           elements = null;

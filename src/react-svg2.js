@@ -41,7 +41,8 @@ export default class ReactSVG extends React.Component {
   static propTypes = {
     callback: PropTypes.func,
     evalScripts: PropTypes.oneOf(['always', 'once', 'never']),
-    path: PropTypes.string.isRequired,
+    path: PropTypes.string,
+    svgXML: PropTypes.string
   };
 
   refCallback = container => {
@@ -55,13 +56,16 @@ export default class ReactSVG extends React.Component {
 
   renderSVG(props = this.props) {
     var svgNode = this.container;
-    const {callback: each, evalScripts, path, ...htmlProps} = props;
+    const {callback, evalScripts, path, svgXML,  ...htmlProps} = props;
 
-    //Update SVG element
-    SVGInjector(svgNode, {
-      evalScripts,
-      each,
-    });
+      //Update SVG element
+      SVGInjector(svgNode, {
+        evalScripts,
+        each:callback,
+        svgXML
+      });
+  
+
 
     //SVGInjector will override the initial attributes set
     //by props. So we need to re apply them.
@@ -75,7 +79,7 @@ export default class ReactSVG extends React.Component {
   }
 
   render() {
-    const {callback, evalScripts, path, ...props} = this.props
+    const {callback, evalScripts, path, svgXML,  ...props} = this.props
     return (
         <svg ref={this.refCallback} data-src={this.props.path} {...props} />
     );

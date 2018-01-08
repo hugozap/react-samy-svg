@@ -90,17 +90,19 @@ var ReactSVG = function (_React$Component) {
 
       var svgNode = this.container;
 
-      var each = props.callback,
+      var callback = props.callback,
           evalScripts = props.evalScripts,
           path = props.path,
-          htmlProps = _objectWithoutProperties(props, ['callback', 'evalScripts', 'path']);
+          svgXML = props.svgXML,
+          htmlProps = _objectWithoutProperties(props, ['callback', 'evalScripts', 'path', 'svgXML']);
 
       //Update SVG element
 
 
       SVGInjector(svgNode, {
         evalScripts: evalScripts,
-        each: each
+        each: callback,
+        svgXML: svgXML
       });
 
       //SVGInjector will override the initial attributes set
@@ -119,7 +121,8 @@ var ReactSVG = function (_React$Component) {
           callback = _props.callback,
           evalScripts = _props.evalScripts,
           path = _props.path,
-          props = _objectWithoutProperties(_props, ['callback', 'evalScripts', 'path']);
+          svgXML = _props.svgXML,
+          props = _objectWithoutProperties(_props, ['callback', 'evalScripts', 'path', 'svgXML']);
 
       return _react2.default.createElement('svg', _extends({ ref: this.refCallback, 'data-src': this.props.path }, props));
     }
@@ -136,6 +139,7 @@ ReactSVG.defaultProps = {
 ReactSVG.propTypes = {
   callback: _propTypes2.default.func,
   evalScripts: _propTypes2.default.oneOf(['always', 'once', 'never']),
-  path: _propTypes2.default.string.isRequired
+  path: _propTypes2.default.string,
+  svgXML: _propTypes2.default.string
 };
 exports.default = ReactSVG;

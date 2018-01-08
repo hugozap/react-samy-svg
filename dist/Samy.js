@@ -20,10 +20,6 @@ var _SVGLoader = require('./SVGLoader');
 
 var _SVGLoader2 = _interopRequireDefault(_SVGLoader);
 
-var _lodash = require('lodash.isequal');
-
-var _lodash2 = _interopRequireDefault(_lodash);
-
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _objectWithoutProperties(obj, keys) { var target = {}; for (var i in obj) { if (keys.indexOf(i) >= 0) continue; if (!Object.prototype.hasOwnProperty.call(obj, i)) continue; target[i] = obj[i]; } return target; }
@@ -64,7 +60,11 @@ var Samy = function (_React$Component) {
     value: function onSVGReady(svgNode) {
       this.setState({ svg: svgNode });
       this.props.onSVGReady(svgNode);
+      console.log('onSVGReady fired', svgNode);
     }
+  }, {
+    key: 'componentDidMount',
+    value: function componentDidMount() {}
   }, {
     key: 'render',
     value: function render() {
@@ -72,14 +72,16 @@ var Samy = function (_React$Component) {
           path = _props.path,
           onSVGReady = _props.onSVGReady,
           children = _props.children,
-          props = _objectWithoutProperties(_props, ['path', 'onSVGReady', 'children']);
+          svgXML = _props.svgXML,
+          props = _objectWithoutProperties(_props, ['path', 'onSVGReady', 'children', 'svgXML']);
 
       return _react2.default.createElement(
         _react2.default.Fragment,
         null,
         _react2.default.createElement(_SVGLoader2.default, _extends({
           path: this.props.path,
-          onSVGReady: this.onSVGReady
+          onSVGReady: this.onSVGReady,
+          svgXML: svgXML
         }, props)),
         this.props.children
       );
@@ -90,7 +92,9 @@ var Samy = function (_React$Component) {
 }(_react2.default.Component);
 
 Samy.propTypes = {
-  path: _propTypes2.default.string.isRequired,
+  path: _propTypes2.default.string,
+  //if we have the svg text we can use that instead of loading it with ajax
+  svgXML: _propTypes2.default.string,
   onSVGReady: _propTypes2.default.func,
   children: _propTypes2.default.oneOfType([_propTypes2.default.arrayOf(_propTypes2.default.element), _propTypes2.default.element]),
   style: _propTypes2.default.object

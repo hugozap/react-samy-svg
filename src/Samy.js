@@ -1,11 +1,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import SVGLoader from './SVGLoader';
-import isEqual from 'lodash.isequal';
 
 class Samy extends React.Component {
   static propTypes = {
-    path: PropTypes.string.isRequired,
+    path: PropTypes.string,
+    //if we have the svg text we can use that instead of loading it with ajax
+    svgXML: PropTypes.string,
     onSVGReady: PropTypes.func,
     children: PropTypes.oneOfType([
       PropTypes.arrayOf(PropTypes.element),
@@ -35,16 +36,22 @@ class Samy extends React.Component {
   onSVGReady(svgNode) {
     this.setState({ svg: svgNode });
     this.props.onSVGReady(svgNode);
+    console.log('onSVGReady fired', svgNode)
+  }
+
+  componentDidMount() {
+
   }
 
   render() {
-    const { path, onSVGReady, children, ...props } = this.props;
+    const { path, onSVGReady, children, svgXML, ...props } = this.props;
 
     return (
       <React.Fragment>
         <SVGLoader
           path={this.props.path}
           onSVGReady={this.onSVGReady}
+          svgXML={svgXML}
           {...props}
         />
         {this.props.children}
