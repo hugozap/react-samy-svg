@@ -191,10 +191,10 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
   //have its contents
   var injectElement = function injectElement(el, evalScripts, pngFallback, svgXML, callback) {
 
-    var processSvg = function processSvg(svg, callback) {
+    var processSvg = function processSvg(svg, cb) {
 
       if (typeof svg === 'undefined' || typeof svg === 'string') {
-        callback(svg);
+        cb();
         return false;
       }
 
@@ -295,6 +295,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
       // To keep the element reference and avoid problems with react
       // We replace innerHTML only
       el.innerHTML = svg.innerHTML;
+      console.log('el.innerHTML', el.innerHTML);
+      console.log('svg.innerHTML', el.innerHTML);
       //copy original svg attributes to node
       if (svg.hasAttributes()) {
         var attrs = svg.attributes;
@@ -313,7 +315,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
       // Increment the injected count
       injectCount++;
 
-      callback(svg);
+      cb();
     };
 
     if (svgXML) {
@@ -401,15 +403,15 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
     if (elements.length !== undefined) {
       var elementsLoaded = 0;
       forEach.call(elements, function (element) {
-        injectElement(element, evalScripts, pngFallback, svgXML, function (svg) {
-          if (eachCallback && typeof eachCallback === 'function') eachCallback(svg);
+        injectElement(element, evalScripts, pngFallback, svgXML, function () {
+          if (eachCallback && typeof eachCallback === 'function') eachCallback();
           if (done && elements.length === ++elementsLoaded) done(elementsLoaded);
         });
       });
     } else {
       if (elements) {
-        injectElement(elements, evalScripts, pngFallback, svgXML, function (svg) {
-          if (eachCallback && typeof eachCallback === 'function') eachCallback(svg);
+        injectElement(elements, evalScripts, pngFallback, svgXML, function () {
+          if (eachCallback && typeof eachCallback === 'function') eachCallback();
           if (done) done(1);
           elements = null;
         });

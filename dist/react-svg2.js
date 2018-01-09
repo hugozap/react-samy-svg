@@ -86,6 +86,8 @@ var ReactSVG = function (_React$Component) {
   _createClass(ReactSVG, [{
     key: 'renderSVG',
     value: function renderSVG() {
+      var _this2 = this;
+
       var props = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : this.props;
 
       var svgNode = this.container;
@@ -101,18 +103,21 @@ var ReactSVG = function (_React$Component) {
 
       SVGInjector(svgNode, {
         evalScripts: evalScripts,
-        each: callback,
+        each: function each() {
+          //each is called when the svg was injected and is ready
+          callback(_this2.container);
+        },
         svgXML: svgXML
+      }, function () {
+        //SVGInjector will override the initial attributes set
+        //by props. So we need to re apply them.
+        if (svgNode && htmlProps) {
+          Object.keys(htmlProps).reduce(function (svgNode, key) {
+            svgNode.setAttribute(key, htmlProps[key]);
+            return svgNode;
+          }, svgNode);
+        }
       });
-
-      //SVGInjector will override the initial attributes set
-      //by props. So we need to re apply them.
-      if (svgNode && htmlProps) {
-        Object.keys(htmlProps).reduce(function (svgNode, key) {
-          svgNode.setAttribute(key, htmlProps[key]);
-          return svgNode;
-        }, svgNode);
-      }
     }
   }, {
     key: 'render',

@@ -191,10 +191,10 @@
   var injectElement = function (el, evalScripts, pngFallback, svgXML, callback) {
 
 
-    var processSvg =  function (svg, callback) {
+    var processSvg =  function (svg, cb) {
 
       if (typeof svg === 'undefined' || typeof svg === 'string') {
-        callback(svg);
+        cb();
         return false;
       }
 
@@ -294,6 +294,8 @@
       // To keep the element reference and avoid problems with react
       // We replace innerHTML only
       el.innerHTML = svg.innerHTML;
+      console.log('el.innerHTML', el.innerHTML);
+      console.log('svg.innerHTML', el.innerHTML);
       //copy original svg attributes to node
       if (svg.hasAttributes()) {
        var attrs = svg.attributes;
@@ -312,7 +314,7 @@
       // Increment the injected count
       injectCount++;
 
-      callback(svg);
+      cb();
     }
 
 
@@ -409,16 +411,16 @@
     if (elements.length !== undefined) {
       var elementsLoaded = 0;
       forEach.call(elements, function (element) {
-        injectElement(element, evalScripts, pngFallback, svgXML,  function (svg) {
-          if (eachCallback && typeof eachCallback === 'function') eachCallback(svg);
+        injectElement(element, evalScripts, pngFallback, svgXML,  function () {
+          if (eachCallback && typeof eachCallback === 'function') eachCallback();
           if (done && elements.length === ++elementsLoaded) done(elementsLoaded);
         });
       });
     }
     else {
       if (elements) {
-        injectElement(elements, evalScripts, pngFallback, svgXML, function (svg) {
-          if (eachCallback && typeof eachCallback === 'function') eachCallback(svg);
+        injectElement(elements, evalScripts, pngFallback, svgXML, function () {
+          if (eachCallback && typeof eachCallback === 'function') eachCallback();
           if (done) done(1);
           elements = null;
         });

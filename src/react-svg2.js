@@ -61,21 +61,21 @@ export default class ReactSVG extends React.Component {
       //Update SVG element
       SVGInjector(svgNode, {
         evalScripts,
-        each:callback,
+        each:()=>{
+          //each is called when the svg was injected and is ready
+          callback(this.container);
+        },
         svgXML
+      }, ()=>{
+        //SVGInjector will override the initial attributes set
+        //by props. So we need to re apply them.
+        if (svgNode && htmlProps) {
+          Object.keys(htmlProps).reduce((svgNode, key) => {
+            svgNode.setAttribute(key, htmlProps[key]);
+            return svgNode;
+          }, svgNode);
+        }
       });
-  
-
-
-    //SVGInjector will override the initial attributes set
-    //by props. So we need to re apply them.
-    if (svgNode && htmlProps) {
-      Object.keys(htmlProps).reduce((svgNode, key) => {
-        svgNode.setAttribute(key, htmlProps[key]);
-        return svgNode;
-      }, svgNode);
-    }
-
   }
 
   render() {
