@@ -18,20 +18,23 @@
   ],
   "scripts": {
     "test": "jest",
-    "build": "babel ./src --out-dir ./dist",
+    "build": "webpack",
+    "start:dev": "webpack-dev-server",
     "prepublish_disabled": "babel src --out-dir ./dist",
     "examples": "cd examples && budo app.js --live --open  -- -t babelify",
     "examples:build": "cd examples && cp -R robots ./dist/ && browserify app.js -t babelify > dist/bundle.js"
   },
   "devDependencies": {
     "babel-cli": "^6.26.0",
-    "babel-core": "^6.7.4",
     "babel-jest": "^20.0.3",
-    "babel-preset-env": "1.6.1",
+    "babel-loader": "^7.1.2",
+    "babel-plugin-transform-class-properties": "^6.24.1",
+    "babel-plugin-transform-object-rest-spread": "^6.26.0",
+    "babel-plugin-transform-react-jsx": "^6.24.1",
+    "babel-preset-env": "^1.6.1",
     "babel-preset-react": "^6.24.1",
     "babel-preset-stage-2": "^6.5.0",
     "babelify": "^7.3.0",
-    "budo": "^9.4.7",
     "enzyme": "3.0.0",
     "enzyme-adapter-react-16": "1.1.0",
     "jest-cli": "^20.0.4",
@@ -42,16 +45,17 @@
     "react-move": "^2.6.0",
     "react-test-renderer": "16.1.1",
     "sinon": "^4.1.3",
-    "tape": "^4.6.3"
+    "tape": "^4.6.3",
+    "webpack": "^3.10.0",
+    "webpack-bundle-analyzer": "^2.9.2",
+    "webpack-dev-server": "^2.10.1"
   },
   "peerDependencies": {
     "prop-types": "15.6.0",
     "react": "^16.2.0",
     "react-dom": "^16.2.0"
   },
-  "dependencies": {
- 
-  },
+  "dependencies": {},
   "jest": {
     "setupFiles": [
       "raf/polyfill"
