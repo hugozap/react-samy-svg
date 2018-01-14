@@ -20,7 +20,7 @@
     "test": "jest",
     "cypress:open": "cypress open",
     "build": "webpack",
-    "start:dev": "webpack-dev-server",
+    "start-test-server": "webpack-dev-server --entry=./__tests__/testapp.js --content-base=./__tests__ --config=webpack.test.config.js --open",
     "prepublish_disabled": "babel src --out-dir ./dist",
     "examples": "cd examples && budo app.js --live --open  -- -t babelify",
     "examples:build": "cd examples && cp -R robots ./dist/ && browserify app.js -t babelify > dist/bundle.js"

@@ -27,6 +27,7 @@ class Samy extends React.Component {
 
   constructor(props) {
     super(props);
+    this.mounted = false;
     this.state = {
       svg: null
     };
@@ -34,13 +35,19 @@ class Samy extends React.Component {
     this.onSVGReady = this.onSVGReady.bind(this);
   }
   onSVGReady(svgNode) {
-    this.setState({ svg: svgNode });
-    this.props.onSVGReady(svgNode);
-    console.log('onSVGReady fired', svgNode)
+    if ( this.mounted ) {
+      this.setState({ svg: svgNode });
+      this.props.onSVGReady(svgNode);
+    }
+
+  }
+
+  componentWillUnmount() {
+    this.mounted = false;
   }
 
   componentDidMount() {
-
+    this.mounted = true;
   }
 
   render() {

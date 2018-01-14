@@ -318,7 +318,7 @@ var processSvg =  function (el, svg) {
   // Inject a single element
   //@svgXML: if not null then we don't fetch the file because we alredy
   //have its contents
-  var injectElement = function (el, evalScripts, pngFallback, svgXML, callback) {
+  var injectElement = function (el, pngFallback, svgXML, callback) {
 
     
     if (svgXML) {
@@ -397,12 +397,6 @@ var processSvg =  function (el, svg) {
     // Options & defaults
     options = options || {};
 
-    // Should we run the scripts blocks found in the SVG
-    // 'always' - Run them every time
-    // 'once' - Only run scripts once for each SVG
-    // [false|'never'] - Ignore scripts
-    var evalScripts = options.evalScripts || 'always';
-
     // Location of fallback pngs, if desired
     var pngFallback = options.pngFallback || false;
 
@@ -415,7 +409,7 @@ var processSvg =  function (el, svg) {
     if (elements.length !== undefined) {
       var elementsLoaded = 0;
       forEach.call(elements, function (element) {
-        injectElement(element, evalScripts, pngFallback, svgXML,  function () {
+        injectElement(element, pngFallback, svgXML,  function () {
           if (eachCallback && typeof eachCallback === 'function') eachCallback();
           if (done && elements.length === ++elementsLoaded) done(elementsLoaded);
         });
@@ -423,7 +417,7 @@ var processSvg =  function (el, svg) {
     }
     else {
       if (elements) {
-        injectElement(elements, evalScripts, pngFallback, svgXML, function () {
+        injectElement(elements, pngFallback, svgXML, function () {
           if (eachCallback && typeof eachCallback === 'function') eachCallback();
           if (done) done(1);
           elements = null;

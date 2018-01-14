@@ -39,7 +39,6 @@ export default class ReactSVG extends React.Component {
 
   static propTypes = {
     callback: PropTypes.func,
-    evalScripts: PropTypes.oneOf(['always', 'once', 'never']),
     path: PropTypes.string,
     svgXML: PropTypes.string
   };
@@ -55,11 +54,10 @@ export default class ReactSVG extends React.Component {
 
   renderSVG(props = this.props) {
     var svgNode = this.container;
-    const {callback, evalScripts, path, svgXML,  ...htmlProps} = props;
+    const {callback, path, svgXML,  ...htmlProps} = props;
 
       //Update SVG element
       SVGInjector(svgNode, {
-        evalScripts,
         each:(err)=>{
           if(err) {
             console.log('Error:', err);
@@ -69,11 +67,14 @@ export default class ReactSVG extends React.Component {
         },
         svgXML
       }, ()=>{
-        //SVGInjector will override the initial attributes set
+        //SVGInjector will override the SVG attributes set by react props
+        //Re apply them (except the special `style` prop)
         //by props. So we need to re apply them.
         if (svgNode && htmlProps) {
           Object.keys(htmlProps).reduce((svgNode, key) => {
-            svgNode.setAttribute(key, htmlProps[key]);
+            if (key != 'style') {
+              svgNode.setAttribute(key, htmlProps[key]);
+            }
             return svgNode;
           }, svgNode);
         }

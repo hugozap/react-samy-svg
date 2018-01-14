@@ -7,12 +7,19 @@ import {Samy, SvgProxy} from '../src/index'
 const App = ()=>{
     return(
         <div>
-           {/* Basic ajax loading */}
+    
+           <p> Basic ajax loading</p>
            <Samy path="1.svg">
            </Samy>
 
-           {/* change property */}
+           <p> Update fill property to red</p>           
            <Samy path="1.svg">
+             <SvgProxy selector="#Star" fill="red"/>
+           </Samy>
+
+           <p> Pass style prop with custom width and border</p>           
+           
+           <Samy style={{width:'500px', height:'200px', border:'solid 1px'}} path="1.svg">
              <SvgProxy selector="#Star" fill="red"/>
            </Samy>
         </div>
