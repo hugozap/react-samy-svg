@@ -185,16 +185,17 @@
     }
   };
 
-  // Inject a single element
-  //@svgXML: if not null then we don't fetch the file because we alredy
-  //have its contents
-  var injectElement = function (el, evalScripts, pngFallback, svgXML, callback) {
 
 
-    var processSvg =  function (svg, cb) {
+/**
+ * Process the loaded svg node and copies its contents
+ * to the `el` element (also an SVG node)
+ * @param {Node} el Existing (empty) SVG element
+ * @param {Node} svg Loaded SVG element
+ */
+var processSvg =  function (el, svg) {
 
       if (typeof svg === 'undefined' || typeof svg === 'string') {
-        cb();
         return false;
       }
 
@@ -294,8 +295,6 @@
       // To keep the element reference and avoid problems with react
       // We replace innerHTML only
       el.innerHTML = svg.innerHTML;
-      console.log('el.innerHTML', el.innerHTML);
-      console.log('svg.innerHTML', el.innerHTML);
       //copy original svg attributes to node
       if (svg.hasAttributes()) {
        var attrs = svg.attributes;
@@ -313,11 +312,15 @@
 
       // Increment the injected count
       injectCount++;
-
-      cb();
     }
 
+  
+  // Inject a single element
+  //@svgXML: if not null then we don't fetch the file because we alredy
+  //have its contents
+  var injectElement = function (el, evalScripts, pngFallback, svgXML, callback) {
 
+    
     if (svgXML) {
       //If the svgXML is passed then we don't need to fetch the svg
       var xmlDoc;
@@ -336,7 +339,8 @@
       else {
         // Cache it
         //svgCache[url] = xmlDoc.documentElement;
-        processSvg(xmlDoc.documentElement, callback)
+        processSvg(el, xmlDoc.documentElement)
+        callback();
       }
     } else {
       // Grab the src or data-src attribute
@@ -364,13 +368,13 @@
 
       
       // Load it up
-      loadSvg(imgUrl, processSvg);
+      loadSvg(imgUrl, (svg)=>{
+        processSvg(el, svg)
+        callback();
+      });
 
     }
-    
 
-
-    
   };
 
   /**

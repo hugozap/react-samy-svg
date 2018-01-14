@@ -60,7 +60,10 @@ export default class ReactSVG extends React.Component {
       //Update SVG element
       SVGInjector(svgNode, {
         evalScripts,
-        each:()=>{
+        each:(err)=>{
+          if(err) {
+            console.log('Error:', err);
+          }
           //each is called when the svg was injected and is ready
           callback(this.container);
         },

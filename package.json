@@ -18,6 +18,7 @@
   ],
   "scripts": {
     "test": "jest",
+    "cypress:open": "cypress open",
     "build": "webpack",
     "start:dev": "webpack-dev-server",
     "prepublish_disabled": "babel src --out-dir ./dist",
@@ -35,6 +36,7 @@
     "babel-preset-react": "^6.24.1",
     "babel-preset-stage-2": "^6.5.0",
     "babelify": "^7.3.0",
+    "cypress": "^1.4.1",
     "enzyme": "3.0.0",
     "enzyme-adapter-react-16": "1.1.0",
     "jest-cli": "^20.0.4",
