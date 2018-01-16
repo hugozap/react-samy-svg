@@ -1,6 +1,6 @@
 {
   "name": "react-samy-svg",
-  "version": "2.1.0",
+  "version": "3.0.0",
   "description": "Convenient SVG loading and manipulation from react",
   "repository": {
     "type": "git",
@@ -27,7 +27,6 @@
   "devDependencies": {
     "babel-cli": "^6.26.0",
     "babel-core": "^6.26.0",
-    "babel-jest": "^20.0.3",
     "babel-loader": "^7.1.2",
     "babel-plugin-transform-class-properties": "^6.24.1",
     "babel-plugin-transform-object-rest-spread": "^6.26.0",
@@ -59,11 +58,5 @@
     "react": "^16.2.0",
     "react-dom": "^16.2.0"
   },
-  "dependencies": {},
-  "jest": {
-    "setupFiles": [
-      "raf/polyfill"
-    ],
-    "setupTestFrameworkScriptFile": "<rootDir>/test-setup.js"
-  }
+  "dependencies": {}
 }
