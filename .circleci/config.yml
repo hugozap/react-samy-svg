@@ -5,9 +5,12 @@
 version: 2
 jobs:
   build:
+    branches:
+      only:
+        - refactor
     docker:
       # specify the version you desire here
-      - image: circleci/node:7.10
+      - image: circleci/node:8.1.1
       
       # Specify service dependencies here if necessary
       # CircleCI maintains a library of pre-built images
