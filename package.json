@@ -19,7 +19,7 @@
   "scripts": {
     "test": "./__tests__/runtests.sh",
     "build": "webpack",
-    "start-test-server": "webpack-dev-server --entry=./__tests__/testapp.js --content-base=./__tests__ --config=webpack.test.config.js",
+    "start-test-server": "webpack-dev-server --entry=./__tests__/testapp.js --content-base=./__tests__ --config=./webpack.test.config.js",
     "prepublish_disabled": "babel src --out-dir ./dist",
     "examples": "cd examples && budo app.js --live --open  -- -t babelify",
     "examples:build": "cd examples && cp -R robots ./dist/ && browserify app.js -t babelify > dist/bundle.js"
