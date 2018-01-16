@@ -33,6 +33,9 @@ class Samy extends React.Component {
     };
 
     this.onSVGReady = this.onSVGReady.bind(this);
+    if (React.Fragment == null) {
+      throw new Errror("This version of React doesn't support Fragments, please update it");
+    }
   }
   onSVGReady(svgNode) {
     if ( this.mounted ) {
@@ -52,7 +55,7 @@ class Samy extends React.Component {
 
   render() {
     const { path, onSVGReady, children, svgXML, ...props } = this.props;
-
+    
     return (
       <React.Fragment>
         <SVGLoader

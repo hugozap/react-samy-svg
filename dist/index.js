@@ -161,6 +161,9 @@ var Samy = function (_React$Component) {
     };
 
     _this.onSVGReady = _this.onSVGReady.bind(_this);
+    if (_react2.default.Fragment == null) {
+      throw new Errror("This version of React doesn't support Fragments, please update it");
+    }
     return _this;
   }
 
