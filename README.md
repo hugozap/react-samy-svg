@@ -83,7 +83,9 @@ In this context and Svg proxy just transfers its props to the selected SVG eleme
 ```
 
 **Note 1:** Use any valid svg attribute and it will be applied to the selected element
+
 **Note 2:** Multiple elements can be manipulated at once if they match the CSS selector!
+
 **Note 3:** Keep in mind that proxies transfer additional props (as is) to the underlying DOM element (not React elements) so props like `style` are expected to be a string in this context.
 
 If you need to rename the svg element ids, its recommended to do it from the editor (In Sketch, the layer names are used as the element id's ). This keeps the svg file as the 'source of truth'. Communication with the SVG designer is important so the internal SVG structure and ids are known. 

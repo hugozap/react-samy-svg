@@ -7,7 +7,7 @@ jobs:
   build:
     docker:
       # specify the version you desire here
-      - image: node:latest-browsers
+      - image: node:7-browsers
       
       # Specify service dependencies here if necessary
       # CircleCI maintains a library of pre-built images
