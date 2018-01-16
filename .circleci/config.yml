@@ -5,9 +5,6 @@
 version: 2
 jobs:
   build:
-    branches:
-      only:
-        - refactor
     docker:
       # specify the version you desire here
       - image: node:latest-browsers
