@@ -12,7 +12,7 @@ There are different approaches to use SVG inside a React component, the process 
   - Adjust content (e.g class -> className) to make it JSX compatible
 - Manipulate the SVG JSX like any other element.
 
-This works ok for small components but there issues that can make the process complex:
+This works ok for small components but there are some issues that can get annoying for bigger components:
 
 - We lose the ability to keep iterating on the SVG assets (We would have to adjust them again or just copy/paste the parts that changed into our JSX).
 
