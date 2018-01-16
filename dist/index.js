@@ -155,6 +155,7 @@ var Samy = function (_React$Component) {
 
     var _this = _possibleConstructorReturn(this, (Samy.__proto__ || Object.getPrototypeOf(Samy)).call(this, props));
 
+    _this.mounted = false;
     _this.state = {
       svg: null
     };
@@ -166,13 +167,21 @@ var Samy = function (_React$Component) {
   _createClass(Samy, [{
     key: 'onSVGReady',
     value: function onSVGReady(svgNode) {
-      this.setState({ svg: svgNode });
-      this.props.onSVGReady(svgNode);
-      console.log('onSVGReady fired', svgNode);
+      if (this.mounted) {
+        this.setState({ svg: svgNode });
+        this.props.onSVGReady(svgNode);
+      }
+    }
+  }, {
+    key: 'componentWillUnmount',
+    value: function componentWillUnmount() {
+      this.mounted = false;
     }
   }, {
     key: 'componentDidMount',
-    value: function componentDidMount() {}
+    value: function componentDidMount() {
+      this.mounted = true;
+    }
   }, {
     key: 'render',
     value: function render() {
@@ -255,7 +264,6 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-/* Just a wrapper around ReactSVG to disable re rendering it */
 var SVGLoader = function (_React$Component) {
   _inherits(SVGLoader, _React$Component);
 
@@ -393,27 +401,31 @@ var ReactSVG = function (_React$Component) {
       var svgNode = this.container;
 
       var callback = props.callback,
-          evalScripts = props.evalScripts,
           path = props.path,
           svgXML = props.svgXML,
-          htmlProps = _objectWithoutProperties(props, ['callback', 'evalScripts', 'path', 'svgXML']);
+          htmlProps = _objectWithoutProperties(props, ['callback', 'path', 'svgXML']);
 
       //Update SVG element
 
 
       SVGInjector(svgNode, {
-        evalScripts: evalScripts,
-        each: function each() {
+        each: function each(err) {
+          if (err) {
+            console.log('Error:', err);
+          }
           //each is called when the svg was injected and is ready
           callback(_this2.container);
         },
         svgXML: svgXML
       }, function () {
-        //SVGInjector will override the initial attributes set
+        //SVGInjector will override the SVG attributes set by react props
+        //Re apply them (except the special `style` prop)
         //by props. So we need to re apply them.
         if (svgNode && htmlProps) {
           Object.keys(htmlProps).reduce(function (svgNode, key) {
-            svgNode.setAttribute(key, htmlProps[key]);
+            if (key != 'style') {
+              svgNode.setAttribute(key, htmlProps[key]);
+            }
             return svgNode;
           }, svgNode);
         }
@@ -424,10 +436,9 @@ var ReactSVG = function (_React$Component) {
     value: function render() {
       var _props = this.props,
           callback = _props.callback,
-          evalScripts = _props.evalScripts,
           path = _props.path,
           svgXML = _props.svgXML,
-          props = _objectWithoutProperties(_props, ['callback', 'evalScripts', 'path', 'svgXML']);
+          props = _objectWithoutProperties(_props, ['callback', 'path', 'svgXML']);
 
       return _react2.default.createElement('svg', _extends({ ref: this.refCallback, 'data-src': this.props.path }, props));
     }
@@ -437,13 +448,10 @@ var ReactSVG = function (_React$Component) {
 }(_react2.default.Component);
 
 ReactSVG.defaultProps = {
-  callback: function callback() {},
-  className: null,
-  evalScripts: 'once'
+  callback: function callback() {}
 };
 ReactSVG.propTypes = {
   callback: _propTypes2.default.func,
-  evalScripts: _propTypes2.default.oneOf(['always', 'once', 'never']),
   path: _propTypes2.default.string,
   svgXML: _propTypes2.default.string
 };
@@ -642,137 +650,138 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
     }
   };
 
+  /**
+   * Process the loaded svg node and copies its contents
+   * to the `el` element (also an SVG node)
+   * @param {Node} el Existing (empty) SVG element
+   * @param {Node} svg Loaded SVG element
+   */
+  var processSvg = function processSvg(el, svg) {
+
+    if (typeof svg === 'undefined' || typeof svg === 'string') {
+      return false;
+    }
+
+    var imgId = el.getAttribute('id');
+    if (imgId) {
+      svg.setAttribute('id', imgId);
+    }
+
+    var imgTitle = el.getAttribute('title');
+    if (imgTitle) {
+      svg.setAttribute('title', imgTitle);
+    }
+
+    // Concat the SVG classes + 'injected-svg' + the img classes
+    var classMerge = [].concat(svg.getAttribute('class') || [], 'injected-svg', el.getAttribute('class') || []).join(' ');
+    svg.setAttribute('class', uniqueClasses(classMerge));
+
+    var imgStyle = el.getAttribute('style');
+    if (imgStyle) {
+      svg.setAttribute('style', imgStyle);
+    }
+
+    // Copy all the data elements to the svg
+    var imgData = [].filter.call(el.attributes, function (at) {
+      return (/^data-\w[\w\-]*$/.test(at.name)
+      );
+    });
+    forEach.call(imgData, function (dataAttr) {
+      if (dataAttr.name && dataAttr.value) {
+        svg.setAttribute(dataAttr.name, dataAttr.value);
+      }
+    });
+
+    // Make sure any internally referenced clipPath ids and their
+    // clip-path references are unique.
+    //
+    // This addresses the issue of having multiple instances of the
+    // same SVG on a page and only the first clipPath id is referenced.
+    //
+    // Browsers often shortcut the SVG Spec and don't use clipPaths
+    // contained in parent elements that are hidden, so if you hide the first
+    // SVG instance on the page, then all other instances lose their clipping.
+    // Reference: https://bugzilla.mozilla.org/show_bug.cgi?id=376027
+
+    // Handle all defs elements that have iri capable attributes as defined by w3c: http://www.w3.org/TR/SVG/linking.html#processingIRI
+    // Mapping IRI addressable elements to the properties that can reference them:
+    var iriElementsAndProperties = {
+      'clipPath': ['clip-path'],
+      'color-profile': ['color-profile'],
+      'cursor': ['cursor'],
+      'filter': ['filter'],
+      'linearGradient': ['fill', 'stroke'],
+      'marker': ['marker', 'marker-start', 'marker-mid', 'marker-end'],
+      'mask': ['mask'],
+      'pattern': ['fill', 'stroke'],
+      'radialGradient': ['fill', 'stroke']
+    };
+
+    var element, elementDefs, properties, currentId, newId;
+    Object.keys(iriElementsAndProperties).forEach(function (key) {
+      element = key;
+      properties = iriElementsAndProperties[key];
+
+      elementDefs = svg.querySelectorAll('defs ' + element + '[id]');
+      for (var i = 0, elementsLen = elementDefs.length; i < elementsLen; i++) {
+        currentId = elementDefs[i].id;
+        newId = currentId + '-' + injectCount;
+
+        // All of the properties that can reference this element type
+        var referencingElements;
+        forEach.call(properties, function (property) {
+          // :NOTE: using a substring match attr selector here to deal with IE "adding extra quotes in url() attrs"
+          referencingElements = svg.querySelectorAll('[' + property + '*="' + currentId + '"]');
+          for (var j = 0, referencingElementLen = referencingElements.length; j < referencingElementLen; j++) {
+            referencingElements[j].setAttribute(property, 'url(#' + newId + ')');
+          }
+        });
+
+        elementDefs[i].id = newId;
+      }
+    });
+
+    // Remove any unwanted/invalid namespaces that might have been added by SVG editing tools
+    svg.removeAttribute('xmlns:a');
+
+    // :WORKAROUND:
+    // IE doesn't evaluate <style> tags in SVGs that are dynamically added to the page.
+    // This trick will trigger IE to read and use any existing SVG <style> tags.
+    //
+    // Reference: https://github.com/iconic/SVGInjector/issues/23
+    var styleTags = svg.querySelectorAll('style');
+    forEach.call(styleTags, function (styleTag) {
+      styleTag.textContent += '';
+    });
+
+    //--- Update for react-samy-svg ----//
+    // Before:el.parentNode.replaceChild(svg, el);
+    // To keep the element reference and avoid problems with react
+    // We replace innerHTML only
+    el.innerHTML = svg.innerHTML;
+    //copy original svg attributes to node
+    if (svg.hasAttributes()) {
+      var attrs = svg.attributes;
+      var output = "";
+      for (var i = attrs.length - 1; i >= 0; i--) {
+        output += attrs[i].name + "->" + attrs[i].value;
+        el.setAttribute(attrs[i].name, attrs[i].value);
+      }
+    }
+
+    // Now that we no longer need it, drop references
+    // to the original element so it can be GC'd
+    delete injectedElements[injectedElements.indexOf(el)];
+    el = null;
+
+    // Increment the injected count
+    injectCount++;
+  };
+
   // Inject a single element
   //@svgXML: if not null then we don't fetch the file because we alredy
   //have its contents
-  var injectElement = function injectElement(el, evalScripts, pngFallback, svgXML, callback) {
-
-    var processSvg = function processSvg(svg, cb) {
-
-      if (typeof svg === 'undefined' || typeof svg === 'string') {
-        cb();
-        return false;
-      }
-
-      var imgId = el.getAttribute('id');
-      if (imgId) {
-        svg.setAttribute('id', imgId);
-      }
-
-      var imgTitle = el.getAttribute('title');
-      if (imgTitle) {
-        svg.setAttribute('title', imgTitle);
-      }
-
-      // Concat the SVG classes + 'injected-svg' + the img classes
-      var classMerge = [].concat(svg.getAttribute('class') || [], 'injected-svg', el.getAttribute('class') || []).join(' ');
-      svg.setAttribute('class', uniqueClasses(classMerge));
-
-      var imgStyle = el.getAttribute('style');
-      if (imgStyle) {
-        svg.setAttribute('style', imgStyle);
-      }
-
-      // Copy all the data elements to the svg
-      var imgData = [].filter.call(el.attributes, function (at) {
-        return (/^data-\w[\w\-]*$/.test(at.name)
-        );
-      });
-      forEach.call(imgData, function (dataAttr) {
-        if (dataAttr.name && dataAttr.value) {
-          svg.setAttribute(dataAttr.name, dataAttr.value);
-        }
-      });
-
-      // Make sure any internally referenced clipPath ids and their
-      // clip-path references are unique.
-      //
-      // This addresses the issue of having multiple instances of the
-      // same SVG on a page and only the first clipPath id is referenced.
-      //
-      // Browsers often shortcut the SVG Spec and don't use clipPaths
-      // contained in parent elements that are hidden, so if you hide the first
-      // SVG instance on the page, then all other instances lose their clipping.
-      // Reference: https://bugzilla.mozilla.org/show_bug.cgi?id=376027
-
-      // Handle all defs elements that have iri capable attributes as defined by w3c: http://www.w3.org/TR/SVG/linking.html#processingIRI
-      // Mapping IRI addressable elements to the properties that can reference them:
-      var iriElementsAndProperties = {
-        'clipPath': ['clip-path'],
-        'color-profile': ['color-profile'],
-        'cursor': ['cursor'],
-        'filter': ['filter'],
-        'linearGradient': ['fill', 'stroke'],
-        'marker': ['marker', 'marker-start', 'marker-mid', 'marker-end'],
-        'mask': ['mask'],
-        'pattern': ['fill', 'stroke'],
-        'radialGradient': ['fill', 'stroke']
-      };
-
-      var element, elementDefs, properties, currentId, newId;
-      Object.keys(iriElementsAndProperties).forEach(function (key) {
-        element = key;
-        properties = iriElementsAndProperties[key];
-
-        elementDefs = svg.querySelectorAll('defs ' + element + '[id]');
-        for (var i = 0, elementsLen = elementDefs.length; i < elementsLen; i++) {
-          currentId = elementDefs[i].id;
-          newId = currentId + '-' + injectCount;
-
-          // All of the properties that can reference this element type
-          var referencingElements;
-          forEach.call(properties, function (property) {
-            // :NOTE: using a substring match attr selector here to deal with IE "adding extra quotes in url() attrs"
-            referencingElements = svg.querySelectorAll('[' + property + '*="' + currentId + '"]');
-            for (var j = 0, referencingElementLen = referencingElements.length; j < referencingElementLen; j++) {
-              referencingElements[j].setAttribute(property, 'url(#' + newId + ')');
-            }
-          });
-
-          elementDefs[i].id = newId;
-        }
-      });
-
-      // Remove any unwanted/invalid namespaces that might have been added by SVG editing tools
-      svg.removeAttribute('xmlns:a');
-
-      // :WORKAROUND:
-      // IE doesn't evaluate <style> tags in SVGs that are dynamically added to the page.
-      // This trick will trigger IE to read and use any existing SVG <style> tags.
-      //
-      // Reference: https://github.com/iconic/SVGInjector/issues/23
-      var styleTags = svg.querySelectorAll('style');
-      forEach.call(styleTags, function (styleTag) {
-        styleTag.textContent += '';
-      });
-
-      //--- Update for react-samy-svg ----//
-      // Before:el.parentNode.replaceChild(svg, el);
-      // To keep the element reference and avoid problems with react
-      // We replace innerHTML only
-      el.innerHTML = svg.innerHTML;
-      console.log('el.innerHTML', el.innerHTML);
-      console.log('svg.innerHTML', el.innerHTML);
-      //copy original svg attributes to node
-      if (svg.hasAttributes()) {
-        var attrs = svg.attributes;
-        var output = "";
-        for (var i = attrs.length - 1; i >= 0; i--) {
-          output += attrs[i].name + "->" + attrs[i].value;
-          el.setAttribute(attrs[i].name, attrs[i].value);
-        }
-      }
-
-      // Now that we no longer need it, drop references
-      // to the original element so it can be GC'd
-      delete injectedElements[injectedElements.indexOf(el)];
-      el = null;
-
-      // Increment the injected count
-      injectCount++;
-
-      cb();
-    };
+  var injectElement = function injectElement(el, pngFallback, svgXML, callback) {
 
     if (svgXML) {
       //If the svgXML is passed then we don't need to fetch the svg
@@ -785,12 +794,13 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
       }
 
       if (!xmlDoc || xmlDoc.getElementsByTagName('parsererror').length) {
-        callback('Unable to parse SVG file: ' + url);
+        callback('Unable to parse SVG file: ' + xmlDoc.getElementsByTagName('parsererror')[0].innerHTML);
         return false;
       } else {
         // Cache it
         //svgCache[url] = xmlDoc.documentElement;
-        processSvg(xmlDoc.documentElement, callback);
+        processSvg(el, xmlDoc.documentElement);
+        callback();
       }
     } else {
       // Grab the src or data-src attribute
@@ -817,7 +827,10 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
       injectedElements.push(el);
 
       // Load it up
-      loadSvg(imgUrl, processSvg);
+      loadSvg(imgUrl, function (svg) {
+        processSvg(el, svg);
+        callback();
+      });
     }
   };
 
@@ -841,12 +854,6 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
     // Options & defaults
     options = options || {};
 
-    // Should we run the scripts blocks found in the SVG
-    // 'always' - Run them every time
-    // 'once' - Only run scripts once for each SVG
-    // [false|'never'] - Ignore scripts
-    var evalScripts = options.evalScripts || 'always';
-
     // Location of fallback pngs, if desired
     var pngFallback = options.pngFallback || false;
 
@@ -859,14 +866,14 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
     if (elements.length !== undefined) {
       var elementsLoaded = 0;
       forEach.call(elements, function (element) {
-        injectElement(element, evalScripts, pngFallback, svgXML, function () {
+        injectElement(element, pngFallback, svgXML, function () {
           if (eachCallback && typeof eachCallback === 'function') eachCallback();
           if (done && elements.length === ++elementsLoaded) done(elementsLoaded);
         });
       });
     } else {
       if (elements) {
-        injectElement(elements, evalScripts, pngFallback, svgXML, function () {
+        injectElement(elements, pngFallback, svgXML, function () {
           if (eachCallback && typeof eachCallback === 'function') eachCallback();
           if (done) done(1);
           elements = null;
@@ -1005,6 +1012,7 @@ var SvgProxy = function (_React$Component) {
           if (['selector', 'onElementSelected'].includes(propName)) {
             return 'continue';
           }
+          //Apply attributes to node
           elemRefs.forEach(function (elem) {
             // TODO: replace this with a faster alternative
             if (typeof nextProps[propName] === 'function') {
@@ -1012,8 +1020,10 @@ var SvgProxy = function (_React$Component) {
             } else {
               //https://developer.mozilla.org/en/docs/Web/SVG/Namespaces_Crash_Course
               elem.setAttributeNS(null, propName, nextProps[propName]);
+              //Set inner text
               if (typeof _this2.props.children === 'string' && _this2.props.children.trim().length) {
-                elem.innerHTML = _this2.props.children;
+                debugger;
+                elem.node.textContent = _this2.props.children;
               }
             }
           });
@@ -1059,8 +1069,7 @@ var SvgProxy = function (_React$Component) {
 
 SvgProxy.propTypes = {
   selector: _propTypes2.default.string.isRequired,
-  onElementSelected: _propTypes2.default.func,
-  children: _propTypes2.default.string
+  onElementSelected: _propTypes2.default.func
 };
 SvgProxy.contextTypes = {
   svg: _propTypes2.default.object
