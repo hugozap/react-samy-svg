@@ -1,6 +1,6 @@
-[![CircleCI](https://circleci.com/gh/hugozap/react-samy-svg.svg?style=svg)](https://circleci.com/gh/hugozap/react-samy-svg)
 
-# SamySVG :cyclone:
+
+# SamySVG :cyclone: [![CircleCI](https://circleci.com/gh/hugozap/react-samy-svg.svg?style=svg)](https://circleci.com/gh/hugozap/react-samy-svg)
 
 Better SVG workflows with React :ok_hand:
 
