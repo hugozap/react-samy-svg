@@ -3,6 +3,7 @@ var BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlug
 
 module.exports = {
   entry: "./__tests__/testapp.js",
+  devtool: "eval-source-map",
   output: {
     path: path.resolve(__dirname, "__tests__"),
     filename: "testbundle.js",

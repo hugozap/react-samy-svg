@@ -33,8 +33,6 @@ const SVGInjector = isBrowser ? require('./svg-injector') : undefined;
 export default class ReactSVG extends React.Component {
   static defaultProps = {
     callback: () => {},
-    className: null,
-    evalScripts: 'once',
   };
 
   static propTypes = {
@@ -82,7 +80,7 @@ export default class ReactSVG extends React.Component {
   }
 
   render() {
-    const {callback, evalScripts, path, svgXML,  ...props} = this.props
+    const {callback, path, svgXML,  ...props} = this.props
     return (
         <svg ref={this.refCallback} data-src={this.props.path} {...props} />
     );

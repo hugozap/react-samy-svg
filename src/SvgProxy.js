@@ -11,7 +11,6 @@ export default class SvgProxy extends React.Component {
   static propTypes = {
     selector: PropTypes.string.isRequired,
     onElementSelected: PropTypes.func,
-    children: PropTypes.string
   };
 
   static contextTypes = {
@@ -53,6 +52,7 @@ export default class SvgProxy extends React.Component {
         if (['selector', 'onElementSelected'].includes(propName)) {
           continue;
         }
+        //Apply attributes to node
         elemRefs.forEach(elem => {
           // TODO: replace this with a faster alternative
           if (typeof nextProps[propName] === 'function') {
@@ -60,11 +60,13 @@ export default class SvgProxy extends React.Component {
           } else {
             //https://developer.mozilla.org/en/docs/Web/SVG/Namespaces_Crash_Course
             elem.setAttributeNS(null, propName, nextProps[propName]);
+            //Set inner text
             if (
               typeof this.props.children === 'string' &&
               this.props.children.trim().length
             ) {
-              elem.innerHTML = this.props.children;
+              debugger;
+              elem.node.textContent = this.props.children;
             }
           }
         });

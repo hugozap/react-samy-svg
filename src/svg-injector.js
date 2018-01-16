@@ -333,7 +333,7 @@ var processSvg =  function (el, svg) {
       }
 
       if (!xmlDoc || xmlDoc.getElementsByTagName('parsererror').length) {
-        callback('Unable to parse SVG file: ' + url);
+        callback('Unable to parse SVG file: '+xmlDoc.getElementsByTagName('parsererror')[0].innerHTML);
         return false;
       }
       else {
