@@ -1,3 +1,4 @@
+[![CircleCI](https://circleci.com/gh/hugozap/react-samy-svg.svg?style=svg)](https://circleci.com/gh/hugozap/react-samy-svg)
 
 # SamySVG :cyclone:
 
