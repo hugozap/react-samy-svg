@@ -9,7 +9,7 @@ import textsvg from 'raw-loader!./text.svg'
 const App = ()=>{
     return(
         <div>
-           /* <h1> Cypress tests make assertions against this page rendered elements.</h1>
+            <h1> Cypress tests make assertions against this page rendered elements.</h1>
            <p> Basic ajax loading</p>
            <Samy id="basic" path="1.svg">
            </Samy>
