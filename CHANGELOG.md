@@ -1,4 +1,12 @@
 # Changelog
+
+## [3.0.0] - 2018-01-16
+
+- Added svgXML prop to load the svg contents from string (no ajax load)
+- Docs updated
+- Tests switched to cypress.io
+
+
 ## [2.1.0] - 2017-12-19
 
 - Removes wrapper div. Uses React fragments.

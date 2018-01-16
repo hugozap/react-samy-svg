@@ -10,7 +10,7 @@ jobs:
         - refactor
     docker:
       # specify the version you desire here
-      - image: node:8.0
+      - image: latest-browsers
       
       # Specify service dependencies here if necessary
       # CircleCI maintains a library of pre-built images
