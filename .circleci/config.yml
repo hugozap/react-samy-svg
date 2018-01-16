@@ -10,7 +10,7 @@ jobs:
         - refactor
     docker:
       # specify the version you desire here
-      - image: circleci/node:8.1.1
+      - image: node:8.0
       
       # Specify service dependencies here if necessary
       # CircleCI maintains a library of pre-built images
