@@ -1,6 +1,6 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import SVGLoader from './SVGLoader';
+import React from "react";
+import PropTypes from "prop-types";
+import SVGLoader from "./SVGLoader";
 
 class Samy extends React.Component {
   static propTypes = {
@@ -34,15 +34,20 @@ class Samy extends React.Component {
 
     this.onSVGReady = this.onSVGReady.bind(this);
     if (React.Fragment == null) {
-      throw new Error("This version of React doesn't support Fragments, please update it");
+      throw new Error(
+        "This version of React doesn't support Fragments, please update it"
+      );
     }
   }
   onSVGReady(svgNode) {
-    if ( this.mounted ) {
-      this.setState({ svg: svgNode });
-      this.props.onSVGReady(svgNode);
-    }
 
+    //Run after component has mounted
+    setTimeout(() => {
+      if (this.mounted) {
+         this.setState({ ...this.state, svg: svgNode });
+        this.props.onSVGReady(svgNode);
+      }
+    }, 0);
   }
 
   componentWillUnmount() {
@@ -55,7 +60,8 @@ class Samy extends React.Component {
 
   render() {
     const { path, onSVGReady, children, svgXML, ...props } = this.props;
-    
+    const renderProxies = this.state.svg != null;
+    const proxies = renderProxies ? this.props.children : null;
     return (
       <React.Fragment>
         <SVGLoader
@@ -64,7 +70,7 @@ class Samy extends React.Component {
           svgXML={svgXML}
           {...props}
         />
-        {this.props.children}
+        {proxies}
       </React.Fragment>
     );
   }

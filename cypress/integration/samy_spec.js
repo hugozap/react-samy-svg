@@ -25,4 +25,16 @@ describe('Samy Tests', function() {
       console.log(cy.get('#null-path'))
       cy.get('#null-path').should('be.empty')
     })
+
+    it('Change element text (tspan)', function() {
+      cy.visit('http://localhost:8080')
+      console.log(cy.get('#null-path'))
+      cy.get('#change-text tspan').should('contain','Hello SVG')
+    })
+
+    it('onElementSelectedTest works', function() {
+      cy.visit('http://localhost:8080')
+      cy.get('#onElementSelectedTest #Star').should('have.attr', 'fill', 'red')
+    })
+    
   })

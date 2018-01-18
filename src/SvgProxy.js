@@ -1,5 +1,5 @@
-import React from 'react';
-import PropTypes from 'prop-types';
+import React from "react";
+import PropTypes from "prop-types";
 
 /*
  * SvgProxy works as a virtual svg node.
@@ -10,7 +10,7 @@ import PropTypes from 'prop-types';
 export default class SvgProxy extends React.Component {
   static propTypes = {
     selector: PropTypes.string.isRequired,
-    onElementSelected: PropTypes.func,
+    onElementSelected: PropTypes.func
   };
 
   static contextTypes = {
@@ -24,7 +24,21 @@ export default class SvgProxy extends React.Component {
     };
   }
 
+  componentDidMount() {
+    /* 
+     Note: The parent component <Samy>
+     only renders children when the svg has been loaded
+     so we know we have it in context
+    */
+    this.updateSvgElements(this.props, this.context);
+  }
+
   componentWillReceiveProps(nextProps, nextContext) {
+    //If a prop has changed then update the element
+    this.updateSvgElements(nextProps, nextContext);
+  }
+
+  updateSvgElements(nextProps, nextContext) {
     let { elemRefs } = this.state;
 
     if (nextContext.svg && elemRefs.length === 0) {
@@ -33,7 +47,7 @@ export default class SvgProxy extends React.Component {
       let nodes = Array.from(
         nextContext.svg.querySelectorAll(this.props.selector)
       );
-      if (nodes.length === 0 && ['svg', 'root'].includes(this.props.selector)) {
+      if (nodes.length === 0 && ["svg", "root"].includes(this.props.selector)) {
         //If the selector equls 'svg' or 'root' use the svg node
         nodes.push(nextContext.svg);
       }
@@ -49,24 +63,23 @@ export default class SvgProxy extends React.Component {
     if (elemRefs) {
       for (let propName of Object.keys(nextProps)) {
         //Ignore component props
-        if (['selector', 'onElementSelected'].includes(propName)) {
+        if (["selector", "onElementSelected"].includes(propName)) {
           continue;
         }
         //Apply attributes to node
         elemRefs.forEach(elem => {
           // TODO: replace this with a faster alternative
-          if (typeof nextProps[propName] === 'function') {
+          if (typeof nextProps[propName] === "function") {
             elem[propName.toLowerCase()] = nextProps[propName];
           } else {
             //https://developer.mozilla.org/en/docs/Web/SVG/Namespaces_Crash_Course
             elem.setAttributeNS(null, propName, nextProps[propName]);
             //Set inner text
             if (
-              typeof this.props.children === 'string' &&
+              typeof this.props.children === "string" &&
               this.props.children.trim().length
             ) {
-              debugger;
-              elem.node.textContent = this.props.children;
+              elem.textContent = this.props.children;
             }
           }
         });

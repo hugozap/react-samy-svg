@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.0.2] - 2018-01-16
+
+- Text content can be set by adding a child to SvgProxy
+- Only render SvgProxy children when the svg element has been updated.
+- update Samy state with svg reference after component has mounted (added setTimeout(..,0))
+-  
+
 ## [3.0.0] - 2018-01-16
 
 - Added svgXML prop to load the svg contents from string (no ajax load)

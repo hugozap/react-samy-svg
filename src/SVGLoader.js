@@ -1,6 +1,6 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import ReactSVG from './react-svg2';
+import React from "react";
+import PropTypes from "prop-types";
+import ReactSVG from "./react-svg2";
 
 class SVGLoader extends React.Component {
   static propTypes = {
@@ -14,7 +14,7 @@ class SVGLoader extends React.Component {
   }
 
   render() {
-    const {path, onSVGReady, svgXML,  ...props} = this.props;
+    const { path, onSVGReady, svgXML, ...props } = this.props;
     return (
       <ReactSVG
         path={this.props.path}
