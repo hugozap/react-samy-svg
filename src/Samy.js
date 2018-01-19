@@ -8,10 +8,6 @@ class Samy extends React.Component {
     //if we have the svg text we can use that instead of loading it with ajax
     svgXML: PropTypes.string,
     onSVGReady: PropTypes.func,
-    children: PropTypes.oneOfType([
-      PropTypes.arrayOf(PropTypes.element),
-      PropTypes.element
-    ]),
     style: PropTypes.object
   };
 
