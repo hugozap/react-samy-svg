@@ -223,7 +223,6 @@ Samy.propTypes = {
   //if we have the svg text we can use that instead of loading it with ajax
   svgXML: _propTypes2.default.string,
   onSVGReady: _propTypes2.default.func,
-  children: _propTypes2.default.oneOfType([_propTypes2.default.arrayOf(_propTypes2.default.element), _propTypes2.default.element]),
   style: _propTypes2.default.object
 };
 Samy.childContextTypes = {
