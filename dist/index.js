@@ -401,6 +401,13 @@ var ReactSVG = function (_React$Component) {
   }
 
   _createClass(ReactSVG, [{
+    key: 'componentWillReceiveProps',
+    value: function componentWillReceiveProps(nextProps) {
+      if (this.props.path != nextProps.path || this.props.svgXML != nextProps.svgXML) {
+        this.renderSVG(nextProps);
+      }
+    }
+  }, {
     key: 'renderSVG',
     value: function renderSVG() {
       var _this2 = this;

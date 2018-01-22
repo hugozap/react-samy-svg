@@ -1,5 +1,9 @@
 # Changelog
 
+## [3.0.4]
+
+- allows update to svgXML
+
 ## [3.0.2] - 2018-01-16
 
 - Text content can be set by adding a child to SvgProxy
