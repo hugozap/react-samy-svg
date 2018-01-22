@@ -36,5 +36,12 @@ describe('Samy Tests', function() {
       cy.visit('http://localhost:8080')
       cy.get('#onElementSelectedTest #Star').should('have.attr', 'fill', 'red')
     })
+
+    it('changing prop svgXML updates svg contents', function() {
+      cy.visit('http://localhost:8080')
+      cy.get('button#btnChangeSVG').click()
+      cy.get('#updatesvgxmlprop #Star').should('have.attr', 'fill', '#000')
+      
+    })
     
   })

@@ -50,6 +50,12 @@ export default class ReactSVG extends React.Component {
     this.renderSVG();
   };
 
+  componentWillReceiveProps(nextProps) {
+    if (this.props.path != nextProps.path || this.props.svgXML != nextProps.svgXML) {
+      this.renderSVG(nextProps);
+    }
+  }
+
   renderSVG(props = this.props) {
     var svgNode = this.container;
     const {callback, path, svgXML,  ...htmlProps} = props;
