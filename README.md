@@ -132,7 +132,18 @@ the `selector` attribute can target multiple elements, so this is valid:
 <SvgProxy selector="#rightEye,#leftEye" fill="#000" />;
 ```
 
-Properties:
+**Note**
+Use the token $ORIGINAL to keep the original attribute value.
+For example, to keep the original transform but add a translate operation:
+
+```jsx
+<SvgProxy transform="$ORIGINAL translate(0,40)" fill="#000" />;
+```
+
+(Remember than in SVG transforms are applied right to left)
+
+
+**Properties:**
 
 * selector: (string) CSS selector for the element(s)
 * onElementSelected: (function(elem)) callback that receives the DOM element (or list of

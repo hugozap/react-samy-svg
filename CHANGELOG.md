@@ -1,5 +1,10 @@
 # Changelog
 
+
+## [3.0.6]
+
+- Support for $ORIGINAL token in SvgProxy values to keep the original attribute value.
+
 ## [3.0.4]
 
 - allows update to svgXML

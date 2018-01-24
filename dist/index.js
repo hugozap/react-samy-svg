@@ -419,7 +419,8 @@ var ReactSVG = function (_React$Component) {
       var callback = props.callback,
           path = props.path,
           svgXML = props.svgXML,
-          htmlProps = _objectWithoutProperties(props, ['callback', 'path', 'svgXML']);
+          className = props.className,
+          htmlProps = _objectWithoutProperties(props, ['callback', 'path', 'svgXML', 'className']);
 
       //Update SVG element
 
@@ -984,6 +985,8 @@ var SvgProxy = function (_React$Component) {
     _this.state = {
       elemRefs: []
     };
+
+    _this.originalValues = {};
     return _this;
   }
 
@@ -1036,12 +1039,22 @@ var SvgProxy = function (_React$Component) {
           }
           //Apply attributes to node
           elemRefs.forEach(function (elem) {
-            // TODO: replace this with a faster alternative
             if (typeof nextProps[propName] === "function") {
               elem[propName.toLowerCase()] = nextProps[propName];
             } else {
+              //Discard non string props 
+              //TODO: Support style conversion
+              if (typeof nextProps[propName] != 'string') {
+                return;
+              }
+              //Save originalValue
+              if (_this2.originalValues[propName] == null) {
+                _this2.originalValues[propName] = elem.getAttributeNS(null, propName) || '';
+              }
+              //TODO: Optimization, avoid using replace everytime
+              var attrValue = nextProps[propName].replace('$ORIGINAL', _this2.originalValues[propName]);
               //https://developer.mozilla.org/en/docs/Web/SVG/Namespaces_Crash_Course
-              elem.setAttributeNS(null, propName, nextProps[propName]);
+              elem.setAttributeNS(null, propName, attrValue);
               //Set inner text
               if (typeof _this2.props.children === "string" && _this2.props.children.trim().length) {
                 elem.textContent = _this2.props.children;

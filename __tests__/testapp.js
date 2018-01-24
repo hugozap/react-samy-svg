@@ -98,6 +98,16 @@ class App extends Component {
           style={{ width: "500px", height: "200px", border: "solid 1px" }}
         >
         </Samy>
+
+        
+        <p>Append content without overwriting attribute using $CURRENT token</p>
+        <Samy
+          id="keepcurrentattributevalue"
+          svgXML={svgcontents}
+          style={{ width: "500px", height: "200px", border: "solid 1px" }}
+        >
+          <SvgProxy selector="g#Page-1" transform="$ORIGINAL translate(10,10)" />
+        </Samy>
       </div>
     );
   }

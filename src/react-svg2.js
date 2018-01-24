@@ -58,7 +58,7 @@ export default class ReactSVG extends React.Component {
 
   renderSVG(props = this.props) {
     var svgNode = this.container;
-    const {callback, path, svgXML,  ...htmlProps} = props;
+    const {callback, path, svgXML, className,  ...htmlProps} = props;
 
       //Update SVG element
       SVGInjector(svgNode, {
@@ -86,7 +86,7 @@ export default class ReactSVG extends React.Component {
   }
 
   render() {
-    const {callback, path, svgXML,  ...props} = this.props
+    const {callback, path, svgXML, ...props} = this.props
     return (
         <svg ref={this.refCallback} data-src={this.props.path} {...props} />
     );

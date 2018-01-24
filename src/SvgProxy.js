@@ -22,6 +22,8 @@ export default class SvgProxy extends React.Component {
     this.state = {
       elemRefs: []
     };
+
+    this.originalValues = {};
   }
 
   componentDidMount() {
@@ -68,12 +70,22 @@ export default class SvgProxy extends React.Component {
         }
         //Apply attributes to node
         elemRefs.forEach(elem => {
-          // TODO: replace this with a faster alternative
           if (typeof nextProps[propName] === "function") {
             elem[propName.toLowerCase()] = nextProps[propName];
           } else {
+            //Discard non string props 
+            //TODO: Support style conversion
+            if (typeof nextProps[propName] != 'string') {
+              return;
+            }
+            //Save originalValue
+            if (this.originalValues[propName] == null) {
+              this.originalValues[propName] = elem.getAttributeNS(null, propName) || ''
+            }
+            //TODO: Optimization, avoid using replace everytime
+            const attrValue = nextProps[propName].replace('$ORIGINAL', this.originalValues[propName])
             //https://developer.mozilla.org/en/docs/Web/SVG/Namespaces_Crash_Course
-            elem.setAttributeNS(null, propName, nextProps[propName]);
+            elem.setAttributeNS(null, propName, attrValue);
             //Set inner text
             if (
               typeof this.props.children === "string" &&

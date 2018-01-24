@@ -43,5 +43,10 @@ describe('Samy Tests', function() {
       cy.get('#updatesvgxmlprop #Star').should('have.attr', 'fill', '#000')
       
     })
+
+    it('SvgProxy converts $ORIGINAL to original attribute value', function() {
+      cy.visit('http://localhost:8080')
+      cy.get('#keepcurrentattributevalue g#Page-1').should('have.attr', 'transform','translate(0,0) translate(10,10)')
+    })
     
   })
