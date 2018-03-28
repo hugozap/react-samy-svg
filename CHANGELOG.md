@@ -1,5 +1,9 @@
 # Changelog
 
+## [3.0.7]
+
+- Fixed bug when setting text content with SvgProxy children
+- eslint setup 
 
 ## [3.0.6]
 
