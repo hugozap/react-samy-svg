@@ -8,16 +8,7 @@ import PropTypes from "prop-types";
  * @children : string supported (for text elements
  */
 export default class SvgProxy extends React.Component {
-  static propTypes = {
-    selector: PropTypes.string.isRequired,
-    onElementSelected: PropTypes.func
-  };
-
-  static contextTypes = {
-    svg: PropTypes.object
-  };
-
-  constructor(props, context) {
+  constructor(props) {
     super(props);
     this.state = {
       elemRefs: []
@@ -36,7 +27,7 @@ export default class SvgProxy extends React.Component {
   }
 
   componentWillReceiveProps(nextProps, nextContext) {
-    //If a prop has changed then update the element
+    // If a prop has changed then update the element
     this.updateSvgElements(nextProps, nextContext);
   }
 
@@ -44,13 +35,13 @@ export default class SvgProxy extends React.Component {
     let { elemRefs } = this.state;
 
     if (nextContext.svg && elemRefs.length === 0) {
-      //We don't have the svg element reference.
+      // We don't have the svg element reference.
 
-      let nodes = Array.from(
+      const nodes = Array.from(
         nextContext.svg.querySelectorAll(this.props.selector)
       );
       if (nodes.length === 0 && ["svg", "root"].includes(this.props.selector)) {
-        //If the selector equls 'svg' or 'root' use the svg node
+        // If the selector equls 'svg' or 'root' use the svg node
         nodes.push(nextContext.svg);
       }
       // Call the onElementSelected callback with the element (or array)
@@ -63,38 +54,45 @@ export default class SvgProxy extends React.Component {
     }
 
     if (elemRefs) {
-      for (let propName of Object.keys(nextProps)) {
-        //Ignore component props
-        if (["selector", "onElementSelected"].includes(propName)) {
-          continue;
-        }
-        //Apply attributes to node
-        elemRefs.forEach(elem => {
-          if (typeof nextProps[propName] === "function") {
-            elem[propName.toLowerCase()] = nextProps[propName];
-          } else {
-            //Discard non string props 
-            //TODO: Support style conversion
-            if (typeof nextProps[propName] != 'string') {
-              return;
-            }
-            //Save originalValue
-            if (this.originalValues[propName] == null) {
-              this.originalValues[propName] = elem.getAttributeNS(null, propName) || ''
-            }
-            //TODO: Optimization, avoid using replace everytime
-            const attrValue = nextProps[propName].replace('$ORIGINAL', this.originalValues[propName])
-            //https://developer.mozilla.org/en/docs/Web/SVG/Namespaces_Crash_Course
-            elem.setAttributeNS(null, propName, attrValue);
-            //Set inner text
-            if (
-              typeof this.props.children === "string" &&
-              this.props.children.trim().length
-            ) {
-              elem.textContent = this.props.children;
+      const propkeys = Object.keys(nextProps);
+      for (let i = 0; i < propkeys.length; i += 1) {
+        const propName = propkeys[i];
+        // Ignore component props
+        const ownprop = ["selector", "onElementSelected"].includes(propName);
+        if (!ownprop) {
+          // Apply attributes to node
+          for (let elemix = 0; elemix < elemRefs.length; elemix+=1) {
+            const elem = elemRefs[elemix];
+            if (typeof nextProps[propName] === "function") {
+              elem[propName.toLowerCase()] = nextProps[propName];
+            } else {
+              // Discard non string props
+              // TODO: Support style conversion
+              if (typeof nextProps[propName] !== "string") {
+                return;
+              }
+              // Save originalValue
+              if (this.originalValues[propName] == null) {
+                this.originalValues[propName] =
+                  elem.getAttributeNS(null, propName) || "";
+              }
+              // TODO: Optimization, avoid using replace everytime
+              const attrValue = nextProps[propName].replace(
+                "$ORIGINAL",
+                this.originalValues[propName]
+              );
+              // https://developer.mozilla.org/en/docs/Web/SVG/Namespaces_Crash_Course
+              elem.setAttributeNS(null, propName, attrValue);
+              // Set inner text
+              if (
+                typeof nextProps.children === "string" &&
+                nextProps.children.trim().length
+              ) {
+                elem.textContent = nextProps.children;
+              }
             }
           }
-        });
+        }
       }
     }
   }
@@ -103,6 +101,15 @@ export default class SvgProxy extends React.Component {
     return null;
   }
 }
+
+SvgProxy.propTypes = {
+  selector: PropTypes.string.isRequired,
+  onElementSelected: PropTypes.func
+};
+
+SvgProxy.contextTypes = {
+  svg: PropTypes.object
+};
 
 SvgProxy.defaultProps = {
   onElementSelected: () => {}

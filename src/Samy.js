@@ -2,25 +2,7 @@ import React from "react";
 import PropTypes from "prop-types";
 import SVGLoader from "./SVGLoader";
 
-class Samy extends React.Component {
-  static propTypes = {
-    path: PropTypes.string,
-    //if we have the svg text we can use that instead of loading it with ajax
-    svgXML: PropTypes.string,
-    onSVGReady: PropTypes.func,
-    style: PropTypes.object
-  };
-
-  static childContextTypes = {
-    svg: PropTypes.object
-  };
-
-  getChildContext() {
-    return {
-      svg: this.state.svg
-    };
-  }
-
+export default class Samy extends React.Component {
   constructor(props) {
     super(props);
     this.mounted = false;
@@ -35,23 +17,29 @@ class Samy extends React.Component {
       );
     }
   }
-  onSVGReady(svgNode) {
 
-    //Run after component has mounted
-    setTimeout(() => {
-      if (this.mounted) {
-         this.setState({ ...this.state, svg: svgNode });
-        this.props.onSVGReady(svgNode);
-      }
-    }, 0);
+  getChildContext() {
+    return {
+      svg: this.state.svg
+    };
+  }
+
+  componentDidMount() {
+    this.mounted = true;
   }
 
   componentWillUnmount() {
     this.mounted = false;
   }
 
-  componentDidMount() {
-    this.mounted = true;
+  onSVGReady(svgNode) {
+    // Run after component has mounted
+    setTimeout(() => {
+      if (this.mounted) {
+        this.setState({ ...this.state, svg: svgNode });
+        this.props.onSVGReady(svgNode);
+      }
+    }, 0);
   }
 
   render() {
@@ -72,8 +60,23 @@ class Samy extends React.Component {
   }
 }
 
-Samy.defaultProps = {
-  onSVGReady: () => {}
+Samy.childContextTypes = {
+  svg: PropTypes.object
 };
 
-export default Samy;
+Samy.propTypes = {
+  path: PropTypes.string,
+  svgXML: PropTypes.string,
+  onSVGReady: PropTypes.func,
+  style: PropTypes.object, // eslint-disable-line
+  children: PropTypes.any // eslint-disable-line
+};
+
+Samy.defaultProps = {
+  path: null,
+  svgXML: null,
+  onSVGReady: () => {},
+  style: null
+};
+
+

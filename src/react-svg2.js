@@ -31,17 +31,19 @@ const isBrowser = typeof window !== 'undefined';
 const SVGInjector = isBrowser ? require('./svg-injector') : undefined;
 
 export default class ReactSVG extends React.Component {
-  static defaultProps = {
-    callback: () => {},
-  };
 
-  static propTypes = {
-    callback: PropTypes.func,
-    path: PropTypes.string,
-    svgXML: PropTypes.string
-  };
+  constructor(){
+    super();
+    this.refCallback = this.refCallback.bind(this);
+  }
 
-  refCallback = container => {
+  componentWillReceiveProps(nextProps) {
+    if (this.props.path !== nextProps.path || this.props.svgXML !== nextProps.svgXML) {
+      this.renderSVG(nextProps);
+    }
+  }
+
+  refCallback(container){
     if (!container) {
       return;
     }
@@ -50,34 +52,30 @@ export default class ReactSVG extends React.Component {
     this.renderSVG();
   };
 
-  componentWillReceiveProps(nextProps) {
-    if (this.props.path != nextProps.path || this.props.svgXML != nextProps.svgXML) {
-      this.renderSVG(nextProps);
-    }
-  }
 
   renderSVG(props = this.props) {
-    var svgNode = this.container;
+    const svgNode = this.container;
     const {callback, path, svgXML, className,  ...htmlProps} = props;
 
-      //Update SVG element
+      // Update SVG element 
+
       SVGInjector(svgNode, {
         each:(err)=>{
           if(err) {
-            console.log('Error:', err);
+            throw new Error(err)
           }
-          //each is called when the svg was injected and is ready
+          // each is called when the svg was injected and is ready
           callback(this.container);
         },
         svgXML
       }, ()=>{
-        //SVGInjector will override the SVG attributes set by react props
-        //Re apply them (except the special `style` prop)
-        //by props. So we need to re apply them.
+        // SVGInjector will override the SVG attributes set by react props
+        // Re apply them (except the special `style` prop)
+        // by props. So we need to re apply them.
         if (svgNode && htmlProps) {
-          Object.keys(htmlProps).reduce((svgNode, key) => {
-            if (key != 'style') {
-              svgNode.setAttribute(key, htmlProps[key]);
+          Object.keys(htmlProps).reduce((svgNode_, key) => {
+            if (key !== 'style') {
+              svgNode_.setAttribute(key, htmlProps[key]);
             }
             return svgNode;
           }, svgNode);
@@ -92,3 +90,15 @@ export default class ReactSVG extends React.Component {
     );
   }
 }
+
+ReactSVG.defaultProps = {
+  callback: () => {},
+  path: null,
+  svgXML: null
+};
+
+ReactSVG.propTypes = {
+  callback: PropTypes.func,
+  path: PropTypes.string,
+  svgXML: PropTypes.string
+};
