@@ -1,4 +1,8 @@
+# ⚠️Project moved to [https://github.com/hugozap/react-svgmt](https://github.com/hugozap/react-svgmt)
 
+Please update your dependency to react-svgmt and change `<Samy>` references to `<SvgLoader>`
+
+<hr/>
 
 # SamySVG :cyclone: [![CircleCI](https://circleci.com/gh/hugozap/react-samy-svg.svg?style=svg)](https://circleci.com/gh/hugozap/react-samy-svg)
 
